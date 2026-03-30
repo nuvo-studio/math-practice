@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Math Practice</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700&family=DM+Mono:wght@400;500&display=swap');
+
+  :root {
+    --bg: #FAFAF8;
+    --card: #FFFFFF;
+    --text: #1A1A1A;
+    --text-secondary: #6B6B6B;
+    --border: #E8E8E4;
+    --accent: #2D6A4F;
+    --accent-light: #D8F3DC;
+    --accent-bg: #F0FAF3;
+    --correct: #2D6A4F;
+    --correct-bg: #D8F3DC;
+    --wrong: #C1453B;
+    --wrong-bg: #FDE8E6;
+    --nudge: #B8860B;
+    --nudge-bg: #FFF8E7;
+    --unsure: #5A6B7A;
+    --unsure-bg: #EDF1F5;
+    --mono: 'DM Mono', monospace;
+    --sans: 'DM Sans', sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+  }
+
+  /* ── Setup Screen (Teacher Mode) ── */
+  #setup-screen {
+    max-width: 640px;
+    width: 100%;
+    margin-top: 40px;
+  }
+
+  #setup-screen h1 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+    letter-spacing: -0.02em;
+  }
+
+  #setup-screen .subtitle {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    margin-bottom: 28px;
+    line-height: 1.5;
+  }
+
+  .setup-section {
+    margin-bottom: 24px;
+  }
+
+  .setup-section label {
+    display: block;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+  }
+
+  #problems-input {
+    width: 100%;
+    min-height: 260px;
+    padding: 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    line-height: 1.7;
+    background: var(--card);
+    outline: none;
+    resize: vertical;
+    transition: border-color 0.2s;
+  }
+
+  #problems-input:focus { border-color: var(--accent); }
+
+  .format-hint {
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    margin-top: 8px;
+    line-height: 1.5;
+    background: var(--accent-bg);
+    padding: 10px 12px;
+    border-radius: 8px;
+    border-left: 3px solid var(--accent);
+  }
+
+  .format-hint code {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    background: rgba(45, 106, 79, 0.08);
+    padding: 1px 5px;
+    border-radius: 3px;
+  }
+
+  .setup-error {
+    color: var(--wrong);
+    font-size: 0.85rem;
+    margin-top: 8px;
+    display: none;
+  }
+
+  .btn-primary {
+    width: 100%;
+    padding: 14px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.1s;
+  }
+
+  .btn-primary:hover { opacity: 0.9; }
+  .btn-primary:active { transform: scale(0.99); }
+  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  /* ── Link Generated Screen ── */
+  #link-screen {
+    max-width: 640px;
+    width: 100%;
+    margin-top: 40px;
+    display: none;
+    text-align: center;
+  }
+
+  #link-screen h2 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  #link-screen .subtitle {
+    color: var(--text-secondary);
+    font-size: 0.92rem;
+    margin-bottom: 24px;
+  }
+
+  .link-box {
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    word-break: break-all;
+    text-align: left;
+    color: var(--text-secondary);
+    margin-bottom: 14px;
+    max-height: 80px;
+    overflow-y: auto;
+  }
+
+  .btn-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .btn-row button {
+    flex: 1;
+  }
+
+  .btn-secondary {
+    padding: 12px 16px;
+    background: transparent;
+    color: var(--accent);
+    border: 1.5px solid var(--accent);
+    border-radius: 10px;
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .btn-secondary:hover { background: var(--accent-bg); }
+
+  .copy-toast {
+    font-size: 0.85rem;
+    color: var(--correct);
+    opacity: 0;
+    transition: opacity 0.3s;
+    margin-bottom: 10px;
+  }
+
+  .copy-toast.show { opacity: 1; }
+
+  .problem-summary {
+    text-align: left;
+    background: var(--accent-bg);
+    border-radius: 10px;
+    padding: 16px;
+    margin-top: 16px;
+  }
+
+  .problem-summary h4 {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--accent);
+    margin-bottom: 10px;
+  }
+
+  .problem-summary li {
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    margin-bottom: 5px;
+    list-style: none;
+    padding-left: 20px;
+    position: relative;
+    color: var(--text);
+  }
+
+  .problem-summary li::before {
+    content: attr(data-num);
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  /* ── Practice Screen (Student Mode) ── */
+  #practice-screen {
+    max-width: 640px;
+    width: 100%;
+    margin-top: 30px;
+    display: none;
+  }
+
+  .student-header {
+    text-align: center;
+    margin-bottom: 24px;
+  }
+
+  .student-header h1 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .student-header p {
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+  }
+
+  .progress-bar-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+
+  .progress-bar {
+    flex: 1;
+    height: 6px;
+    background: var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 3px;
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+
+  .progress-text {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    white-space: nowrap;
+  }
+
+  .problem-card {
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    padding: 28px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+
+  .problem-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--accent);
+    margin-bottom: 10px;
+  }
+
+  .problem-text {
+    font-family: var(--mono);
+    font-size: 1.15rem;
+    font-weight: 500;
+    line-height: 1.6;
+    color: var(--text);
+  }
+
+  /* ── Step History ── */
+  .step-entry {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    margin-bottom: 6px;
+    animation: slideIn 0.25s ease;
+  }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .step-entry.correct { background: var(--correct-bg); }
+
+  .step-entry .step-icon {
+    font-size: 1rem;
+    margin-top: 1px;
+    flex-shrink: 0;
+  }
+
+  .step-entry .step-text {
+    font-family: var(--mono);
+    font-size: 0.92rem;
+    line-height: 1.5;
+  }
+
+  /* ── Feedback ── */
+  .feedback {
+    padding: 12px 14px;
+    border-radius: 10px;
+    margin-bottom: 14px;
+    font-size: 0.88rem;
+    line-height: 1.5;
+    animation: slideIn 0.25s ease;
+    display: none;
+  }
+
+  .feedback.wrong { background: var(--wrong-bg); color: var(--wrong); display: block; }
+  .feedback.nudge { background: var(--nudge-bg); color: var(--nudge); display: block; }
+  .feedback.unsure { background: var(--unsure-bg); color: var(--unsure); display: block; }
+  .feedback.reveal { background: var(--accent-bg); color: var(--accent); display: block; font-family: var(--mono); }
+
+  /* ── Input ── */
+  .input-area {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  #step-input {
+    flex: 1;
+    padding: 12px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    font-family: var(--mono);
+    font-size: 0.95rem;
+    background: var(--card);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  #step-input:focus { border-color: var(--accent); }
+  #step-input:disabled { opacity: 0.5; }
+
+  #submit-step {
+    padding: 12px 20px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    white-space: nowrap;
+  }
+
+  #submit-step:hover { opacity: 0.9; }
+  #submit-step:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .loading-indicator {
+    display: none;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    padding: 8px 0;
+  }
+
+  .loading-indicator.show { display: flex; }
+
+  .spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .completed-card {
+    background: var(--correct-bg);
+    border: 1.5px solid var(--correct);
+    border-radius: 14px;
+    padding: 24px;
+    text-align: center;
+    margin-bottom: 20px;
+    animation: slideIn 0.3s ease;
+    display: none;
+  }
+
+  .completed-card .check { font-size: 2rem; margin-bottom: 8px; }
+  .completed-card h3 { color: var(--correct); font-size: 1.1rem; margin-bottom: 4px; }
+  .completed-card p { color: var(--correct); font-size: 0.88rem; opacity: 0.8; }
+
+  #next-problem-btn {
+    width: 100%;
+    padding: 14px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    display: none;
+  }
+
+  #next-problem-btn:hover { opacity: 0.9; }
+
+  /* ── Done Screen ── */
+  #done-screen {
+    max-width: 640px;
+    width: 100%;
+    margin-top: 60px;
+    text-align: center;
+    display: none;
+  }
+
+  #done-screen .done-icon { font-size: 3rem; margin-bottom: 16px; }
+  #done-screen h2 { font-size: 1.5rem; font-weight: 700; margin-bottom: 8px; }
+  #done-screen p { color: var(--text-secondary); font-size: 0.95rem; line-height: 1.5; }
+
+  .ask-ronel-list {
+    margin-top: 20px;
+    text-align: left;
+    background: var(--unsure-bg);
+    border-radius: 10px;
+    padding: 16px 20px;
+  }
+
+  .ask-ronel-list h4 {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--unsure);
+    margin-bottom: 10px;
+  }
+
+  .ask-ronel-list li {
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    margin-bottom: 6px;
+    list-style: none;
+    padding-left: 16px;
+    position: relative;
+    color: var(--text);
+  }
+
+  .ask-ronel-list li::before {
+    content: '?';
+    position: absolute;
+    left: 0;
+    color: var(--unsure);
+    font-weight: 700;
+  }
+
+  @media (max-width: 500px) {
+    body { padding: 14px; }
+    .problem-card { padding: 20px; }
+    .problem-text { font-size: 1rem; }
+    #step-input { font-size: 0.88rem; padding: 10px 12px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ════════ SETUP / TEACHER MODE ════════ -->
+<div id="setup-screen">
+  <h1>Math Practice ✏️</h1>
+  <p class="subtitle">Add the homework problems below, then generate a link for your student.</p>
+
+  <div class="setup-section">
+    <label>Problems</label>
+    <textarea id="problems-input" placeholder="Q: Expand 3(2x + 5)
+A: 6x + 15
+
+Q: Factorize 6x + 12
+A: 6(x + 2)
+
+Q: Expand and simplify 2(3x + 1) + 4(x - 2)
+A: 10x - 6"></textarea>
+    <div class="format-hint">
+      One problem per block, separated by blank lines.<br>
+      <code>Q:</code> the problem &nbsp; <code>A:</code> the expected final answer
+    </div>
+    <div class="setup-error" id="setup-error"></div>
+  </div>
+
+  <button class="btn-primary" onclick="generateLink()">Generate Student Link</button>
+</div>
+
+<!-- ════════ LINK GENERATED ════════ -->
+<div id="link-screen">
+  <h2>Link ready! 🔗</h2>
+  <p class="subtitle">Send this link to your student — they'll go straight into practice mode.</p>
+
+  <div class="link-box" id="link-box"></div>
+  <div class="copy-toast" id="copy-toast">✓ Copied to clipboard</div>
+
+  <div class="btn-row">
+    <button class="btn-primary" onclick="copyLink()">Copy Link</button>
+    <button class="btn-secondary" onclick="previewAsStudent()">Preview</button>
+  </div>
+
+  <div class="problem-summary" id="problem-summary">
+    <h4>Problems loaded</h4>
+    <ul id="summary-list"></ul>
+  </div>
+</div>
+
+<!-- ════════ PRACTICE / STUDENT MODE ════════ -->
+<div id="practice-screen">
+  <div class="student-header">
+    <h1>Math Practice ✏️</h1>
+    <p>Work through each problem one step at a time.</p>
+  </div>
+
+  <div class="progress-bar-container">
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+    <div class="progress-text" id="progress-text">1 / 1</div>
+  </div>
+
+  <div class="problem-card">
+    <div class="problem-label">Problem <span id="problem-number"></span></div>
+    <div class="problem-text" id="problem-text"></div>
+  </div>
+
+  <div id="steps-container"></div>
+  <div class="feedback" id="feedback"></div>
+
+  <div class="loading-indicator" id="loading">
+    <div class="spinner"></div>
+    <span>Checking your step...</span>
+  </div>
+
+  <div class="input-area" id="input-area">
+    <input type="text" id="step-input" placeholder="Type your next step..." autocomplete="off" />
+    <button id="submit-step" onclick="submitStep()">Check</button>
+  </div>
+
+  <div class="completed-card" id="completed-card">
+    <div class="check">✓</div>
+    <h3>Nice work!</h3>
+    <p>You got it. Ready for the next one?</p>
+  </div>
+
+  <button id="next-problem-btn" onclick="nextProblem()">Next Problem →</button>
+</div>
+
+<!-- ════════ DONE SCREEN ════════ -->
+<div id="done-screen">
+  <div class="done-icon">🎉</div>
+  <h2>All done!</h2>
+  <p>You've worked through all the problems. Great effort!</p>
+  <div class="ask-ronel-list" id="ask-ronel-list" style="display:none;">
+    <h4>📋 Ask Ronel about these</h4>
+    <ul id="ask-ronel-items"></ul>
+  </div>
+</div>
+
+<script>
+  // ══════════════════════════════════════════════════
+  // REPLACE THIS WITH YOUR RAILWAY DEPLOYMENT URL:
+  const PROXY_URL = 'https://math-practice-production-b96e.up.railway.app';
+  // Example: 'https://math-practice-proxy-production.up.railway.app'
+  // ══════════════════════════════════════════════════
+
+  let problems = [];
+  let currentIndex = 0;
+  let stepHistory = [];
+  let wrongCount = 0;
+  let askRonelProblems = [];
+  let generatedLink = '';
+
+  // ── Check if URL has problem data (student mode) ──
+  function init() {
+    const hash = window.location.hash.slice(1);
+    if (hash) {
+      try {
+        const decoded = JSON.parse(decodeURIComponent(atob(hash)));
+        if (decoded.problems && decoded.problems.length > 0) {
+          problems = decoded.problems;
+          document.getElementById('setup-screen').style.display = 'none';
+          document.getElementById('practice-screen').style.display = 'block';
+          loadProblem(0);
+          return;
+        }
+      } catch (e) {
+        console.error('Failed to parse problem data from URL:', e);
+      }
+    }
+    // Otherwise show teacher setup
+    document.getElementById('setup-screen').style.display = 'block';
+  }
+
+  // ── Parse Q:/A: format ──
+  function parseProblems(text) {
+    const blocks = text.trim().split(/\n\s*\n/);
+    const parsed = [];
+    for (const block of blocks) {
+      const lines = block.trim().split('\n').map(l => l.trim());
+      let q = '', a = '';
+      for (const line of lines) {
+        if (/^Q:\s*/i.test(line)) q = line.replace(/^Q:\s*/i, '').trim();
+        else if (/^A:\s*/i.test(line)) a = line.replace(/^A:\s*/i, '').trim();
+      }
+      if (q && a) parsed.push({ question: q, answer: a });
+    }
+    return parsed;
+  }
+
+  // ── Generate link ──
+  function generateLink() {
+    const raw = document.getElementById('problems-input').value.trim();
+    const err = document.getElementById('setup-error');
+    err.style.display = 'none';
+
+    if (!raw) { err.textContent = 'Please enter at least one problem.'; err.style.display = 'block'; return; }
+
+    const parsed = parseProblems(raw);
+    if (parsed.length === 0) {
+      err.textContent = 'Could not parse any problems. Use the Q:/A: format.';
+      err.style.display = 'block';
+      return;
+    }
+
+    // Encode problems into URL hash
+    const data = JSON.stringify({ problems: parsed });
+    const encoded = btoa(encodeURIComponent(data));
+    const baseUrl = window.location.href.split('#')[0];
+    generatedLink = baseUrl + '#' + encoded;
+
+    // Show link screen
+    document.getElementById('setup-screen').style.display = 'none';
+    document.getElementById('link-screen').style.display = 'block';
+    document.getElementById('link-box').textContent = generatedLink;
+
+    // Show summary
+    const ul = document.getElementById('summary-list');
+    ul.innerHTML = '';
+    parsed.forEach((p, i) => {
+      const li = document.createElement('li');
+      li.setAttribute('data-num', (i + 1) + '.');
+      li.textContent = p.question;
+      ul.appendChild(li);
+    });
+  }
+
+  // ── Copy link ──
+  async function copyLink() {
+    try {
+      await navigator.clipboard.writeText(generatedLink);
+      const toast = document.getElementById('copy-toast');
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2000);
+    } catch (e) {
+      // Fallback
+      const ta = document.createElement('textarea');
+      ta.value = generatedLink;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      const toast = document.getElementById('copy-toast');
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2000);
+    }
+  }
+
+  // ── Preview as student ──
+  function previewAsStudent() {
+    window.location.href = generatedLink;
+    window.location.reload();
+  }
+
+  // ── Load a problem ──
+  function loadProblem(index) {
+    currentIndex = index;
+    stepHistory = [];
+    wrongCount = 0;
+
+    const p = problems[index];
+    document.getElementById('problem-number').textContent = `${index + 1} of ${problems.length}`;
+    document.getElementById('problem-text').textContent = p.question;
+    document.getElementById('steps-container').innerHTML = '';
+    document.getElementById('feedback').className = 'feedback';
+    document.getElementById('feedback').textContent = '';
+    document.getElementById('feedback').style.display = 'none';
+    document.getElementById('completed-card').style.display = 'none';
+    document.getElementById('next-problem-btn').style.display = 'none';
+    document.getElementById('input-area').style.display = 'flex';
+    document.getElementById('step-input').value = '';
+    document.getElementById('step-input').disabled = false;
+    document.getElementById('submit-step').disabled = false;
+    document.getElementById('step-input').focus();
+    updateProgress();
+  }
+
+  function updateProgress() {
+    const total = problems.length;
+    const current = currentIndex + 1;
+    document.getElementById('progress-text').textContent = `${current} / ${total}`;
+    document.getElementById('progress-fill').style.width = `${(current / total) * 100}%`;
+  }
+
+  // ── Submit step ──
+  async function submitStep() {
+    const input = document.getElementById('step-input').value.trim();
+    if (!input) return;
+
+    document.getElementById('step-input').disabled = true;
+    document.getElementById('submit-step').disabled = true;
+    document.getElementById('loading').classList.add('show');
+    document.getElementById('feedback').style.display = 'none';
+
+    try {
+      const result = await validateStep(input);
+      document.getElementById('loading').classList.remove('show');
+      handleResult(result, input);
+    } catch (e) {
+      document.getElementById('loading').classList.remove('show');
+      showFeedback('unsure', 'Error checking your step: ' + e.message);
+      document.getElementById('step-input').disabled = false;
+      document.getElementById('submit-step').disabled = false;
+      console.error('Validation error:', e);
+    }
+  }
+
+  // ── Call Claude API ──
+  async function validateStep(studentStep) {
+    const problem = problems[currentIndex];
+    const previousSteps = stepHistory.length > 0
+      ? `Previous correct steps:\n${stepHistory.map((s, i) => `  Step ${i + 1}: ${s}`).join('\n')}\n\n`
+      : '';
+
+    const lastExpression = stepHistory.length > 0
+      ? stepHistory[stepHistory.length - 1]
+      : problem.question;
+
+    const systemPrompt = `You are a math step validator for a 7th grade student practicing algebra. Your ONLY job is to determine if the student's step is mathematically valid.
+
+CONTEXT:
+- Topics: expanding brackets, factorizing, creating algebraic expressions from word problems
+- The student is working step by step toward the answer
+
+YOUR TASK:
+Given the original problem, any previous correct steps, and the student's new step, determine:
+1. Is this step a mathematically valid transformation? (It should be equivalent to or a correct simplification of the previous expression/step)
+2. Does this step reach the final answer?
+
+RULES FOR VALIDATION:
+- Order of terms doesn't matter: "15 + 6x" equals "6x + 15"
+- Equivalent forms are valid: "2(3x)" and "6x" are both fine
+- Partial progress is fine: expanding one bracket but not another is a valid step
+- Skipping steps is fine: going directly from problem to answer is valid IF the answer is correct
+- Be strict about mathematical correctness: wrong signs, wrong coefficients, wrong operations = WRONG
+- For word problems: the student's expression must correctly represent the described situation
+
+RESPOND IN EXACTLY THIS JSON FORMAT (no other text):
+{
+  "valid": true/false/"unsure",
+  "is_final": true/false,
+  "hint": "only if valid is false and this is attempt #${wrongCount + 1}, give a SMALL hint about where the error is without revealing the answer. Be warm and encouraging.",
+  "reveal_next_step": "only if valid is false and attempt >= 4, show what a correct next step from the last position would be",
+  "reason": "brief internal reason for your judgment"
+}
+
+If you are not confident in your judgment (edge cases, ambiguous notation, unclear if equivalent), set valid to "unsure". It is MUCH better to say "unsure" than to give a wrong judgment.`;
+
+    const userMsg = `PROBLEM: ${problem.question}
+EXPECTED FINAL ANSWER: ${problem.answer}
+
+${previousSteps}The student's current starting point is: ${lastExpression}
+
+STUDENT'S NEW STEP: ${studentStep}
+
+This is wrong-attempt #${wrongCount + 1} for this step (if 1, it's their first try).
+
+Validate this step. Respond with ONLY the JSON.`;
+
+    const response = await fetch(PROXY_URL + '/validate', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        system: systemPrompt,
+        messages: [{ role: 'user', content: userMsg }]
+      })
+    });
+
+    if (!response.ok) {
+      const errBody = await response.text();
+      throw new Error(`API ${response.status}: ${errBody}`);
+    }
+
+    const data = await response.json();
+    const text = data.content.map(c => c.text || '').join('');
+    const clean = text.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim();
+    return JSON.parse(clean);
+  }
+
+  // ── Handle result ──
+  function handleResult(result, input) {
+    if (result.valid === 'unsure' || result.valid === null) {
+      askRonelProblems.push(problems[currentIndex].question);
+      showFeedback('unsure', "I'm not 100% sure about this step. Save this problem and ask Ronel — better safe than sorry!");
+      document.getElementById('step-input').disabled = false;
+      document.getElementById('submit-step').disabled = false;
+      if (currentIndex < problems.length - 1) {
+        document.getElementById('next-problem-btn').style.display = 'block';
+        document.getElementById('next-problem-btn').textContent = 'Skip to Next →';
+      }
+      return;
+    }
+
+    if (result.valid === true) {
+      wrongCount = 0;
+      stepHistory.push(input);
+      addStepToHistory(input);
+      document.getElementById('feedback').style.display = 'none';
+
+      if (result.is_final) {
+        document.getElementById('input-area').style.display = 'none';
+        document.getElementById('completed-card').style.display = 'block';
+        if (currentIndex < problems.length - 1) {
+          document.getElementById('next-problem-btn').style.display = 'block';
+          document.getElementById('next-problem-btn').textContent = 'Next Problem →';
+        } else {
+          document.getElementById('next-problem-btn').style.display = 'block';
+          document.getElementById('next-problem-btn').textContent = 'Finish ✓';
+        }
+      } else {
+        document.getElementById('step-input').value = '';
+        document.getElementById('step-input').disabled = false;
+        document.getElementById('submit-step').disabled = false;
+        document.getElementById('step-input').focus();
+      }
+    } else {
+      wrongCount++;
+      if (wrongCount >= 4 && result.reveal_next_step) {
+        showFeedback('reveal', `Here's a valid next step: ${result.reveal_next_step}`);
+      } else if (wrongCount >= 2 && result.hint) {
+        showFeedback('nudge', result.hint);
+      } else {
+        showFeedback('wrong', "That step doesn't look right. Try again!");
+      }
+      document.getElementById('step-input').value = '';
+      document.getElementById('step-input').disabled = false;
+      document.getElementById('submit-step').disabled = false;
+      document.getElementById('step-input').focus();
+    }
+  }
+
+  // ── UI helpers ──
+  function addStepToHistory(text) {
+    const container = document.getElementById('steps-container');
+    const div = document.createElement('div');
+    div.className = 'step-entry correct';
+    div.innerHTML = `<span class="step-icon">✓</span><span class="step-text">${escapeHtml(text)}</span>`;
+    container.appendChild(div);
+  }
+
+  function showFeedback(type, message) {
+    const fb = document.getElementById('feedback');
+    fb.className = `feedback ${type}`;
+    fb.textContent = message;
+    fb.style.display = 'block';
+  }
+
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  function nextProblem() {
+    if (currentIndex < problems.length - 1) {
+      loadProblem(currentIndex + 1);
+    } else {
+      document.getElementById('practice-screen').style.display = 'none';
+      document.getElementById('done-screen').style.display = 'block';
+      if (askRonelProblems.length > 0) {
+        document.getElementById('ask-ronel-list').style.display = 'block';
+        const ul = document.getElementById('ask-ronel-items');
+        ul.innerHTML = '';
+        [...new Set(askRonelProblems)].forEach(q => {
+          const li = document.createElement('li');
+          li.textContent = q;
+          ul.appendChild(li);
+        });
+      }
+    }
+  }
+
+  // ── Enter key ──
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && document.getElementById('practice-screen').style.display !== 'none') {
+      if (!document.getElementById('step-input').disabled) submitStep();
+    }
+  });
+
+  // ── Boot ──
+  init();
+</script>
+
+</body>
+</html>

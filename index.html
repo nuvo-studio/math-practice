@@ -831,7 +831,7 @@ A: 10x - 6"></textarea>
       handleResult(result, input);
     } catch (e) {
       document.getElementById('loading').classList.remove('show');
-      showFeedback('unsure', 'Error checking your step: ' + e.message);
+      showFeedback('unsure', "I'm not 100% sure about this step. Save this problem and ask Ronel — better safe than sorry!");
       document.getElementById('step-input').disabled = false;
       document.getElementById('submit-step').disabled = false;
       console.error('Validation error:', e);
@@ -919,8 +919,26 @@ Validate this step. Respond with ONLY the JSON.`;
 
     const data = await response.json();
     const text = data.content.map(c => c.text || '').join('');
-    const clean = text.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim();
-    return JSON.parse(clean);
+
+    // Extract first complete JSON object using brace-matching
+    function extractJSON(str) {
+      const start = str.indexOf('{');
+      if (start === -1) return null;
+      let depth = 0;
+      for (let i = start; i < str.length; i++) {
+        if (str[i] === '{') depth++;
+        else if (str[i] === '}') { depth--; if (depth === 0) return str.slice(start, i + 1); }
+      }
+      return null;
+    }
+
+    const jsonStr = extractJSON(text);
+    if (!jsonStr) return { valid: 'unsure', is_final: false, reason: 'Could not parse response' };
+    try {
+      return JSON.parse(jsonStr);
+    } catch (e) {
+      return { valid: 'unsure', is_final: false, reason: 'Could not parse response' };
+    }
   }
 
   // ── Handle result ──

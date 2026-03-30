@@ -890,10 +890,16 @@ RULES FOR VALIDATION:
 - Partial progress is fine: expanding one bracket but not another is a valid step
 - Skipping steps is fine: going directly from problem to answer is valid IF the answer is correct
 - Be strict about mathematical correctness: wrong signs, wrong coefficients, wrong operations = WRONG
-- For indices: apply laws of indices strictly (aⁿ × aᵐ = aⁿ⁺ᵐ, (aⁿ)ᵐ = aⁿᵐ, a⁰ = 1, a⁻ⁿ = 1/aⁿ)
+- For indices: apply laws of indices strictly (a^n * a^m = a^(n+m), (a^n)^m = a^(nm), a^0 = 1, a^-n = 1/a^n)
 - For word problems: the student's expression must correctly represent the described situation
-- When factorizing, breaking terms into prime factors or partial factor groups is a valid intermediate step. E.g. for 8pq - 12p²: "2 × 4pq - 2 × 6p²" or "2 × 2 × 2pq - 2 × 2 × 3p²" or "4p(2q - 3p)" or "2(4pq - 6p²)" are all valid steps.
-- IMPORTANT: Only return "unsure" if you genuinely cannot determine mathematical equivalence. If the step is clearly a valid algebraic transformation, return valid: true. Err on the side of validating correct work rather than being overly cautious.
+- When factorizing, breaking terms into prime factors or partial factor groups is a valid intermediate step. E.g. for 8pq - 12p^2: "2*4pq - 2*6p^2" or "4(2pq - 3p^2)" or "4p(2q - 3p)" or "2(4pq - 6p^2)" are all valid steps.
+
+CONFIDENCE CALIBRATION:
+For standard algebraic operations — expanding brackets, factorizing by taking out common factors, collecting like terms, applying index laws — you CAN and SHOULD be confident. These are well-defined operations with clear right/wrong answers.
+
+Use valid: true when the step is a correct algebraic transformation, even if it's not the most simplified form.
+Use valid: false when there is a clear mathematical error (wrong coefficient, wrong sign, wrong operation).
+Use valid: "unsure" ONLY for genuinely ambiguous notation or steps you cannot evaluate at all — NOT as a safe default. If you can work out whether the math is right or wrong, give a definitive true or false.
 
 RESPOND IN EXACTLY THIS JSON FORMAT (no other text):
 {
@@ -902,9 +908,7 @@ RESPOND IN EXACTLY THIS JSON FORMAT (no other text):
   "hint": "only if valid is false and this is attempt #${wrongCount + 1}, give a SMALL hint about where the error is without revealing the answer. Be warm and encouraging.",
   "reveal_next_step": "only if valid is false and attempt >= 4, show what a correct next step from the last position would be",
   "reason": "brief internal reason for your judgment"
-}
-
-Only use "unsure" as a last resort when you truly cannot evaluate the step mathematically.`;
+}`;
 
     const userMsg = `PROBLEM: ${apiQuestion}
 EXPECTED FINAL ANSWER: ${apiAnswer}
@@ -916,6 +920,8 @@ STUDENT'S NEW STEP: ${apiStep}
 This is wrong-attempt #${wrongCount + 1} for this step (if 1, it's their first try).
 
 Validate this step. Respond with ONLY the JSON.`;
+
+    console.log('[validateStep] userMsg:', userMsg);
 
     const response = await fetch(PROXY_URL + '/validate', {
       method: 'POST',
@@ -935,6 +941,7 @@ Validate this step. Respond with ONLY the JSON.`;
 
     const data = await response.json();
     const text = data.content.map(c => c.text || '').join('');
+    console.log('[validateStep] raw response text:', text);
 
     // Extract first complete JSON object using brace-matching
     function extractJSON(str) {
@@ -951,7 +958,9 @@ Validate this step. Respond with ONLY the JSON.`;
     const jsonStr = extractJSON(text);
     if (!jsonStr) return { valid: 'unsure', is_final: false, reason: 'Could not parse response' };
     try {
-      return JSON.parse(jsonStr);
+      const result = JSON.parse(jsonStr);
+      console.log('[validateStep] parsed result:', result);
+      return result;
     } catch (e) {
       return { valid: 'unsure', is_final: false, reason: 'Could not parse response' };
     }

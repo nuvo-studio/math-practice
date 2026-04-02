@@ -543,6 +543,7 @@
     #step-input { font-size: 0.88rem; padding: 10px 12px; }
   }
 </style>
+<script src="https://cdn.jsdelivr.net/npm/algebrite@1.4.0/dist/algebrite.bundle-for-browser.js"></script>
 </head>
 <body>
 
@@ -673,7 +674,6 @@ A: 10x - 6"></textarea>
   // ══════════════════════════════════════════════════
   // REPLACE THIS WITH YOUR RAILWAY DEPLOYMENT URL:
   const PROXY_URL = 'https://math-practice-production-b96e.up.railway.app';
-  // Example: 'https://math-practice-proxy-production.up.railway.app'
   // ══════════════════════════════════════════════════
 
   let problems = [];
@@ -682,6 +682,156 @@ A: 10x - 6"></textarea>
   let wrongCount = 0;
   let askRonelProblems = [];
   let generatedLink = '';
+
+  // ── Normalize input for Algebrite ──
+  function normalize(input) {
+    let s = input.trim();
+    // Unicode superscripts → ^n
+    s = s.replace(/²/g, '^2');
+    s = s.replace(/³/g, '^3');
+    s = s.replace(/⁴/g, '^4');
+    s = s.replace(/⁵/g, '^5');
+    // Unicode operators
+    s = s.replace(/×/g, '*');
+    s = s.replace(/−/g, '-');
+    // Protect "sqrt" from implicit-mult mangling (non-letter placeholder \x01)
+    s = s.replace(/sqrt/gi, '\x01');
+    // √ notation → placeholder
+    s = s.replace(/√\(/g, '\x01(');
+    s = s.replace(/√(\d+)/g, '\x01($1)');
+    s = s.replace(/√([a-zA-Z])/g, '\x01($1)');
+    // Insert * before sqrt placeholder where needed
+    s = s.replace(/(\d)\x01/g, '$1*\x01');
+    s = s.replace(/\)\x01/g, ')*\x01');
+    s = s.replace(/([a-zA-Z])\x01/g, '$1*\x01');
+    // Insert implicit multiplication
+    s = s.replace(/(\d)([a-zA-Z])/g, '$1*$2');       // 2x → 2*x
+    s = s.replace(/([a-zA-Z])([a-zA-Z])/g, '$1*$2'); // pq → p*q
+    s = s.replace(/(\d)\(/g, '$1*(');                 // 4( → 4*(
+    s = s.replace(/\)\(/g, ')*(');                    // )( → )*(
+    s = s.replace(/([a-zA-Z])\(/g, '$1*(');           // x( → x*(
+    s = s.replace(/\)([a-zA-Z])/g, ')*$1');           // )x → )*x
+    s = s.replace(/\)(\d)/g, ')*$1');                 // )2 → )*2
+    // Restore sqrt
+    s = s.replace(/\x01/g, 'sqrt');
+    return s;
+  }
+
+  // ── Check algebraic equivalence via Algebrite ──
+  function checkEquivalence(exprA, exprB) {
+    try {
+      const normA = normalize(exprA);
+      const normB = normalize(exprB);
+      const result = Algebrite.run(`simplify((${normA}) - (${normB}))`);
+      const trimmed = result.trim();
+      if (trimmed === '0') return { valid: true };
+      if (!trimmed || trimmed.toLowerCase().includes('stop') || trimmed.toLowerCase().includes('error')) {
+        return { valid: null, parseError: true };
+      }
+      return { valid: false };
+    } catch (e) {
+      console.error('Algebrite error:', e);
+      return { valid: null, parseError: true };
+    }
+  }
+
+  // ── Check if student's step equals the expected final answer ──
+  function checkIsFinal(studentStep, expectedAnswer) {
+    return checkEquivalence(studentStep, expectedAnswer);
+  }
+
+  // ── Extract the algebraic expression from a question (strip instruction verb) ──
+  function extractExpression(questionText) {
+    return questionText
+      .replace(/^(expand and simplify|expand|factorise|factorize|simplify|solve|evaluate|find|calculate)\s+/i, '')
+      .trim();
+  }
+
+  // ── Ask Claude to interpret unparseable input ──
+  async function askClaudeToInterpret(input) {
+    try {
+      const response = await fetch(PROXY_URL + '/validate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          system: "The student tried to write a math expression but it couldn't be parsed. Convert their input to a valid algebraic expression using standard notation. Return ONLY the expression, nothing else.",
+          messages: [{ role: 'user', content: input }]
+        })
+      });
+      if (!response.ok) return null;
+      const data = await response.json();
+      return data.content.map(c => c.text || '').join('').trim() || null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  // ── Ask Claude for a hint ──
+  async function askClaudeForHint(problem, history, currentExpr, wrongInput) {
+    try {
+      const stepsText = history.length > 0
+        ? `Previous correct steps:\n${history.map((s, i) => `  Step ${i + 1}: ${s}`).join('\n')}\n\n`
+        : '';
+      const response = await fetch(PROXY_URL + '/validate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          system: "You are a warm, encouraging math tutor for a 7th grade student. The student made an error. Give a small hint pointing toward the error without revealing the correct answer. Keep it to 1-2 sentences.",
+          messages: [{
+            role: 'user',
+            content: `Problem: ${problem.question}\nExpected answer: ${problem.answer}\n\n${stepsText}Current expression: ${currentExpr}\nStudent wrote (incorrect): ${wrongInput}\n\nGive a gentle hint.`
+          }]
+        })
+      });
+      if (!response.ok) return null;
+      const data = await response.json();
+      return data.content.map(c => c.text || '').join('').trim() || null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  // ── Ask Claude to reveal the next step ──
+  async function askClaudeForReveal(problem, history, currentExpr) {
+    try {
+      const stepsText = history.length > 0
+        ? `Previous correct steps:\n${history.map((s, i) => `  Step ${i + 1}: ${s}`).join('\n')}\n\n`
+        : '';
+      const response = await fetch(PROXY_URL + '/validate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          system: "You are a math tutor for a 7th grade student. The student is struggling. Return ONLY the algebraic expression for a valid next step from their current position. Nothing else — no explanation, just the expression.",
+          messages: [{
+            role: 'user',
+            content: `Problem: ${problem.question}\nExpected answer: ${problem.answer}\n\n${stepsText}Current expression: ${currentExpr}\n\nWhat is a valid next step? Return only the expression.`
+          }]
+        })
+      });
+      if (!response.ok) return null;
+      const data = await response.json();
+      return data.content.map(c => c.text || '').join('').trim() || null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  // ── Loading indicator helpers ──
+  function showLoading(text) {
+    const loading = document.getElementById('loading');
+    loading.querySelector('span').textContent = text || 'Thinking...';
+    loading.classList.add('show');
+  }
+
+  function hideLoading() {
+    document.getElementById('loading').classList.remove('show');
+  }
+
+  function reenableInput() {
+    document.getElementById('step-input').disabled = false;
+    document.getElementById('submit-step').disabled = false;
+    document.getElementById('step-input').focus();
+  }
 
   // ── Check if URL has problem data (student mode) ──
   function init() {
@@ -700,7 +850,6 @@ A: 10x - 6"></textarea>
         console.error('Failed to parse problem data from URL:', e);
       }
     }
-    // Otherwise show teacher setup
     document.getElementById('setup-screen').style.display = 'block';
   }
 
@@ -735,18 +884,15 @@ A: 10x - 6"></textarea>
       return;
     }
 
-    // Encode problems into URL hash
     const data = JSON.stringify({ problems: parsed });
     const encoded = btoa(encodeURIComponent(data));
     const baseUrl = window.location.href.split('#')[0];
     generatedLink = baseUrl + '#' + encoded;
 
-    // Show link screen
     document.getElementById('setup-screen').style.display = 'none';
     document.getElementById('link-screen').style.display = 'block';
     document.getElementById('link-box').textContent = generatedLink;
 
-    // Show summary
     const ul = document.getElementById('summary-list');
     ul.innerHTML = '';
     parsed.forEach((p, i) => {
@@ -765,7 +911,6 @@ A: 10x - 6"></textarea>
       toast.classList.add('show');
       setTimeout(() => toast.classList.remove('show'), 2000);
     } catch (e) {
-      // Fallback
       const ta = document.createElement('textarea');
       ta.value = generatedLink;
       document.body.appendChild(ta);
@@ -822,200 +967,69 @@ A: 10x - 6"></textarea>
 
     document.getElementById('step-input').disabled = true;
     document.getElementById('submit-step').disabled = true;
-    document.getElementById('loading').classList.add('show');
     document.getElementById('feedback').style.display = 'none';
 
-    try {
-      const result = await validateStep(input);
-      document.getElementById('loading').classList.remove('show');
-      handleResult(result, input);
-    } catch (e) {
-      document.getElementById('loading').classList.remove('show');
-      showFeedback('unsure', "I'm not 100% sure about this step. Save this problem and ask Ronel — better safe than sorry!");
-      document.getElementById('step-input').disabled = false;
-      document.getElementById('submit-step').disabled = false;
-      console.error('Validation error:', e);
-    }
-  }
-
-  // ── Normalize Unicode math to ASCII for API ──
-  function normalizeForAPI(str) {
-    return str
-      .replace(/×/g, '*')
-      .replace(/−/g, '-')
-      .replace(/²/g, '^2')
-      .replace(/³/g, '^3')
-      .replace(/√/g, 'sqrt');
-  }
-
-  // ── Call Claude API ──
-  async function validateStep(studentStep) {
     const problem = problems[currentIndex];
-    const previousSteps = stepHistory.length > 0
-      ? `Previous correct steps:\n${stepHistory.map((s, i) => `  Step ${i + 1}: ${normalizeForAPI(s)}`).join('\n')}\n\n`
-      : '';
+    const previousExpression = stepHistory.length > 0
+      ? stepHistory[stepHistory.length - 1]
+      : extractExpression(problem.question);
 
-    const lastExpression = stepHistory.length > 0
-      ? normalizeForAPI(stepHistory[stepHistory.length - 1])
-      : normalizeForAPI(problem.question);
+    let equiv = checkEquivalence(previousExpression, input);
 
-    const apiStep = normalizeForAPI(studentStep);
-    const apiQuestion = normalizeForAPI(problem.question);
-    const apiAnswer = normalizeForAPI(problem.answer);
-
-    const systemPrompt = `You are a math step validator for a 7th grade student practicing algebra. Your ONLY job is to determine if the student's step is mathematically valid.
-
-CONTEXT:
-- Topics: expanding brackets, factorizing, creating algebraic expressions from word problems, indices (powers/exponents), square roots
-- The student is working step by step toward the answer
-
-INPUT NOTATION:
-The student uses a mix of Unicode and text notation. These are ALL equivalent and should be treated the same:
-- x² or x^2 (x squared)
-- x³ or x^3 (x cubed)
-- 2⁴ or 2^4 (2 to the power of 4)
-- √25 or sqrt(25) (square root of 25)
-- × or * or implicit multiplication (multiplication) — "2pq" means 2×p×q, "2 × 2 × 2pq" means 8pq. The ×, *, and implicit multiplication are ALL equivalent; accept any form.
-- − or - (subtraction)
-Always interpret the student's input charitably — if the notation is clear, accept it.
-
-YOUR TASK:
-Given the original problem, any previous correct steps, and the student's new step, determine:
-1. Is this step a mathematically valid transformation? (It should be equivalent to or a correct simplification of the previous expression/step)
-2. Does this step reach the final answer?
-
-RULES FOR VALIDATION:
-- Order of terms doesn't matter: "15 + 6x" equals "6x + 15"
-- Equivalent forms are valid: "2(3x)" and "6x" are both fine
-- Partial progress is fine: expanding one bracket but not another is a valid step
-- Skipping steps is fine: going directly from problem to answer is valid IF the answer is correct
-- Be strict about mathematical correctness: wrong signs, wrong coefficients, wrong operations = WRONG
-- For indices: apply laws of indices strictly (a^n * a^m = a^(n+m), (a^n)^m = a^(nm), a^0 = 1, a^-n = 1/a^n)
-- For word problems: the student's expression must correctly represent the described situation
-- When factorizing, breaking terms into prime factors or partial factor groups is a valid intermediate step. E.g. for 8pq - 12p^2: "2*4pq - 2*6p^2" or "4(2pq - 3p^2)" or "4p(2q - 3p)" or "2(4pq - 6p^2)" are all valid steps.
-
-CONFIDENCE CALIBRATION:
-For standard algebraic operations — expanding brackets, factorizing by taking out common factors, collecting like terms, applying index laws — you CAN and SHOULD be confident. These are well-defined operations with clear right/wrong answers.
-
-Use valid: true when the step is a correct algebraic transformation, even if it's not the most simplified form.
-Use valid: false when there is a clear mathematical error (wrong coefficient, wrong sign, wrong operation).
-Use valid: "unsure" ONLY for genuinely ambiguous notation or steps you cannot evaluate at all — NOT as a safe default. If you can work out whether the math is right or wrong, give a definitive true or false.
-
-RESPOND IN EXACTLY THIS JSON FORMAT (no other text):
-{
-  "valid": true/false/"unsure",
-  "is_final": true/false,
-  "hint": "only if valid is false and this is attempt #${wrongCount + 1}, give a SMALL hint about where the error is without revealing the answer. Be warm and encouraging.",
-  "reveal_next_step": "only if valid is false and attempt >= 4, show what a correct next step from the last position would be",
-  "reason": "brief internal reason for your judgment"
-}`;
-
-    const userMsg = `PROBLEM: ${apiQuestion}
-EXPECTED FINAL ANSWER: ${apiAnswer}
-
-${previousSteps}The student's current starting point is: ${lastExpression}
-
-STUDENT'S NEW STEP: ${apiStep}
-
-This is wrong-attempt #${wrongCount + 1} for this step (if 1, it's their first try).
-
-Validate this step. Respond with ONLY the JSON.`;
-
-    console.log('[validateStep] userMsg:', userMsg);
-
-    const response = await fetch(PROXY_URL + '/validate', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        system: systemPrompt,
-        messages: [{ role: 'user', content: userMsg }]
-      })
-    });
-
-    if (!response.ok) {
-      const errBody = await response.text();
-      throw new Error(`API ${response.status}: ${errBody}`);
-    }
-
-    const data = await response.json();
-    const text = data.content.map(c => c.text || '').join('');
-    console.log('[validateStep] raw response text:', text);
-
-    // Extract first complete JSON object using brace-matching
-    function extractJSON(str) {
-      const start = str.indexOf('{');
-      if (start === -1) return null;
-      let depth = 0;
-      for (let i = start; i < str.length; i++) {
-        if (str[i] === '{') depth++;
-        else if (str[i] === '}') { depth--; if (depth === 0) return str.slice(start, i + 1); }
+    // Parse error — ask Claude to interpret the input
+    if (equiv.valid === null) {
+      showLoading('Interpreting your input...');
+      const interpreted = await askClaudeToInterpret(input);
+      hideLoading();
+      if (interpreted) equiv = checkEquivalence(previousExpression, interpreted);
+      if (equiv.valid === null) {
+        showFeedback('unsure', "I couldn't understand your answer. Try rewriting it using the math buttons.");
+        reenableInput();
+        return;
       }
-      return null;
     }
 
-    const jsonStr = extractJSON(text);
-    if (!jsonStr) return { valid: 'unsure', is_final: false, reason: 'Could not parse response' };
-    try {
-      const result = JSON.parse(jsonStr);
-      console.log('[validateStep] parsed result:', result);
-      return result;
-    } catch (e) {
-      return { valid: 'unsure', is_final: false, reason: 'Could not parse response' };
-    }
-  }
-
-  // ── Handle result ──
-  function handleResult(result, input) {
-    if (result.valid === 'unsure' || result.valid === null) {
-      askRonelProblems.push(problems[currentIndex].question);
-      showFeedback('unsure', "I'm not 100% sure about this step. Save this problem and ask Ronel — better safe than sorry!");
-      document.getElementById('step-input').disabled = false;
-      document.getElementById('submit-step').disabled = false;
-      if (currentIndex < problems.length - 1) {
-        document.getElementById('next-problem-btn').style.display = 'block';
-        document.getElementById('next-problem-btn').textContent = 'Skip to Next →';
-      }
-      return;
-    }
-
-    if (result.valid === true) {
+    if (equiv.valid === true) {
+      // Valid step — check if it's the final answer
       wrongCount = 0;
       stepHistory.push(input);
       addStepToHistory(input);
       document.getElementById('feedback').style.display = 'none';
 
-      if (result.is_final) {
+      const isFinal = checkIsFinal(input, problem.answer);
+      if (isFinal.valid === true) {
         document.getElementById('input-area').style.display = 'none';
         document.getElementById('math-buttons').style.display = 'none';
         document.getElementById('completed-card').style.display = 'block';
-        if (currentIndex < problems.length - 1) {
-          document.getElementById('next-problem-btn').style.display = 'block';
-          document.getElementById('next-problem-btn').textContent = 'Next Problem →';
-        } else {
-          document.getElementById('next-problem-btn').style.display = 'block';
-          document.getElementById('next-problem-btn').textContent = 'Finish ✓';
-        }
+        document.getElementById('next-problem-btn').style.display = 'block';
+        document.getElementById('next-problem-btn').textContent =
+          currentIndex < problems.length - 1 ? 'Next Problem →' : 'Finish ✓';
       } else {
+        // Correct intermediate step — keep going
         document.getElementById('step-input').value = '';
-        document.getElementById('step-input').disabled = false;
-        document.getElementById('submit-step').disabled = false;
-        document.getElementById('step-input').focus();
+        reenableInput();
       }
     } else {
+      // Invalid step
       wrongCount++;
-      if (wrongCount >= 4 && result.reveal_next_step) {
-        showFeedback('reveal', `Here's a valid next step: ${result.reveal_next_step}`);
-      } else if (wrongCount >= 2 && result.hint) {
-        showFeedback('nudge', result.hint);
+      document.getElementById('step-input').value = '';
+
+      if (wrongCount >= 4) {
+        showLoading('Getting help...');
+        const nextStep = await askClaudeForReveal(problem, stepHistory, previousExpression);
+        hideLoading();
+        showFeedback('reveal', nextStep
+          ? `Here's a valid next step: ${nextStep}`
+          : "That step doesn't look right. Keep trying!");
+      } else if (wrongCount >= 2) {
+        showLoading('Getting a hint...');
+        const hint = await askClaudeForHint(problem, stepHistory, previousExpression, input);
+        hideLoading();
+        showFeedback('nudge', hint || "That step doesn't look right. Try again!");
       } else {
         showFeedback('wrong', "That step doesn't look right. Try again!");
       }
-      document.getElementById('step-input').value = '';
-      document.getElementById('step-input').disabled = false;
-      document.getElementById('submit-step').disabled = false;
-      document.getElementById('step-input').focus();
+      reenableInput();
     }
   }
 

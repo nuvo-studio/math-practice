@@ -791,6 +791,30 @@ A: 10x - 6"></textarea>
     }
   }
 
+  // ── Ask Claude to check if student's answer is in the correct structural form ──
+  async function askClaudeFormCheck(studentStep, expectedAnswer) {
+    try {
+      const response = await fetch(PROXY_URL + '/validate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          system: `The teacher expects the answer in this form: ${expectedAnswer}. The student wrote: ${studentStep}. Both are mathematically equivalent (already verified). Is the student's answer in the SAME STRUCTURAL FORM as the teacher's? Same level of factoring, same grouping, same simplification level. Respond with ONLY a JSON object: { "match": true/false, "feedback": "brief message if no match, e.g. 'Correct, but try factoring further!'" }`,
+          messages: [{ role: 'user', content: `Teacher's expected form: ${expectedAnswer}\nStudent's answer: ${studentStep}` }]
+        })
+      });
+      if (!response.ok) return null;
+      const data = await response.json();
+      const text = data.content.map(c => c.text || '').join('').trim();
+      const start = text.indexOf('{');
+      const end = text.lastIndexOf('}');
+      if (start === -1 || end === -1) return null;
+      return JSON.parse(text.slice(start, end + 1));
+    } catch (e) {
+      console.error('Form check error:', e);
+      return null;
+    }
+  }
+
   // ── Ask Claude to reveal the next step ──
   async function askClaudeForReveal(problem, history, currentExpr) {
     try {
@@ -998,12 +1022,25 @@ A: 10x - 6"></textarea>
 
       const isFinal = checkIsFinal(input, problem.answer);
       if (isFinal.valid === true) {
-        document.getElementById('input-area').style.display = 'none';
-        document.getElementById('math-buttons').style.display = 'none';
-        document.getElementById('completed-card').style.display = 'block';
-        document.getElementById('next-problem-btn').style.display = 'block';
-        document.getElementById('next-problem-btn').textContent =
-          currentIndex < problems.length - 1 ? 'Next Problem →' : 'Finish ✓';
+        // Algebrite confirmed equivalence to final answer — now check structural form via Claude
+        showLoading('Checking answer form...');
+        const formCheck = await askClaudeFormCheck(input, problem.answer);
+        hideLoading();
+
+        if (formCheck === null || formCheck.match === true) {
+          // Accept: Claude agrees on form, or we couldn't reach Claude (Algebrite already confirmed correct)
+          document.getElementById('input-area').style.display = 'none';
+          document.getElementById('math-buttons').style.display = 'none';
+          document.getElementById('completed-card').style.display = 'block';
+          document.getElementById('next-problem-btn').style.display = 'block';
+          document.getElementById('next-problem-btn').textContent =
+            currentIndex < problems.length - 1 ? 'Next Problem →' : 'Finish ✓';
+        } else {
+          // Wrong form — show Claude's feedback, let student keep going
+          showFeedback('nudge', formCheck.feedback || 'Correct value, but try to simplify or factor further!');
+          document.getElementById('step-input').value = '';
+          reenableInput();
+        }
       } else {
         // Correct intermediate step — keep going
         document.getElementById('step-input').value = '';

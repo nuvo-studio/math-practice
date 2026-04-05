@@ -1325,13 +1325,13 @@
     console.log('FORM CHECK CALLED', { studentStep, expectedAnswer, problemType, formCheckAttempts });
     let hintInstruction;
     if (formCheckAttempts === 0) {
-      hintInstruction = "Respond with feedback like 'Correct so far, keep simplifying!' — do NOT mention what to factor out or what the answer looks like.";
+      hintInstruction = "STRICT RULE: Your feedback must contain ZERO specifics. Do NOT mention any variables, numbers, coefficients, factors, or anything about the structure of the answer. ONLY say something like 'Correct so far, but keep going!' or 'You're on the right track — this can be simplified further.' Nothing else. NEVER hint at what to do next.";
     } else if (formCheckAttempts === 1) {
-      hintInstruction = "Give a slightly more specific hint about what direction to go. Do NOT reveal the final form.";
+      hintInstruction = "STRICT RULE: Give a direction only — no specifics. You may say something like 'Can you factor out anything else?' or 'Look more carefully at what terms have in common.' Do NOT mention any specific variables, numbers, or coefficients. Do NOT describe what the answer looks like. NEVER reveal the target form.";
     } else if (formCheckAttempts === 2) {
-      hintInstruction = "Give a more direct hint about what operation to apply. Still do NOT show the final answer.";
+      hintInstruction = "STRICT RULE: You may mention the TYPE of thing to look for, but still no specific values. For example: 'There is a common variable you can still factor out' or 'The coefficient outside can be simplified further.' Do NOT name which variable or what the coefficient is. Do NOT show or describe the final answer form.";
     } else {
-      hintInstruction = "Show the expected form clearly.";
+      hintInstruction = "You may now be explicit. Show the expected form and explain clearly what the student should have written.";
     }
     try {
       const typeContext = problemType ? `The problem type is: ${problemType}. ` : '';
@@ -1339,7 +1339,7 @@
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          system: `${typeContext}The teacher expects the answer in this form: ${expectedAnswer}. The student wrote: ${studentStep}. Both are mathematically equivalent (already verified). Is the student's answer in the SAME STRUCTURAL FORM as the teacher's? Same level of factoring, same grouping, same simplification level. ${hintInstruction} Respond with ONLY a JSON object: { "match": true/false, "feedback": "brief message if no match" }`,
+          system: `${typeContext}The teacher expects the answer in this form: ${expectedAnswer}. The student wrote: ${studentStep}. Both are mathematically equivalent (already verified). Is the student's answer in the SAME STRUCTURAL FORM as the teacher's? Same level of factoring, same grouping, same simplification level. NEVER reveal the final answer form until attempt 3 or higher. NEVER mention specific variables or coefficients to factor out until attempt 2 or higher. ${hintInstruction} Respond with ONLY a JSON object: { "match": true/false, "feedback": "brief message if no match" }`,
           messages: [{ role: 'user', content: `Teacher's expected form: ${expectedAnswer}\nStudent's answer: ${studentStep}` }]
         })
       });

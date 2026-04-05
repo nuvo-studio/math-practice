@@ -1098,8 +1098,9 @@
         <select class="builder-type-select">
           <option value="Expand">Expand</option>
           <option value="Factorize">Factorize</option>
-          <option value="Simplify">Simplify</option>
           <option value="Solve">Solve</option>
+          <option value="Evaluate">Evaluate</option>
+          <option value="Rearrange">Rearrange</option>
         </select>
       </div>
       <div class="builder-field">
@@ -1293,22 +1294,31 @@
   }
 
   // ── Check algebraic equivalence via Algebrite ──
-  function checkEquivalence(exprA, exprB) {
+  function equationEquivalence(a, b) {
+    const normA = normalize(equationToExpr(a));
+    const normB = normalize(equationToExpr(b));
+    const diffResult = Algebrite.run(`simplify((${normA}) - (${normB}))`);
+    const diffTrimmed = diffResult.trim();
+    if (diffTrimmed === '0') return { valid: true };
+    const multipliers = ['1','-1','2','-2','3','-3','4','-4','5','-5',
+                         '1/2','-1/2','1/3','-1/3','1/4','-1/4','1/5','-1/5'];
+    for (const k of multipliers) {
+      const r = Algebrite.run(`simplify((${normA}) - (${k})*(${normB}))`).trim();
+      if (r === '0') return { valid: true };
+    }
+    return { valid: null, parseError: true };
+  }
+
+  function checkEquivalence(exprA, exprB, problemType) {
     try {
-      const isEq = containsEquals(exprA) || containsEquals(exprB);
-      const normA = normalize(equationToExpr(exprA));
-      const normB = normalize(equationToExpr(exprB));
+      if (containsEquals(exprA) && containsEquals(exprB) && problemType !== 'Evaluate') {
+        return equationEquivalence(exprA, exprB);
+      }
+      const normA = normalize(exprA);
+      const normB = normalize(exprB);
       const diffResult = Algebrite.run(`simplify((${normA}) - (${normB}))`);
       const diffTrimmed = diffResult.trim();
       if (diffTrimmed === '0') return { valid: true };
-      if (isEq) {
-        const ratioResult = Algebrite.run(`simplify((${normA}) / (${normB}))`);
-        const ratioTrimmed = ratioResult.trim();
-        if (ratioTrimmed && !/[a-zA-Z]/.test(ratioTrimmed) && ratioTrimmed !== '0' &&
-            !ratioTrimmed.toLowerCase().includes('stop') && !ratioTrimmed.toLowerCase().includes('error')) {
-          return { valid: true };
-        }
-      }
       if (!diffTrimmed || diffTrimmed.toLowerCase().includes('stop') || diffTrimmed.toLowerCase().includes('error')) {
         return { valid: null, parseError: true };
       }
@@ -1319,8 +1329,8 @@
     }
   }
 
-  function checkIsFinal(studentStep, expectedAnswer) {
-    return checkEquivalence(studentStep, expectedAnswer);
+  function checkIsFinal(studentStep, expectedAnswer, problemType) {
+    return checkEquivalence(studentStep, expectedAnswer, problemType);
   }
 
   function extractExpression(questionText) {
@@ -1542,13 +1552,13 @@
     console.log('[submitStep] normalized:', JSON.stringify(normalize(input)));
     console.log('[submitStep] comparing against:', JSON.stringify(previousExpression));
 
-    let equiv = checkEquivalence(previousExpression, input);
+    let equiv = checkEquivalence(previousExpression, input, problem.type);
 
     if (equiv.valid === null) {
       showLoading('Interpreting your input...');
       const interpreted = await askClaudeToInterpret(input);
       hideLoading();
-      if (interpreted) equiv = checkEquivalence(previousExpression, interpreted);
+      if (interpreted) equiv = checkEquivalence(previousExpression, interpreted, problem.type);
       if (equiv.valid === null) {
         showFeedback('unsure', "I couldn't understand your answer. Try rewriting it using the math buttons.");
         reenableInput();
@@ -1562,13 +1572,24 @@
       addStepToHistory(input);
       document.getElementById('feedback').style.display = 'none';
 
-      const isFinal = checkIsFinal(input, problem.answer);
+      const isFinal = checkIsFinal(input, problem.answer, problem.type);
       if (isFinal.valid === true) {
-        showLoading('Checking answer form...');
-        const formCheck = await askClaudeFormCheck(input, problem.answer, problem.type);
-        hideLoading();
+        const useRawMatch = ['Expand', 'Solve', 'Evaluate'].includes(problem.type);
+        let formMatches, formFeedback;
+        if (useRawMatch) {
+          const rawA = input.replace(/\s+/g, ' ').trim().toLowerCase();
+          const rawB = problem.answer.replace(/\s+/g, ' ').trim().toLowerCase();
+          formMatches = rawA === rawB;
+          formFeedback = null;
+        } else {
+          showLoading('Checking answer form...');
+          const formCheck = await askClaudeFormCheck(input, problem.answer, problem.type);
+          hideLoading();
+          formMatches = formCheck === null || formCheck.match === true;
+          formFeedback = formCheck?.feedback;
+        }
 
-        if (formCheck === null || formCheck.match === true) {
+        if (formMatches) {
           document.getElementById('input-area').style.display = 'none';
           document.getElementById('completed-card').style.display = 'block';
           document.getElementById('next-problem-btn').style.display = 'block';
@@ -1576,7 +1597,7 @@
             currentIndex < problems.length - 1 ? 'Next Problem →' : 'Finish ✓';
         } else {
           formCheckAttempts++;
-          showFeedback('nudge', formCheck.feedback || 'Correct value, but try to simplify or factor further!');
+          showFeedback('nudge', formFeedback || 'Correct value, but try to simplify or factor further!');
           clearDisplay();
           reenableInput();
         }

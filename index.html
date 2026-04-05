@@ -1613,7 +1613,7 @@
     document.getElementById('feedback').style.display = 'none';
 
     const problem = problems[currentIndex];
-    const previousExpression = problem.type === 'Evaluate'
+    const previousExpression = (problem.type === 'Evaluate' || problem.type === 'Rearrange')
       ? problem.answer
       : stepHistory.length > 0
         ? stepHistory[stepHistory.length - 1]

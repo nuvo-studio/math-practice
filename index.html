@@ -769,11 +769,12 @@
         <button class="calc-btn var" onclick="insertSetup('b')">b</button>
         <button class="calc-btn var" onclick="insertSetup('c')">c</button>
       </div>
-      <!-- Row 6: ² ³ ^ space -->
+      <!-- Row 6: ² ³ ^ = space -->
       <div class="calc-row">
         <button class="calc-btn special" onclick="insertSetup('²')">²</button>
         <button class="calc-btn special" onclick="insertSetup('³')">³</button>
         <button class="calc-btn special" onclick="insertSetup('^')">^</button>
+        <button class="calc-btn op" onclick="insertSetup(' = ')">=</button>
         <button class="calc-btn op" onclick="insertSetup(' ')">space</button>
       </div>
     </div>
@@ -942,11 +943,12 @@
           <button class="calc-btn var" onclick="insertMath('b')">b</button>
           <button class="calc-btn var" onclick="insertMath('c')">c</button>
         </div>
-        <!-- Row 6: ² ³ ^ space -->
+        <!-- Row 6: ² ³ ^ = space -->
         <div class="calc-row">
           <button class="calc-btn special" onclick="insertMath('²')">²</button>
           <button class="calc-btn special" onclick="insertMath('³')">³</button>
           <button class="calc-btn special" onclick="insertMath('^')">^</button>
+          <button class="calc-btn op" onclick="insertMath(' = ')">=</button>
           <button class="calc-btn op" onclick="insertMath(' ')">space</button>
         </div>
         <!-- Row 7: Check ✓ (full width) -->
@@ -1233,6 +1235,32 @@
     });
   }
 
+  // ── Convert "L = R" equation to difference form "(L) - (R)" ──
+  // Splits on the first standalone = (not !=, <=, >=, ==)
+  function equationToExpr(str) {
+    for (let i = 0; i < str.length; i++) {
+      if (str[i] === '=' &&
+          str[i - 1] !== '!' && str[i - 1] !== '<' && str[i - 1] !== '>' &&
+          str[i + 1] !== '=') {
+        const left  = str.slice(0, i).trim();
+        const right = str.slice(i + 1).trim();
+        return `(${left}) - (${right})`;
+      }
+    }
+    return str; // no standalone = found, return as-is
+  }
+
+  function containsEquals(str) {
+    for (let i = 0; i < str.length; i++) {
+      if (str[i] === '=' &&
+          str[i - 1] !== '!' && str[i - 1] !== '<' && str[i - 1] !== '>' &&
+          str[i + 1] !== '=') {
+        return true;
+      }
+    }
+    return false;
+  }
+
   // ── Normalize input for Algebrite ──
   function normalize(input) {
     let s = input.trim();
@@ -1267,12 +1295,21 @@
   // ── Check algebraic equivalence via Algebrite ──
   function checkEquivalence(exprA, exprB) {
     try {
-      const normA = normalize(exprA);
-      const normB = normalize(exprB);
-      const result = Algebrite.run(`simplify((${normA}) - (${normB}))`);
-      const trimmed = result.trim();
-      if (trimmed === '0') return { valid: true };
-      if (!trimmed || trimmed.toLowerCase().includes('stop') || trimmed.toLowerCase().includes('error')) {
+      const isEq = containsEquals(exprA) || containsEquals(exprB);
+      const normA = normalize(equationToExpr(exprA));
+      const normB = normalize(equationToExpr(exprB));
+      const diffResult = Algebrite.run(`simplify((${normA}) - (${normB}))`);
+      const diffTrimmed = diffResult.trim();
+      if (diffTrimmed === '0') return { valid: true };
+      if (isEq) {
+        const ratioResult = Algebrite.run(`simplify((${normA}) / (${normB}))`);
+        const ratioTrimmed = ratioResult.trim();
+        if (ratioTrimmed && !/[a-zA-Z]/.test(ratioTrimmed) && ratioTrimmed !== '0' &&
+            !ratioTrimmed.toLowerCase().includes('stop') && !ratioTrimmed.toLowerCase().includes('error')) {
+          return { valid: true };
+        }
+      }
+      if (!diffTrimmed || diffTrimmed.toLowerCase().includes('stop') || diffTrimmed.toLowerCase().includes('error')) {
         return { valid: null, parseError: true };
       }
       return { valid: false };

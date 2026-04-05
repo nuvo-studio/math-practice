@@ -1544,9 +1544,11 @@
     document.getElementById('feedback').style.display = 'none';
 
     const problem = problems[currentIndex];
-    const previousExpression = stepHistory.length > 0
-      ? stepHistory[stepHistory.length - 1]
-      : extractExpression(problem.question);
+    const previousExpression = problem.type === 'Evaluate'
+      ? problem.answer
+      : stepHistory.length > 0
+        ? stepHistory[stepHistory.length - 1]
+        : extractExpression(problem.question);
 
     console.log('[submitStep] raw input:', JSON.stringify(input));
     console.log('[submitStep] normalized:', JSON.stringify(normalize(input)));

@@ -667,7 +667,7 @@ A: 10x - 6"></textarea>
           <button class="calc-btn num" onclick="insertSetup('2')">2</button>
           <button class="calc-btn num" onclick="insertSetup('3')">3</button>
           <button class="calc-btn op" onclick="insertSetup(' × ')">×</button>
-          <button class="calc-btn op" onclick="insertSetup('/')">÷</button>
+          <button class="calc-btn op" onclick="insertSetup(' / ')">÷</button>
         </div>
         <!-- Row 4: 0 . ( ) -->
         <div class="calc-row">
@@ -738,10 +738,10 @@ A: 10x - 6"></textarea>
           <button class="calc-btn special" onclick="insertSetup('⁸')">⁸</button>
           <button class="calc-btn special" onclick="insertSetup('⁹')">⁹</button>
           <button class="calc-btn op" onclick="insertSetup(' = ')">=</button>
-          <button class="calc-btn op" onclick="insertSetup('≠')">≠</button>
-          <button class="calc-btn op" onclick="insertSetup('≤')">≤</button>
-          <button class="calc-btn op" onclick="insertSetup('≥')">≥</button>
-          <button class="calc-btn op" onclick="insertSetup('±')">±</button>
+          <button class="calc-btn op" onclick="insertSetup(' ≠ ')">≠</button>
+          <button class="calc-btn op" onclick="insertSetup(' ≤ ')">≤</button>
+          <button class="calc-btn op" onclick="insertSetup(' ≥ ')">≥</button>
+          <button class="calc-btn op" onclick="insertSetup(' ± ')">±</button>
         </div>
       </div>
 
@@ -841,7 +841,7 @@ A: 10x - 6"></textarea>
           <button class="calc-btn num" onclick="insertMath('2')">2</button>
           <button class="calc-btn num" onclick="insertMath('3')">3</button>
           <button class="calc-btn op" onclick="insertMath(' × ')">×</button>
-          <button class="calc-btn op" onclick="insertMath('/')">÷</button>
+          <button class="calc-btn op" onclick="insertMath(' / ')">÷</button>
         </div>
         <!-- Row 4: 0 . ( ) -->
         <div class="calc-row">
@@ -916,10 +916,10 @@ A: 10x - 6"></textarea>
           <button class="calc-btn special" onclick="insertMath('⁸')">⁸</button>
           <button class="calc-btn special" onclick="insertMath('⁹')">⁹</button>
           <button class="calc-btn op" onclick="insertMath(' = ')">=</button>
-          <button class="calc-btn op" onclick="insertMath('≠')">≠</button>
-          <button class="calc-btn op" onclick="insertMath('≤')">≤</button>
-          <button class="calc-btn op" onclick="insertMath('≥')">≥</button>
-          <button class="calc-btn op" onclick="insertMath('±')">±</button>
+          <button class="calc-btn op" onclick="insertMath(' ≠ ')">≠</button>
+          <button class="calc-btn op" onclick="insertMath(' ≤ ')">≤</button>
+          <button class="calc-btn op" onclick="insertMath(' ≥ ')">≥</button>
+          <button class="calc-btn op" onclick="insertMath(' ± ')">±</button>
         </div>
       </div>
 
@@ -1088,6 +1088,7 @@ A: 10x - 6"></textarea>
 
   // ── Ask Claude to check if student's answer is in the correct structural form ──
   async function askClaudeFormCheck(studentStep, expectedAnswer) {
+    console.log('FORM CHECK CALLED', { studentStep, expectedAnswer, formCheckAttempts });
     let hintInstruction;
     if (formCheckAttempts === 0) {
       hintInstruction = "Respond with feedback like 'Correct so far, keep simplifying!' — do NOT mention what to factor out or what the answer looks like.";
@@ -1304,6 +1305,10 @@ A: 10x - 6"></textarea>
     const previousExpression = stepHistory.length > 0
       ? stepHistory[stepHistory.length - 1]
       : extractExpression(problem.question);
+
+    console.log('[submitStep] raw input:', JSON.stringify(input));
+    console.log('[submitStep] normalized:', JSON.stringify(normalize(input)));
+    console.log('[submitStep] comparing against:', JSON.stringify(previousExpression));
 
     let equiv = checkEquivalence(previousExpression, input);
 

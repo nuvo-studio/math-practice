@@ -1267,8 +1267,15 @@
           const formCheck = await askClaudeFormCheck(input, problem.answer, problem.type);
           console.log(`[submitStep] askClaudeFormCheck returned in ${(performance.now()-tF).toFixed(1)}ms:`, formCheck);
           hideLoading();
-          formMatches = formCheck === null || formCheck.match === true;
-          formFeedback = formCheck?.feedback;
+          if (formCheck === null) {
+            askRonelProblems.push(problem.question);
+            showFeedback('unsure', "I couldn't verify your answer right now — save this one for Ronel to check.");
+            studentCalc.clear();
+            reenableInput();
+            return;
+          }
+          formMatches = formCheck.match === true;
+          formFeedback = formCheck.feedback;
         }
 
         if (formMatches) {

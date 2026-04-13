@@ -104,6 +104,26 @@
     font-size: 0.8rem;
   }
 
+  select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-family: var(--sans);
+    font-size: 0.95rem;
+    background: var(--bg);
+    color: var(--text);
+    outline: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236B6B6B' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    cursor: pointer;
+    transition: border-color 0.15s;
+  }
+
+  select:focus { border-color: var(--accent); }
+
   /* Buttons */
   .btn {
     display: inline-flex;
@@ -321,16 +341,30 @@
   <div class="card">
     <div class="card-title">Add Problem</div>
     <div class="field">
+      <label>Type</label>
+      <select id="new-type">
+        <option value="Expand">Expand</option>
+        <option value="Factorize">Factorize</option>
+        <option value="Solve">Solve</option>
+        <option value="Evaluate">Evaluate</option>
+        <option value="Rearrange">Rearrange</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Question</label>
+      <input type="text" id="new-question" placeholder="e.g. 3(x + 2)" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+    </div>
+    <div class="field">
+      <label>Answer</label>
+      <input type="text" id="new-answer" placeholder="e.g. 3x + 6" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+    </div>
+    <div class="field">
+      <label>Title <span style="font-weight:400;font-size:0.75rem;color:var(--text-secondary)">(auto-filled from question if blank)</span></label>
+      <input type="text" id="new-title" placeholder="e.g. Expand 3(x+2)" autocomplete="off" autocorrect="off" spellcheck="false">
+    </div>
+    <div class="field">
       <label>Problem ID</label>
       <input type="text" id="new-pid" placeholder="e.g. p1" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
-    </div>
-    <div class="field">
-      <label>Title</label>
-      <input type="text" id="new-title" placeholder="e.g. Expanding brackets" autocomplete="off" autocorrect="off" spellcheck="false">
-    </div>
-    <div class="field">
-      <label>URL (homework link)</label>
-      <input type="url" id="new-url" placeholder="https://credito-scorer.github.io/math-practice/#...">
     </div>
     <div class="btn-row">
       <button class="btn btn-primary" onclick="addProblem()">Add to list</button>
@@ -365,10 +399,12 @@
 <script>
   const WORKER = 'https://math-practice-proxy.ronelalmanza20.workers.dev';
   const DASHBOARD_BASE = 'https://credito-scorer.github.io/math-practice/dashboard.html';
+  const PRACTICE_BASE  = 'https://credito-scorer.github.io/math-practice/';
 
   let teacherSecret = '';
   let currentProblems = []; // local working copy
   let selectedStudentId = null;
+  let pidCounter = 1;
 
   // ── Auth ──────────────────────────────────────────────────────
   function handleAuth() {
@@ -389,6 +425,7 @@
   function showApp() {
     document.getElementById('auth-screen').style.display = 'none';
     document.getElementById('main-app').style.display = 'block';
+    updatePidField();
     loadStudentList();
   }
 
@@ -447,6 +484,8 @@
     document.getElementById('student-id').value = '';
     document.getElementById('student-name').value = '';
     currentProblems = [];
+    pidCounter = 1;
+    updatePidField();
     renderProblems();
     document.getElementById('profile-status').style.display = 'none';
     document.getElementById('load-status').style.display = 'none';
@@ -475,6 +514,8 @@
       const student = await res.json();
       document.getElementById('student-name').value = student.name || '';
       currentProblems = student.problems || [];
+      pidCounter = nextPidFromList(currentProblems);
+      updatePidField();
       renderProblems();
       showStatus('load-status', 'ok', `Loaded ${currentProblems.length} problem(s).`);
       updateDashboardLink(id);
@@ -483,14 +524,34 @@
     }
   }
 
+  // ── Problem ID helpers ─────────────────────────────────────────
+  function nextPidFromList(problems) {
+    let max = 0;
+    for (const p of problems) {
+      const m = p.id.match(/^p(\d+)$/);
+      if (m) max = Math.max(max, parseInt(m[1], 10));
+    }
+    return max + 1;
+  }
+
+  function updatePidField() {
+    document.getElementById('new-pid').value = `p${pidCounter}`;
+  }
+
   // ── Add a problem to local list ────────────────────────────────
   function addProblem() {
-    const pid   = document.getElementById('new-pid').value.trim();
-    const title = document.getElementById('new-title').value.trim();
-    const url   = document.getElementById('new-url').value.trim();
+    const type     = document.getElementById('new-type').value;
+    const question = document.getElementById('new-question').value.trim();
+    const answer   = document.getElementById('new-answer').value.trim();
+    const title    = document.getElementById('new-title').value.trim() || question;
+    const pid      = document.getElementById('new-pid').value.trim();
 
-    if (!pid || !title || !url) {
-      showToast('Please fill in ID, title, and URL.');
+    if (!question || !answer) {
+      showToast('Please fill in the question and answer.');
+      return;
+    }
+    if (!pid) {
+      showToast('Please enter a problem ID.');
       return;
     }
     if (currentProblems.find(p => p.id === pid)) {
@@ -498,13 +559,19 @@
       return;
     }
 
+    const data    = JSON.stringify({ problems: [{ type, question, answer }] });
+    const encoded = btoa(encodeURIComponent(data));
+    const url     = PRACTICE_BASE + '#' + encoded;
+
     currentProblems.push({ id: pid, title, url, completed: false });
     renderProblems();
 
-    document.getElementById('new-pid').value = '';
+    pidCounter = nextPidFromList(currentProblems);
+    document.getElementById('new-question').value = '';
+    document.getElementById('new-answer').value = '';
     document.getElementById('new-title').value = '';
-    document.getElementById('new-url').value = '';
-    document.getElementById('new-pid').focus();
+    updatePidField();
+    document.getElementById('new-question').focus();
   }
 
   function removeProblem(pid) {

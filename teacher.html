@@ -359,6 +359,10 @@
       <input type="text" id="new-answer" placeholder="e.g. 3x + 6" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
     </div>
     <div class="field">
+      <label>Calculator <span style="font-weight:400;font-size:0.75rem;color:var(--text-secondary)">(tap Question or Answer first)</span></label>
+      <div id="teacher-calc"></div>
+    </div>
+    <div class="field">
       <label>Title <span style="font-weight:400;font-size:0.75rem;color:var(--text-secondary)">(auto-filled from question if blank)</span></label>
       <input type="text" id="new-title" placeholder="e.g. Expand 3(x+2)" autocomplete="off" autocorrect="off" spellcheck="false">
     </div>
@@ -396,10 +400,23 @@
 
 <div class="toast" id="toast"></div>
 
+<script src="calculator.js"></script>
 <script>
   const WORKER = 'https://math-practice-proxy.ronelalmanza20.workers.dev';
   const DASHBOARD_BASE = 'https://credito-scorer.github.io/math-practice/dashboard.html';
   const PRACTICE_BASE  = 'https://credito-scorer.github.io/math-practice/';
+
+  // ── Calculator (shared between Question and Answer fields) ──
+  const teacherCalc = attachCalculator(
+    document.getElementById('new-question'),
+    document.getElementById('teacher-calc')
+  );
+
+  ['new-question', 'new-answer'].forEach(function (id) {
+    document.getElementById(id).addEventListener('focus', function () {
+      teacherCalc.setTarget(this);
+    });
+  });
 
   let teacherSecret = '';
   let currentProblems = []; // local working copy

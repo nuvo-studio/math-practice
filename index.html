@@ -472,134 +472,6 @@
 
   #step-input:focus { border-color: var(--accent); }
 
-  /* ── Unified Calculator Grid ── */
-  .calc-wrapper {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-
-  .calc-main {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-
-  .calc-row {
-    display: flex;
-    gap: 6px;
-  }
-
-  .calc-row .calc-btn {
-    flex: 1;
-    min-width: 0;
-  }
-
-  .calc-btn {
-    min-height: 48px;
-    padding: 0 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 1.5px solid var(--border);
-    border-radius: 8px;
-    font-family: var(--mono);
-    font-size: 1rem;
-    font-weight: 500;
-    cursor: pointer;
-    background: var(--card);
-    color: var(--text);
-    user-select: none;
-    -webkit-user-select: none;
-    -webkit-tap-highlight-color: transparent;
-    transition: background 0.1s, transform 0.08s, border-color 0.1s;
-  }
-
-  .calc-btn:hover  { background: #EBEBEA; }
-  .calc-btn:active { background: #DCDCDA; transform: scale(0.95); }
-
-  .calc-btn.num { background: #F5F5F3; }
-  .calc-btn.num:hover  { background: #EBEBEA; }
-  .calc-btn.num:active { background: #DCDCDA; transform: scale(0.95); }
-
-  .calc-btn.op { background: var(--accent-bg); color: var(--accent); border-color: var(--accent-light); }
-  .calc-btn.op:hover  { background: #E3F7EB; }
-  .calc-btn.op:active { background: #C8EDD5; transform: scale(0.95); }
-
-  .calc-btn.var { background: #EEF2FF; color: #4338CA; border-color: #C7D2FE; }
-  .calc-btn.var:hover  { background: #E2E8FF; }
-  .calc-btn.var:active { background: #C7D2FE; transform: scale(0.95); }
-
-  .calc-btn.special { background: #FFF8E7; color: #92680D; border-color: #F0D897; }
-  .calc-btn.special:hover  { background: #FFF0CC; }
-  .calc-btn.special:active { background: #F0D897; transform: scale(0.95); }
-
-  .calc-btn.backspace { background: var(--wrong-bg); color: var(--wrong); border-color: #F5C6C3; font-size: 1.1rem; }
-  .calc-btn.backspace:hover  { background: #FAD0CD; }
-  .calc-btn.backspace:active { background: #F0ACAA; transform: scale(0.95); }
-
-  .calc-btn.submit {
-    background: var(--accent);
-    color: white;
-    border-color: var(--accent);
-    font-family: var(--sans);
-    font-weight: 600;
-    font-size: 0.95rem;
-    letter-spacing: 0.01em;
-  }
-  .calc-btn.submit:hover  { background: #265E44; }
-  .calc-btn.submit:active { background: #1E4D38; transform: scale(0.95); }
-
-  /* ── Toggle Buttons ── */
-  .calc-toggles {
-    display: flex;
-    gap: 8px;
-    margin-top: 2px;
-  }
-
-  .toggle-btn {
-    padding: 6px 16px;
-    border: 1.5px solid var(--border);
-    border-radius: 20px;
-    background: var(--card);
-    font-family: var(--sans);
-    font-size: 0.82rem;
-    font-weight: 500;
-    cursor: pointer;
-    color: var(--text-secondary);
-    transition: background 0.1s, border-color 0.1s, color 0.1s, transform 0.08s;
-    -webkit-tap-highlight-color: transparent;
-    user-select: none;
-  }
-
-  .toggle-btn:hover  { background: var(--accent-bg); border-color: var(--accent); color: var(--accent); }
-  .toggle-btn:active { background: var(--accent-light); border-color: var(--accent); color: var(--accent); transform: scale(0.95); }
-  .toggle-btn.active { background: var(--accent-bg); border-color: var(--accent); color: var(--accent); font-weight: 600; }
-  .toggle-btn.active:hover  { background: #E3F7EB; }
-  .toggle-btn.active:active { background: var(--accent-light); transform: scale(0.95); }
-
-  /* ── Expandable Panels ── */
-  .calc-panel {
-    display: none;
-    background: #F2F2EF;
-    border: 1.5px solid var(--border);
-    border-radius: 10px;
-    padding: 8px;
-  }
-
-  .panel-buttons {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-  }
-
-  .panel-buttons .calc-btn {
-    flex: 0 1 calc(14.28% - 6px);
-    min-width: 44px;
-    min-height: 44px;
-    font-size: 0.95rem;
-  }
-
   /* Disabled state (student only) */
   #calc-grid.disabled .calc-btn   { opacity: 0.45; pointer-events: none; }
   #calc-grid.disabled .toggle-btn { opacity: 0.45; pointer-events: none; }
@@ -709,10 +581,9 @@
     body { padding: 14px; }
     .problem-card { padding: 20px; }
     .problem-text { font-size: 1rem; }
-    .calc-btn { min-height: 44px; font-size: 0.95rem; }
-    .panel-buttons .calc-btn { min-height: 40px; }
   }
 </style>
+<script src="calculator.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/algebrite@1.4.0/dist/algebrite.bundle-for-browser.js"></script>
 </head>
 <body>
@@ -727,123 +598,8 @@
 
   <button class="add-problem-btn" onclick="addProblemCard()">+ Add Problem</button>
 
-  <!-- Shared Calculator Grid (inserts into last-focused card input) -->
-  <div class="calc-wrapper" id="setup-calc-wrapper">
-    <div class="calc-main">
-      <!-- Row 1: 7 8 9 ⌫ -->
-      <div class="calc-row">
-        <button class="calc-btn num" onclick="insertSetup('7')">7</button>
-        <button class="calc-btn num" onclick="insertSetup('8')">8</button>
-        <button class="calc-btn num" onclick="insertSetup('9')">9</button>
-        <button class="calc-btn backspace" onclick="setupBackspace()">⌫</button>
-      </div>
-      <!-- Row 2: 4 5 6 + − -->
-      <div class="calc-row">
-        <button class="calc-btn num" onclick="insertSetup('4')">4</button>
-        <button class="calc-btn num" onclick="insertSetup('5')">5</button>
-        <button class="calc-btn num" onclick="insertSetup('6')">6</button>
-        <button class="calc-btn op" onclick="insertSetup(' + ')">+</button>
-        <button class="calc-btn op" onclick="insertSetup(' - ')">−</button>
-      </div>
-      <!-- Row 3: 1 2 3 × / -->
-      <div class="calc-row">
-        <button class="calc-btn num" onclick="insertSetup('1')">1</button>
-        <button class="calc-btn num" onclick="insertSetup('2')">2</button>
-        <button class="calc-btn num" onclick="insertSetup('3')">3</button>
-        <button class="calc-btn op" onclick="insertSetup(' × ')">×</button>
-        <button class="calc-btn op" onclick="insertSetup(' / ')">÷</button>
-      </div>
-      <!-- Row 4: 0 . ( ) -->
-      <div class="calc-row">
-        <button class="calc-btn num" onclick="insertSetup('0')">0</button>
-        <button class="calc-btn num" onclick="insertSetup('.')">.</button>
-        <button class="calc-btn op" onclick="insertSetup('(')">(</button>
-        <button class="calc-btn op" onclick="insertSetup(')')">)</button>
-      </div>
-      <!-- Row 5: x y z a b c -->
-      <div class="calc-row">
-        <button class="calc-btn var" onclick="insertSetup('x')">x</button>
-        <button class="calc-btn var" onclick="insertSetup('y')">y</button>
-        <button class="calc-btn var" onclick="insertSetup('z')">z</button>
-        <button class="calc-btn var" onclick="insertSetup('a')">a</button>
-        <button class="calc-btn var" onclick="insertSetup('b')">b</button>
-        <button class="calc-btn var" onclick="insertSetup('c')">c</button>
-      </div>
-      <!-- Row 6: ² ³ ^ = space -->
-      <div class="calc-row">
-        <button class="calc-btn special" onclick="insertSetup('²')">²</button>
-        <button class="calc-btn special" onclick="insertSetup('³')">³</button>
-        <button class="calc-btn special" onclick="insertSetup('^')">^</button>
-        <button class="calc-btn op" onclick="insertSetup(' = ')">=</button>
-        <button class="calc-btn op" onclick="insertSetup(' ')">space</button>
-      </div>
-    </div>
-
-    <!-- Toggle buttons -->
-    <div class="calc-toggles">
-      <button class="toggle-btn" id="setup-toggle-abc"   onclick="togglePanel('setup', 'abc')">abc</button>
-      <button class="toggle-btn" id="setup-toggle-ops"   onclick="togglePanel('setup', 'ops')">ops</button>
-      <button class="toggle-btn" id="setup-toggle-greek" onclick="togglePanel('setup', 'greek')">αβ</button>
-    </div>
-
-    <!-- Panel: abc -->
-    <div class="calc-panel" id="setup-panel-abc">
-      <div class="panel-buttons">
-        <button class="calc-btn var" onclick="insertSetup('d')">d</button>
-        <button class="calc-btn var" onclick="insertSetup('e')">e</button>
-        <button class="calc-btn var" onclick="insertSetup('f')">f</button>
-        <button class="calc-btn var" onclick="insertSetup('g')">g</button>
-        <button class="calc-btn var" onclick="insertSetup('h')">h</button>
-        <button class="calc-btn var" onclick="insertSetup('i')">i</button>
-        <button class="calc-btn var" onclick="insertSetup('j')">j</button>
-        <button class="calc-btn var" onclick="insertSetup('k')">k</button>
-        <button class="calc-btn var" onclick="insertSetup('l')">l</button>
-        <button class="calc-btn var" onclick="insertSetup('m')">m</button>
-        <button class="calc-btn var" onclick="insertSetup('n')">n</button>
-        <button class="calc-btn var" onclick="insertSetup('o')">o</button>
-        <button class="calc-btn var" onclick="insertSetup('p')">p</button>
-        <button class="calc-btn var" onclick="insertSetup('q')">q</button>
-        <button class="calc-btn var" onclick="insertSetup('r')">r</button>
-        <button class="calc-btn var" onclick="insertSetup('s')">s</button>
-        <button class="calc-btn var" onclick="insertSetup('t')">t</button>
-        <button class="calc-btn var" onclick="insertSetup('u')">u</button>
-        <button class="calc-btn var" onclick="insertSetup('v')">v</button>
-        <button class="calc-btn var" onclick="insertSetup('w')">w</button>
-      </div>
-    </div>
-
-    <!-- Panel: ops -->
-    <div class="calc-panel" id="setup-panel-ops">
-      <div class="panel-buttons">
-        <button class="calc-btn special" onclick="insertSetup('√')">√</button>
-        <button class="calc-btn special" onclick="insertSetup('⁴')">⁴</button>
-        <button class="calc-btn special" onclick="insertSetup('⁵')">⁵</button>
-        <button class="calc-btn special" onclick="insertSetup('⁶')">⁶</button>
-        <button class="calc-btn special" onclick="insertSetup('⁷')">⁷</button>
-        <button class="calc-btn special" onclick="insertSetup('⁸')">⁸</button>
-        <button class="calc-btn special" onclick="insertSetup('⁹')">⁹</button>
-        <button class="calc-btn op" onclick="insertSetup(' = ')">=</button>
-        <button class="calc-btn op" onclick="insertSetup(' ≠ ')">≠</button>
-        <button class="calc-btn op" onclick="insertSetup(' ≤ ')">≤</button>
-        <button class="calc-btn op" onclick="insertSetup(' ≥ ')">≥</button>
-        <button class="calc-btn op" onclick="insertSetup(' ± ')">±</button>
-      </div>
-    </div>
-
-    <!-- Panel: greek -->
-    <div class="calc-panel" id="setup-panel-greek">
-      <div class="panel-buttons">
-        <button class="calc-btn special" onclick="insertSetup('α')">α</button>
-        <button class="calc-btn special" onclick="insertSetup('β')">β</button>
-        <button class="calc-btn special" onclick="insertSetup('θ')">θ</button>
-        <button class="calc-btn special" onclick="insertSetup('π')">π</button>
-        <button class="calc-btn special" onclick="insertSetup('Δ')">Δ</button>
-        <button class="calc-btn special" onclick="insertSetup('λ')">λ</button>
-        <button class="calc-btn special" onclick="insertSetup('μ')">μ</button>
-      </div>
-    </div>
-  </div>
-  <!-- end setup-calc-wrapper -->
+  <!-- Calculator (populated by calculator.js) -->
+  <div id="setup-calc-wrapper"></div>
 
   <div class="format-hint">
     Tap a Question or Answer field, then use the calculator to insert math symbols into that field.
@@ -901,127 +657,8 @@
     <input type="text" id="step-input" placeholder="Type or tap buttons to enter your answer…"
       autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
 
-    <!-- Student Calculator Grid (with Check button) -->
-    <div class="calc-wrapper" id="calc-grid">
-      <div class="calc-main">
-        <!-- Row 1: 7 8 9 ⌫ -->
-        <div class="calc-row">
-          <button class="calc-btn num" onclick="insertMath('7')">7</button>
-          <button class="calc-btn num" onclick="insertMath('8')">8</button>
-          <button class="calc-btn num" onclick="insertMath('9')">9</button>
-          <button class="calc-btn backspace" onclick="calcBackspace()">⌫</button>
-        </div>
-        <!-- Row 2: 4 5 6 + − -->
-        <div class="calc-row">
-          <button class="calc-btn num" onclick="insertMath('4')">4</button>
-          <button class="calc-btn num" onclick="insertMath('5')">5</button>
-          <button class="calc-btn num" onclick="insertMath('6')">6</button>
-          <button class="calc-btn op" onclick="insertMath(' + ')">+</button>
-          <button class="calc-btn op" onclick="insertMath(' - ')">−</button>
-        </div>
-        <!-- Row 3: 1 2 3 × / -->
-        <div class="calc-row">
-          <button class="calc-btn num" onclick="insertMath('1')">1</button>
-          <button class="calc-btn num" onclick="insertMath('2')">2</button>
-          <button class="calc-btn num" onclick="insertMath('3')">3</button>
-          <button class="calc-btn op" onclick="insertMath(' × ')">×</button>
-          <button class="calc-btn op" onclick="insertMath(' / ')">÷</button>
-        </div>
-        <!-- Row 4: 0 . ( ) -->
-        <div class="calc-row">
-          <button class="calc-btn num" onclick="insertMath('0')">0</button>
-          <button class="calc-btn num" onclick="insertMath('.')">.</button>
-          <button class="calc-btn op" onclick="insertMath('(')">(</button>
-          <button class="calc-btn op" onclick="insertMath(')')">)</button>
-        </div>
-        <!-- Row 5: x y z a b c -->
-        <div class="calc-row">
-          <button class="calc-btn var" onclick="insertMath('x')">x</button>
-          <button class="calc-btn var" onclick="insertMath('y')">y</button>
-          <button class="calc-btn var" onclick="insertMath('z')">z</button>
-          <button class="calc-btn var" onclick="insertMath('a')">a</button>
-          <button class="calc-btn var" onclick="insertMath('b')">b</button>
-          <button class="calc-btn var" onclick="insertMath('c')">c</button>
-        </div>
-        <!-- Row 6: ² ³ ^ = space -->
-        <div class="calc-row">
-          <button class="calc-btn special" onclick="insertMath('²')">²</button>
-          <button class="calc-btn special" onclick="insertMath('³')">³</button>
-          <button class="calc-btn special" onclick="insertMath('^')">^</button>
-          <button class="calc-btn op" onclick="insertMath(' = ')">=</button>
-          <button class="calc-btn op" onclick="insertMath(' ')">space</button>
-        </div>
-        <!-- Row 7: Check ✓ (full width) -->
-        <div class="calc-row">
-          <button class="calc-btn submit" onclick="submitStep()">Check ✓</button>
-        </div>
-      </div>
-
-      <!-- Toggle buttons -->
-      <div class="calc-toggles">
-        <button class="toggle-btn" id="student-toggle-abc"   onclick="togglePanel('student', 'abc')">abc</button>
-        <button class="toggle-btn" id="student-toggle-ops"   onclick="togglePanel('student', 'ops')">ops</button>
-        <button class="toggle-btn" id="student-toggle-greek" onclick="togglePanel('student', 'greek')">αβ</button>
-      </div>
-
-      <!-- Panel: abc -->
-      <div class="calc-panel" id="student-panel-abc">
-        <div class="panel-buttons">
-          <button class="calc-btn var" onclick="insertMath('d')">d</button>
-          <button class="calc-btn var" onclick="insertMath('e')">e</button>
-          <button class="calc-btn var" onclick="insertMath('f')">f</button>
-          <button class="calc-btn var" onclick="insertMath('g')">g</button>
-          <button class="calc-btn var" onclick="insertMath('h')">h</button>
-          <button class="calc-btn var" onclick="insertMath('i')">i</button>
-          <button class="calc-btn var" onclick="insertMath('j')">j</button>
-          <button class="calc-btn var" onclick="insertMath('k')">k</button>
-          <button class="calc-btn var" onclick="insertMath('l')">l</button>
-          <button class="calc-btn var" onclick="insertMath('m')">m</button>
-          <button class="calc-btn var" onclick="insertMath('n')">n</button>
-          <button class="calc-btn var" onclick="insertMath('o')">o</button>
-          <button class="calc-btn var" onclick="insertMath('p')">p</button>
-          <button class="calc-btn var" onclick="insertMath('q')">q</button>
-          <button class="calc-btn var" onclick="insertMath('r')">r</button>
-          <button class="calc-btn var" onclick="insertMath('s')">s</button>
-          <button class="calc-btn var" onclick="insertMath('t')">t</button>
-          <button class="calc-btn var" onclick="insertMath('u')">u</button>
-          <button class="calc-btn var" onclick="insertMath('v')">v</button>
-          <button class="calc-btn var" onclick="insertMath('w')">w</button>
-        </div>
-      </div>
-
-      <!-- Panel: ops -->
-      <div class="calc-panel" id="student-panel-ops">
-        <div class="panel-buttons">
-          <button class="calc-btn special" onclick="insertMath('√')">√</button>
-          <button class="calc-btn special" onclick="insertMath('⁴')">⁴</button>
-          <button class="calc-btn special" onclick="insertMath('⁵')">⁵</button>
-          <button class="calc-btn special" onclick="insertMath('⁶')">⁶</button>
-          <button class="calc-btn special" onclick="insertMath('⁷')">⁷</button>
-          <button class="calc-btn special" onclick="insertMath('⁸')">⁸</button>
-          <button class="calc-btn special" onclick="insertMath('⁹')">⁹</button>
-          <button class="calc-btn op" onclick="insertMath(' = ')">=</button>
-          <button class="calc-btn op" onclick="insertMath(' ≠ ')">≠</button>
-          <button class="calc-btn op" onclick="insertMath(' ≤ ')">≤</button>
-          <button class="calc-btn op" onclick="insertMath(' ≥ ')">≥</button>
-          <button class="calc-btn op" onclick="insertMath(' ± ')">±</button>
-        </div>
-      </div>
-
-      <!-- Panel: greek -->
-      <div class="calc-panel" id="student-panel-greek">
-        <div class="panel-buttons">
-          <button class="calc-btn special" onclick="insertMath('α')">α</button>
-          <button class="calc-btn special" onclick="insertMath('β')">β</button>
-          <button class="calc-btn special" onclick="insertMath('θ')">θ</button>
-          <button class="calc-btn special" onclick="insertMath('π')">π</button>
-          <button class="calc-btn special" onclick="insertMath('Δ')">Δ</button>
-          <button class="calc-btn special" onclick="insertMath('λ')">λ</button>
-          <button class="calc-btn special" onclick="insertMath('μ')">μ</button>
-        </div>
-      </div>
-    </div>
-    <!-- end calc-grid -->
+    <!-- Student Calculator Grid (populated by calculator.js) -->
+    <div id="calc-grid"></div>
   </div>
 
   <div class="completed-card" id="completed-card">
@@ -1054,7 +691,6 @@
   let stepHistory = [];
   let wrongCount = 0;
   let formCheckAttempts = 0;
-  let inputChunks = [];
   let askRonelProblems = [];
   let generatedLink = '';
 
@@ -1072,7 +708,6 @@
 
   // ── Teacher: active field tracking ──
   let activeSetupField = null;
-  let activeSetupCursor = { start: 0, end: 0 };
   let cardCounter = 0;
 
   function setActiveField(el) {
@@ -1081,13 +716,7 @@
     }
     activeSetupField = el;
     el.classList.add('active-field');
-    activeSetupCursor = { start: el.selectionStart, end: el.selectionEnd };
-  }
-
-  function updateSetupCursor(el) {
-    if (activeSetupField === el) {
-      activeSetupCursor = { start: el.selectionStart, end: el.selectionEnd };
-    }
+    setupCalc.setTarget(el);
   }
 
   // ── Add a problem card ──
@@ -1134,12 +763,9 @@
     card.querySelector('.builder-q-input').value = question;
     card.querySelector('.builder-a-input').value = answer;
 
-    // Attach focus / cursor-tracking listeners to both text inputs
+    // Attach focus listener so the shared calculator targets this input
     card.querySelectorAll('.builder-input').forEach(input => {
-      input.addEventListener('focus',  () => setActiveField(input));
-      input.addEventListener('click',  () => updateSetupCursor(input));
-      input.addEventListener('keyup',  () => updateSetupCursor(input));
-      input.addEventListener('blur',   () => updateSetupCursor(input));
+      input.addEventListener('focus', () => setActiveField(input));
     });
 
     document.getElementById('cards-container').appendChild(card);
@@ -1159,6 +785,7 @@
     if (activeSetupField && card.contains(activeSetupField)) {
       activeSetupField.classList.remove('active-field');
       activeSetupField = null;
+      setupCalc.setTarget(null);
     }
     card.remove();
     renumberCards();
@@ -1169,38 +796,6 @@
     document.querySelectorAll('.builder-card').forEach((card, i) => {
       card.querySelector('.builder-card-title').textContent = `Problem ${i + 1}`;
     });
-  }
-
-  // ── Teacher calc: insert into active field ──
-  function insertSetup(symbol) {
-    if (!activeSetupField) return;
-    const el = activeSetupField;
-    const { start, end } = activeSetupCursor;
-    const val = el.value;
-    el.value = val.slice(0, start) + symbol + val.slice(end);
-    const newPos = start + symbol.length;
-    activeSetupCursor = { start: newPos, end: newPos };
-    el.focus();
-    el.setSelectionRange(newPos, newPos);
-  }
-
-  // ── Teacher calc: backspace on active field ──
-  function setupBackspace() {
-    if (!activeSetupField) return;
-    const el = activeSetupField;
-    let { start, end } = activeSetupCursor;
-    const val = el.value;
-    if (start === 0 && end === 0) return;
-    if (start !== end) {
-      el.value = val.slice(0, start) + val.slice(end);
-      activeSetupCursor = { start, end: start };
-    } else {
-      el.value = val.slice(0, start - 1) + val.slice(start);
-      start--;
-      activeSetupCursor = { start, end: start };
-    }
-    el.focus();
-    el.setSelectionRange(activeSetupCursor.start, activeSetupCursor.end);
   }
 
   // ── Generate link from cards ──
@@ -1598,14 +1193,9 @@
     document.getElementById('completed-card').style.display = 'none';
     document.getElementById('next-problem-btn').style.display = 'none';
     document.getElementById('input-area').style.display = 'flex';
-    clearDisplay();
+    studentCalc.clear();
+    studentCalc.closePanels();
     document.getElementById('calc-grid').classList.remove('disabled');
-    ['abc', 'ops', 'greek'].forEach(n => {
-      const panel = document.getElementById(`student-panel-${n}`);
-      const btn   = document.getElementById(`student-toggle-${n}`);
-      if (panel) panel.style.display = 'none';
-      if (btn)   btn.classList.remove('active');
-    });
     updateProgress();
   }
 
@@ -1692,16 +1282,16 @@
         } else {
           formCheckAttempts++;
           showFeedback('nudge', formFeedback || 'Correct value, but try to simplify or factor further!');
-          clearDisplay();
+          studentCalc.clear();
           reenableInput();
         }
       } else {
-        clearDisplay();
+        studentCalc.clear();
         reenableInput();
       }
     } else {
       wrongCount++;
-      clearDisplay();
+      studentCalc.clear();
 
       if (wrongCount >= 4) {
         showLoading('Getting help...');
@@ -1730,60 +1320,6 @@
   }
 
   // ── Student calculator input ──
-  function insertMath(symbol) {
-    const el = document.getElementById('step-input');
-    const start = el.selectionStart;
-    const end = el.selectionEnd;
-    const val = el.value;
-    el.value = val.slice(0, start) + symbol + val.slice(end);
-    const newPos = start + symbol.length;
-    el.setSelectionRange(newPos, newPos);
-    el.focus();
-    inputChunks = Array.from(el.value);
-  }
-
-  function calcBackspace() {
-    if (inputChunks.length > 0) {
-      inputChunks.pop();
-      document.getElementById('step-input').value = inputChunks.join('');
-    } else {
-      const el = document.getElementById('step-input');
-      if (el.value.length > 0) el.value = el.value.slice(0, -1);
-    }
-  }
-
-  function clearDisplay() {
-    inputChunks = [];
-    document.getElementById('step-input').value = '';
-  }
-
-  // Sync inputChunks when student types via keyboard
-  document.addEventListener('DOMContentLoaded', function() {
-    const stepInput = document.getElementById('step-input');
-    if (stepInput) {
-      stepInput.addEventListener('input', function() {
-        inputChunks = Array.from(this.value);
-      });
-    }
-  });
-
-  // ── Toggle expandable panels ──
-  function togglePanel(prefix, name) {
-    ['abc', 'ops', 'greek'].forEach(p => {
-      const panel = document.getElementById(`${prefix}-panel-${p}`);
-      const btn   = document.getElementById(`${prefix}-toggle-${p}`);
-      if (!panel || !btn) return;
-      if (p === name) {
-        const nowOpen = panel.style.display !== 'block';
-        panel.style.display = nowOpen ? 'block' : 'none';
-        btn.classList.toggle('active', nowOpen);
-      } else {
-        panel.style.display = 'none';
-        btn.classList.remove('active');
-      }
-    });
-  }
-
   // ── UI helpers ──
   function addStepToHistory(text) {
     const container = document.getElementById('steps-container');
@@ -1831,6 +1367,14 @@
       if (!document.getElementById('calc-grid').classList.contains('disabled')) submitStep();
     }
   });
+
+  // ── Attach calculators ──
+  const setupCalc   = attachCalculator(null, document.getElementById('setup-calc-wrapper'));
+  const studentCalc = attachCalculator(
+    document.getElementById('step-input'),
+    document.getElementById('calc-grid'),
+    { onSubmit: submitStep }
+  );
 
   // ── Boot ──
   init();

@@ -1255,8 +1255,8 @@
         const useRawMatch = !(problem.modules?.includes('formCheck'));
         let formMatches, formFeedback;
         if (useRawMatch) {
-          const rawA = normalize(input).replace(/\s+/g, ' ').trim().toLowerCase();
-          const rawB = normalize(problem.answer).replace(/\s+/g, ' ').trim().toLowerCase();
+          const rawA = normalize(input).replace(/\s/g, '').toLowerCase();
+          const rawB = normalize(problem.answer).replace(/\s/g, '').toLowerCase();
           formMatches = rawA === rawB;
           formFeedback = null;
           console.log('[submitStep] raw form match:', formMatches, { rawA, rawB });

@@ -363,6 +363,12 @@
       <div id="teacher-calc"></div>
     </div>
     <div class="field">
+      <label style="text-transform:none;letter-spacing:0;font-size:0.88rem;display:flex;align-items:center;gap:8px;cursor:pointer;font-weight:500;">
+        <input type="checkbox" id="new-formcheck">
+        Require form check (Claude verifies answer structure)
+      </label>
+    </div>
+    <div class="field">
       <label>Title <span style="font-weight:400;font-size:0.75rem;color:var(--text-secondary)">(auto-filled from question if blank)</span></label>
       <input type="text" id="new-title" placeholder="e.g. Expand 3(x+2)" autocomplete="off" autocorrect="off" spellcheck="false">
     </div>
@@ -576,7 +582,9 @@
       return;
     }
 
-    const data    = JSON.stringify({ problems: [{ type, question, answer }] });
+    const formCheck = document.getElementById('new-formcheck').checked;
+    const modules = formCheck ? ['equivalence', 'formCheck'] : ['equivalence'];
+    const data    = JSON.stringify({ problems: [{ type, question, answer, modules }] });
     const encoded = btoa(encodeURIComponent(data));
     const url     = PRACTICE_BASE + '#' + encoded;
 
@@ -587,6 +595,7 @@
     document.getElementById('new-question').value = '';
     document.getElementById('new-answer').value = '';
     document.getElementById('new-title').value = '';
+    document.getElementById('new-formcheck').checked = false;
     updatePidField();
     document.getElementById('new-question').focus();
   }

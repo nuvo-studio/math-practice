@@ -1252,11 +1252,11 @@
       const isFinal = checkIsFinal(input, problem.answer, problem.type);
       console.log('[submitStep] checkIsFinal:', isFinal);
       if (isFinal.valid === true) {
-        const useRawMatch = ['Expand', 'Solve', 'Evaluate'].includes(problem.type);
+        const useRawMatch = !(problem.modules?.includes('formCheck'));
         let formMatches, formFeedback;
         if (useRawMatch) {
-          const rawA = input.replace(/\s+/g, ' ').trim().toLowerCase();
-          const rawB = problem.answer.replace(/\s+/g, ' ').trim().toLowerCase();
+          const rawA = normalize(input).replace(/\s+/g, ' ').trim().toLowerCase();
+          const rawB = normalize(problem.answer).replace(/\s+/g, ' ').trim().toLowerCase();
           formMatches = rawA === rawB;
           formFeedback = null;
           console.log('[submitStep] raw form match:', formMatches, { rawA, rawB });

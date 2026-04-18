@@ -958,9 +958,25 @@
     return { valid: false };
   }
 
+  function hasBalancedParens(str) {
+    let depth = 0;
+    for (let i = 0; i < str.length; i++) {
+      if (str[i] === '(') depth++;
+      else if (str[i] === ')') depth--;
+      if (depth < 0) return false; // more closes than opens at this point
+    }
+    return depth === 0;
+  }
+
   function checkEquivalence(exprA, exprB, problemType) {
     const t0 = performance.now();
     console.log('[checkEquivalence] entry', { exprA, exprB, problemType });
+
+    // Guard: unbalanced parens would cause Algebrite parse errors
+    if (!hasBalancedParens(exprA) || !hasBalancedParens(exprB)) {
+      console.log('[checkEquivalence] unbalanced parens', { exprA, exprB });
+      return { valid: null, parseError: true };
+    }
 
     // Handle comma-separated answers (e.g. multiple solutions: x = 1, x = -1)
     const partsA = exprA.split(',').map(s => s.trim()).filter(Boolean);

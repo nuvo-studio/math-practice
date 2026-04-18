@@ -894,6 +894,8 @@
     s = s.replace(/([a-zA-Z])\x01/g, '$1*\x01');
     s = s.replace(/(\d)([a-zA-Z])/g, '$1*$2');
     s = s.replace(/([a-zA-Z])([a-zA-Z])/g, '$1*$2');
+    s = s.replace(/o\*r/g, 'or');    // restore "or" mangled by letter-letter rule
+    s = s.replace(/a\*nd/g, 'and');  // restore "and" (and → a*nd in one pass)
     s = s.replace(/(\d)\(/g, '$1*(');
     s = s.replace(/\)\(/g, ')*(');
     s = s.replace(/([a-zA-Z])\(/g, '$1*(');

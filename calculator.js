@@ -243,7 +243,6 @@
     <button class="calc-btn op" data-insert="y = " style="flex:1 1 auto;">y =</button>
     <button class="calc-btn op" data-insert=", " style="flex:1 1 auto;">,</button>
     <button class="calc-btn op" data-insert="x = , x = " style="flex:1 1 100%;">x = N, x = N</button>
-    <button class="calc-btn op" data-insert="x =  or x = " style="flex:1 1 100%;">x = N or x = N</button>
   </div>
 </div>
 `;

@@ -7,6 +7,8 @@
 <link rel="icon" type="image/x-icon" href="favicon.ico">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="manifest" href="manifest.json">
+<script src="https://cdn.jsdelivr.net/npm/algebrite@1.4.0/dist/algebrite.bundle-for-browser.js"></script>
+<script src="calculator.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700&display=swap');
 
@@ -226,6 +228,186 @@
 
   .all-done-banner .icon { font-size: 1.8rem; margin-bottom: 6px; }
   .all-done-banner p { color: var(--accent); font-weight: 600; font-size: 0.95rem; }
+
+  /* ── Practice Again ── */
+  .problem-item {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .practice-again-btn {
+    align-self: flex-end;
+    padding: 5px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 20px;
+    background: var(--card);
+    font-family: var(--sans);
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: background 0.1s, border-color 0.1s, color 0.1s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .practice-again-btn:hover { background: var(--accent-bg); border-color: var(--accent); color: var(--accent); }
+  .practice-again-btn:disabled { opacity: 0.5; cursor: default; }
+
+  .variant-loading {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 18px;
+    color: var(--text-secondary);
+    font-size: 0.88rem;
+  }
+  .variant-spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    flex-shrink: 0;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .variant-card {
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    padding: 16px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+
+  .generated-badge {
+    display: inline-block;
+    padding: 2px 10px;
+    background: #F2F2EF;
+    border: 1px solid #E0E0DC;
+    border-radius: 99px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    align-self: flex-start;
+  }
+
+  .variant-question {
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.4;
+    font-family: monospace;
+  }
+
+  .variant-input {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    font-family: monospace;
+    font-size: 1rem;
+    color: var(--text);
+    background: var(--bg);
+    outline: none;
+    box-sizing: border-box;
+    margin-bottom: 6px;
+  }
+  .variant-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(45,106,79,0.08); }
+
+  .variant-feedback {
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 0.88rem;
+    font-weight: 500;
+    line-height: 1.4;
+  }
+  .variant-feedback.wrong  { background: #FDE8E6; color: #C1453B; border: 1px solid #F5C6C3; }
+  .variant-feedback.unsure { background: #FFF8E7; color: #92680D; border: 1px solid #F0D897; }
+  .variant-feedback.hint   { background: var(--accent-bg); color: var(--accent); border: 1px solid var(--accent-light); }
+
+  .variant-hint-btn {
+    padding: 6px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: 20px;
+    background: var(--card);
+    font-family: var(--sans);
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .variant-hint-btn:hover { background: var(--accent-bg); border-color: var(--accent); color: var(--accent); }
+  .variant-hint-btn:disabled { opacity: 0.5; cursor: default; }
+
+  .variant-correct-msg { font-size: 1rem; font-weight: 700; color: var(--accent); }
+
+  .variant-done-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  .save-to-list-btn {
+    padding: 8px 18px;
+    border: 1.5px solid var(--accent);
+    border-radius: 20px;
+    background: var(--accent-bg);
+    font-family: var(--sans);
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--accent);
+    cursor: pointer;
+    transition: background 0.1s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .save-to-list-btn:hover { background: #E3F7EB; }
+  .save-to-list-btn.saved { background: var(--accent); color: white; border-color: var(--accent); cursor: default; }
+  .save-to-list-btn:disabled { cursor: default; }
+
+  .chain-practice-btn {
+    padding: 8px 18px;
+    border: 1.5px solid var(--border);
+    border-radius: 20px;
+    background: var(--card);
+    font-family: var(--sans);
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: background 0.1s, border-color 0.1s, color 0.1s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .chain-practice-btn:hover { background: var(--accent-bg); border-color: var(--accent); color: var(--accent); }
+
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1A1A1A;
+    color: white;
+    padding: 10px 16px;
+    border-radius: 10px;
+    font-size: 0.88rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    z-index: 9999;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    max-width: calc(100vw - 40px);
+  }
+  .toast-dismiss {
+    background: none;
+    border: none;
+    color: rgba(255,255,255,0.6);
+    font-size: 1.1rem;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+  }
 </style>
 </head>
 <body>
@@ -243,6 +425,7 @@
   async function init() {
     const params = new URLSearchParams(window.location.search);
     const studentId = params.get('student');
+    currentStudentId = studentId;
 
     if (!studentId) {
       render(`
@@ -279,6 +462,7 @@
     }
 
     const problems = student.problems || [];
+    problems.forEach(p => { problemsById[p.id] = p; });
     const done = problems.filter(p => p.completed).length;
     const total = problems.length;
     const allDone = done === total && total > 0;
@@ -295,15 +479,20 @@
       const icon = p.completed ? '✅' : '🔵';
       const statusText = p.completed ? 'Completed' : 'Not started';
       const href = buildProblemUrl(p, studentId);
+      const canPractice = p.completed && VARIANT_TYPES.has(p.type);
       return `
-        <a class="problem-card ${statusClass}" href="${escHtml(href)}">
-          <div class="status-icon">${icon}</div>
-          <div class="problem-info">
-            <div class="problem-title">${escHtml(p.title)}</div>
-            <div class="problem-status-text">${statusText}</div>
-          </div>
-          <div class="chevron">›</div>
-        </a>`;
+        <div class="problem-item" id="item-${escHtml(p.id)}">
+          <a class="problem-card ${statusClass}" href="${escHtml(href)}">
+            <div class="status-icon">${icon}</div>
+            <div class="problem-info">
+              <div class="problem-title">${escHtml(p.title)}</div>
+              <div class="problem-status-text">${statusText}</div>
+            </div>
+            <div class="chevron">›</div>
+          </a>
+          ${canPractice ? `<button class="practice-again-btn" onclick="startPracticeAgain('${escHtml(p.id)}')">Practice again →</button>` : ''}
+          <div class="variant-slot" id="variant-${escHtml(p.id)}"></div>
+        </div>`;
     }).join('');
 
     const allDoneBanner = allDone ? `
@@ -361,6 +550,265 @@
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;');
+  }
+
+  // ── Practice Again globals ──
+  const VARIANT_TYPES = new Set(['Solve', 'Expand']);
+  let currentStudentId = '';
+  const problemsById = {};
+  const variantState = new Map();
+
+  // ── Validation (mirrored from index.html) ──
+  function equationToExpr(str) {
+    for (let i = 0; i < str.length; i++) {
+      if (str[i] === '=' && str[i-1] !== '!' && str[i-1] !== '<' && str[i-1] !== '>' && str[i+1] !== '=') {
+        return `(${str.slice(0, i).trim()}) - (${str.slice(i+1).trim()})`;
+      }
+    }
+    return str;
+  }
+  function containsEquals(str) {
+    for (let i = 0; i < str.length; i++) {
+      if (str[i] === '=' && str[i-1] !== '!' && str[i-1] !== '<' && str[i-1] !== '>' && str[i+1] !== '=') return true;
+    }
+    return false;
+  }
+  function normalize(input) {
+    let s = input.trim();
+    s = s.replace(/²/g, '^2'); s = s.replace(/³/g, '^3'); s = s.replace(/⁴/g, '^4');
+    s = s.replace(/⁵/g, '^5'); s = s.replace(/⁶/g, '^6'); s = s.replace(/⁷/g, '^7');
+    s = s.replace(/⁸/g, '^8'); s = s.replace(/⁹/g, '^9');
+    s = s.replace(/×/g, '*'); s = s.replace(/−/g, '-');
+    s = s.replace(/sqrt/gi, '\x01');
+    s = s.replace(/√\(/g, '\x01(');
+    s = s.replace(/√(\d+)/g, '\x01($1)');
+    s = s.replace(/√([a-zA-Z])/g, '\x01($1)');
+    s = s.replace(/(\d)\x01/g, '$1*\x01'); s = s.replace(/\)\x01/g, ')*\x01'); s = s.replace(/([a-zA-Z])\x01/g, '$1*\x01');
+    s = s.replace(/(\d)([a-zA-Z])/g, '$1*$2');
+    s = s.replace(/([a-zA-Z])([a-zA-Z])/g, '$1*$2');
+    s = s.replace(/o\*r/g, 'or'); s = s.replace(/a\*nd/g, 'and');
+    s = s.replace(/(\d)\(/g, '$1*('); s = s.replace(/\)\(/g, ')*(');
+    s = s.replace(/([a-zA-Z])\(/g, '$1*('); s = s.replace(/\)([a-zA-Z])/g, ')*$1'); s = s.replace(/\)(\d)/g, ')*$1');
+    s = s.replace(/\x01/g, 'sqrt');
+    return s;
+  }
+  function hasBalancedParens(str) {
+    let depth = 0;
+    for (let i = 0; i < str.length; i++) {
+      if (str[i] === '(') depth++;
+      else if (str[i] === ')') depth--;
+      if (depth < 0) return false;
+    }
+    return depth === 0;
+  }
+  function equationEquivalence(a, b, problemType) {
+    const normA = normalize(equationToExpr(a));
+    const normB = normalize(equationToExpr(b));
+    const diffTrimmed = Algebrite.run(`simplify((${normA}) - (${normB}))`).trim();
+    if (diffTrimmed === '0') return { valid: true };
+    if (!diffTrimmed || diffTrimmed.toLowerCase().includes('stop') || diffTrimmed.toLowerCase().includes('error')) {
+      return { valid: null, parseError: true };
+    }
+    if (problemType === 'Solve') {
+      let varPart = null, valPart = null;
+      for (let i = 0; i < b.length; i++) {
+        if (b[i] === '=' && b[i-1] !== '!' && b[i-1] !== '<' && b[i-1] !== '>' && b[i+1] !== '=') {
+          varPart = normalize(b.slice(0, i).trim());
+          valPart = normalize(b.slice(i+1).trim());
+          break;
+        }
+      }
+      if (varPart && /^[a-zA-Z]$/.test(varPart)) {
+        const sub = Algebrite.run(`simplify(subst(${valPart}, ${varPart}, ${normA}))`).trim();
+        if (sub === '0') return { valid: true };
+        if (!sub || sub.toLowerCase().includes('stop') || sub.toLowerCase().includes('error')) return { valid: null, parseError: true };
+        return { valid: false };
+      }
+    }
+    return { valid: false };
+  }
+  function checkEquivalence(exprA, exprB, problemType) {
+    if (!hasBalancedParens(exprA) || !hasBalancedParens(exprB)) return { valid: null, parseError: true };
+    const partsA = exprA.split(',').map(s => s.trim()).filter(Boolean);
+    const partsB = exprB.split(',').map(s => s.trim()).filter(Boolean);
+    if (partsA.length > 1 || partsB.length > 1) {
+      if (partsA.length !== partsB.length) return { valid: false };
+      const usedB = new Set();
+      for (const pa of partsA) {
+        let matched = false;
+        for (let i = 0; i < partsB.length; i++) {
+          if (!usedB.has(i) && checkEquivalence(pa, partsB[i], problemType).valid === true) { usedB.add(i); matched = true; break; }
+        }
+        if (!matched) return { valid: false };
+      }
+      return { valid: true };
+    }
+    try {
+      if (containsEquals(exprA) && containsEquals(exprB) && problemType !== 'Evaluate') return equationEquivalence(exprA, exprB, problemType);
+      const diffTrimmed = Algebrite.run(`simplify((${normalize(exprA)}) - (${normalize(exprB)}))`).trim();
+      if (diffTrimmed === '0') return { valid: true };
+      if (!diffTrimmed || diffTrimmed.toLowerCase().includes('stop') || diffTrimmed.toLowerCase().includes('error')) return { valid: null, parseError: true };
+      return { valid: false };
+    } catch { return { valid: null, parseError: true }; }
+  }
+
+  // ── Toast ──
+  function showToast(msg) {
+    const old = document.getElementById('dash-toast');
+    if (old) old.remove();
+    const t = document.createElement('div');
+    t.id = 'dash-toast';
+    t.className = 'toast';
+    t.innerHTML = escHtml(msg) + ' <button class="toast-dismiss" onclick="document.getElementById(\'dash-toast\').remove()">×</button>';
+    document.body.appendChild(t);
+    setTimeout(() => { if (t.parentElement) t.remove(); }, 5000);
+  }
+
+  // ── Practice Again ──
+  async function startPracticeAgain(problemId) {
+    const problem = problemsById[problemId];
+    if (!problem) return;
+    const slotEl = document.getElementById('variant-' + problemId);
+    if (!slotEl) return;
+    const itemEl = document.getElementById('item-' + problemId);
+    const btn = itemEl ? itemEl.querySelector('.practice-again-btn') : null;
+    if (btn) { btn.textContent = 'Generating…'; btn.disabled = true; }
+    slotEl.innerHTML = '';
+    await startPracticeAgainInSlot(slotEl, problem);
+    if (btn) { btn.textContent = 'Practice again →'; btn.disabled = false; }
+  }
+
+  async function startPracticeAgainInSlot(slotEl, sourceProblem) {
+    const loadingDiv = document.createElement('div');
+    loadingDiv.className = 'variant-loading';
+    loadingDiv.innerHTML = '<span class="variant-spinner"></span> Generating…';
+    slotEl.appendChild(loadingDiv);
+    try {
+      const expression = sourceProblem.question || sourceProblem.expression || sourceProblem.title || '';
+      const res = await fetch(WORKER + '/generate-variant', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ studentId: currentStudentId, expression, type: sourceProblem.type, modules: sourceProblem.modules || ['equivalence'] })
+      });
+      const data = await res.json();
+      if (loadingDiv.parentElement) slotEl.removeChild(loadingDiv);
+      if (!data || data.error) { showToast("Couldn't generate a variant — try again"); return; }
+      renderVariantCard(slotEl, 'vt_' + Date.now(), data, sourceProblem);
+    } catch {
+      if (loadingDiv.parentElement) slotEl.removeChild(loadingDiv);
+      showToast("Couldn't generate a variant — try again");
+    }
+  }
+
+  function renderVariantCard(slotEl, variantId, variant, sourceProblem) {
+    const cardDiv = document.createElement('div');
+    cardDiv.className = 'variant-card';
+    cardDiv.id = 'vc-' + variantId;
+    cardDiv.innerHTML = `
+      <div class="generated-badge">Generated practice</div>
+      <div class="variant-question">${escHtml(variant.expression)}</div>
+      <div class="variant-feedback" id="vf-${variantId}" style="display:none;"></div>
+      <div id="via-${variantId}">
+        <input type="text" id="vi-${variantId}" class="variant-input" placeholder="Your answer…" autocomplete="off">
+        <div id="vcalc-${variantId}"></div>
+      </div>
+      <div id="vwa-${variantId}" style="display:none;">
+        <button class="variant-hint-btn" onclick="askVariantHint('${variantId}')">Need a hint?</button>
+      </div>
+      <div id="vda-${variantId}" style="display:none;">
+        <div class="variant-correct-msg">✓ Correct!</div>
+        <div class="variant-done-actions">
+          <button class="save-to-list-btn" id="vsave-${variantId}" onclick="saveVariant('${variantId}')">Save to my list</button>
+          <button class="chain-practice-btn" onclick="chainPracticeAgain('${variantId}')">Practice again →</button>
+        </div>
+      </div>
+    `;
+    slotEl.appendChild(cardDiv);
+    const calc = attachCalculator(
+      document.getElementById('vi-' + variantId),
+      document.getElementById('vcalc-' + variantId),
+      { onSubmit: () => submitVariantAnswer(variantId) }
+    );
+    variantState.set(variantId, { expression: variant.expression, answer: variant.answer, type: variant.type, modules: variant.modules, sourceProblem, slotEl, calc, wrongCount: 0 });
+  }
+
+  function submitVariantAnswer(variantId) {
+    const state = variantState.get(variantId);
+    if (!state) return;
+    const inputEl = document.getElementById('vi-' + variantId);
+    const input = inputEl ? inputEl.value.trim() : '';
+    if (!input) return;
+    const result = checkEquivalence(input, state.answer, state.type);
+    const feedbackEl = document.getElementById('vf-' + variantId);
+    if (result.valid === true) {
+      document.getElementById('via-' + variantId).style.display = 'none';
+      document.getElementById('vwa-' + variantId).style.display = 'none';
+      if (feedbackEl) feedbackEl.style.display = 'none';
+      document.getElementById('vda-' + variantId).style.display = 'block';
+    } else {
+      state.wrongCount++;
+      if (feedbackEl) {
+        feedbackEl.style.display = 'block';
+        feedbackEl.textContent = result.valid === null
+          ? "I couldn't understand your answer. Try rewriting it using the math buttons."
+          : 'Not quite — try again!';
+        feedbackEl.className = 'variant-feedback ' + (result.valid === null ? 'unsure' : 'wrong');
+      }
+      if (state.wrongCount >= 1) document.getElementById('vwa-' + variantId).style.display = 'block';
+      if (state.calc) state.calc.clear();
+    }
+  }
+
+  async function askVariantHint(variantId) {
+    const state = variantState.get(variantId);
+    if (!state) return;
+    const hintBtn = document.querySelector('#vwa-' + variantId + ' .variant-hint-btn');
+    if (hintBtn) { hintBtn.textContent = 'Getting hint…'; hintBtn.disabled = true; }
+    const inputEl = document.getElementById('vi-' + variantId);
+    const lastInput = inputEl ? inputEl.value.trim() : '';
+    try {
+      const res = await fetch(WORKER + '/validate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          system: 'You are a warm, encouraging math tutor for a 7th grade student. The student made an error. Give a small hint pointing toward the error without revealing the correct answer. Keep it to 1-2 sentences.',
+          messages: [{ role: 'user', content: `Problem type: ${state.type}\nProblem: ${state.expression}\nExpected answer: ${state.answer}\nStudent wrote (incorrect): ${lastInput}\n\nGive a gentle hint.` }]
+        })
+      });
+      const data = await res.json();
+      const hint = data?.content?.[0]?.text;
+      const feedbackEl = document.getElementById('vf-' + variantId);
+      if (hint && feedbackEl) { feedbackEl.style.display = 'block'; feedbackEl.textContent = hint; feedbackEl.className = 'variant-feedback hint'; }
+    } catch {}
+    if (hintBtn) { hintBtn.textContent = 'Need a hint?'; hintBtn.disabled = false; }
+  }
+
+  async function saveVariant(variantId) {
+    const state = variantState.get(variantId);
+    if (!state) return;
+    const saveBtn = document.getElementById('vsave-' + variantId);
+    if (saveBtn) { saveBtn.textContent = 'Saving…'; saveBtn.disabled = true; }
+    const baseUrl = window.location.href.split('?')[0].replace(/dashboard\.html$/, 'index.html');
+    try {
+      const res = await fetch(WORKER + '/save-variant', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ studentId: currentStudentId, expression: state.expression, answer: state.answer, type: state.type, label: 'Practice: ' + state.type, modules: state.modules || ['equivalence'], url: baseUrl })
+      });
+      const data = await res.json();
+      if (data && data.success) {
+        if (saveBtn) { saveBtn.textContent = '✓ Saved'; saveBtn.disabled = true; saveBtn.classList.add('saved'); }
+      } else { throw new Error('save failed'); }
+    } catch {
+      if (saveBtn) { saveBtn.textContent = 'Save to my list'; saveBtn.disabled = false; }
+      showToast("Couldn't save — try again");
+    }
+  }
+
+  async function chainPracticeAgain(variantId) {
+    const state = variantState.get(variantId);
+    if (!state) return;
+    await startPracticeAgainInSlot(state.slotEl, state.sourceProblem);
   }
 
   init();

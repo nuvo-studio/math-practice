@@ -1443,18 +1443,8 @@
     if (currentIndex < problems.length - 1) {
       loadProblem(currentIndex + 1);
     } else {
-      document.getElementById('practice-screen').style.display = 'none';
-      document.getElementById('done-screen').style.display = 'block';
-      if (askRonelProblems.length > 0) {
-        document.getElementById('ask-ronel-list').style.display = 'block';
-        const ul = document.getElementById('ask-ronel-items');
-        ul.innerHTML = '';
-        [...new Set(askRonelProblems)].forEach(q => {
-          const li = document.createElement('li');
-          li.textContent = q;
-          ul.appendChild(li);
-        });
-      }
+      const studentId = new URLSearchParams(window.location.search).get('student');
+      window.location.href = 'dashboard.html?student=' + studentId;
     }
   }
 

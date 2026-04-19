@@ -1332,34 +1332,8 @@
       const isFinal = checkIsFinal(input, problem.answer, problem.type);
       console.log('[submitStep] checkIsFinal:', isFinal);
       if (isFinal.valid === true) {
-        const useRawMatch = !(problem.modules?.includes('formCheck'));
-        let formMatches, formFeedback;
-        if (useRawMatch) {
-          const rawA = normalize(input).replace(/\s/g, '').toLowerCase();
-          const rawB = normalize(problem.answer).replace(/\s/g, '').toLowerCase();
-          formMatches = rawA === rawB;
-          formFeedback = null;
-          console.log('[submitStep] raw form match:', formMatches, { rawA, rawB });
-        } else {
-          showLoading('Checking answer form...');
-          console.log('[submitStep] calling askClaudeFormCheck...');
-          const tF = performance.now();
-          const formCheck = await askClaudeFormCheck(input, problem.answer, problem.type);
-          console.log(`[submitStep] askClaudeFormCheck returned in ${(performance.now()-tF).toFixed(1)}ms:`, formCheck);
-          hideLoading();
-          if (formCheck === null) {
-            askRonelProblems.push(problem.question);
-            showFeedback('unsure', "I couldn't verify your answer right now — save this one for Ronel to check.");
-            studentCalc.clear();
-            reenableInput();
-            return;
-          }
-          formMatches = formCheck.match === true;
-          formFeedback = formCheck.feedback;
-        }
-
-        if (formMatches) {
-          console.log('[submitStep] problem complete — updating DOM');
+        if (input.includes(',')) {
+          console.log('[submitStep] comma answer — skipping form check, marking complete');
           markProblemComplete();
           document.getElementById('input-area').style.display = 'none';
           document.getElementById('completed-card').style.display = 'block';
@@ -1367,10 +1341,46 @@
           document.getElementById('next-problem-btn').textContent =
             currentIndex < problems.length - 1 ? 'Next Problem →' : 'Finish ✓';
         } else {
-          formCheckAttempts++;
-          showFeedback('nudge', formFeedback || 'Correct value, but try to simplify or factor further!');
-          studentCalc.clear();
-          reenableInput();
+          const useRawMatch = !(problem.modules?.includes('formCheck'));
+          let formMatches, formFeedback;
+          if (useRawMatch) {
+            const rawA = normalize(input).replace(/\s/g, '').toLowerCase();
+            const rawB = normalize(problem.answer).replace(/\s/g, '').toLowerCase();
+            formMatches = rawA === rawB;
+            formFeedback = null;
+            console.log('[submitStep] raw form match:', formMatches, { rawA, rawB });
+          } else {
+            showLoading('Checking answer form...');
+            console.log('[submitStep] calling askClaudeFormCheck...');
+            const tF = performance.now();
+            const formCheck = await askClaudeFormCheck(input, problem.answer, problem.type);
+            console.log(`[submitStep] askClaudeFormCheck returned in ${(performance.now()-tF).toFixed(1)}ms:`, formCheck);
+            hideLoading();
+            if (formCheck === null) {
+              askRonelProblems.push(problem.question);
+              showFeedback('unsure', "I couldn't verify your answer right now — save this one for Ronel to check.");
+              studentCalc.clear();
+              reenableInput();
+              return;
+            }
+            formMatches = formCheck.match === true;
+            formFeedback = formCheck.feedback;
+          }
+
+          if (formMatches) {
+            console.log('[submitStep] problem complete — updating DOM');
+            markProblemComplete();
+            document.getElementById('input-area').style.display = 'none';
+            document.getElementById('completed-card').style.display = 'block';
+            document.getElementById('next-problem-btn').style.display = 'block';
+            document.getElementById('next-problem-btn').textContent =
+              currentIndex < problems.length - 1 ? 'Next Problem →' : 'Finish ✓';
+          } else {
+            formCheckAttempts++;
+            showFeedback('nudge', formFeedback || 'Correct value, but try to simplify or factor further!');
+            studentCalc.clear();
+            reenableInput();
+          }
         }
       } else {
         studentCalc.clear();

@@ -1298,21 +1298,28 @@
     console.log('[submitStep] entry', { input, problemType: problem.type, previousExpression });
     console.log('[submitStep] normalized input:', JSON.stringify(normalize(input)));
 
-    let equiv = checkEquivalence(previousExpression, input, problem.type);
-    console.log(`[submitStep] checkEquivalence result in ${(performance.now()-t0).toFixed(1)}ms:`, equiv);
+    let equiv;
+    if (input.includes(',')) {
+      console.log('[submitStep] comma answer — skipping step check, treating as final answer');
+      equiv = checkIsFinal(input, problem.answer, problem.type);
+      console.log(`[submitStep] checkIsFinal (comma shortcut) in ${(performance.now()-t0).toFixed(1)}ms:`, equiv);
+    } else {
+      equiv = checkEquivalence(previousExpression, input, problem.type);
+      console.log(`[submitStep] checkEquivalence result in ${(performance.now()-t0).toFixed(1)}ms:`, equiv);
 
-    if (equiv.valid === null) {
-      showLoading('Interpreting your input...');
-      console.log('[submitStep] asking Claude to interpret input...');
-      const tI = performance.now();
-      const interpreted = await askClaudeToInterpret(input);
-      console.log(`[submitStep] Claude interpret returned in ${(performance.now()-tI).toFixed(1)}ms:`, interpreted);
-      hideLoading();
-      if (interpreted) equiv = checkEquivalence(previousExpression, interpreted, problem.type);
       if (equiv.valid === null) {
-        showFeedback('unsure', "I couldn't understand your answer. Try rewriting it using the math buttons.");
-        reenableInput();
-        return;
+        showLoading('Interpreting your input...');
+        console.log('[submitStep] asking Claude to interpret input...');
+        const tI = performance.now();
+        const interpreted = await askClaudeToInterpret(input);
+        console.log(`[submitStep] Claude interpret returned in ${(performance.now()-tI).toFixed(1)}ms:`, interpreted);
+        hideLoading();
+        if (interpreted) equiv = checkEquivalence(previousExpression, interpreted, problem.type);
+        if (equiv.valid === null) {
+          showFeedback('unsure', "I couldn't understand your answer. Try rewriting it using the math buttons.");
+          reenableInput();
+          return;
+        }
       }
     }
 

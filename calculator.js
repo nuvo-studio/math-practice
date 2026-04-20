@@ -111,6 +111,23 @@
   min-height: 44px;
   font-size: 0.95rem;
 }
+.frac-icon {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1.1;
+  gap: 1px;
+  pointer-events: none;
+}
+.frac-icon .fi-n {
+  border-bottom: 1.5px solid currentColor;
+  padding: 0 3px;
+  font-size: 0.72em;
+}
+.frac-icon .fi-d {
+  padding: 0 3px;
+  font-size: 0.72em;
+}
 @media (max-width: 500px) {
   .calc-btn { min-height: 44px; font-size: 0.95rem; }
   .panel-buttons .calc-btn { min-height: 40px; }
@@ -210,6 +227,9 @@
 
 <div class="calc-panel" data-panel="ops">
   <div class="panel-buttons">
+    <button class="calc-btn special" data-frac title="Fraction">
+      <span class="frac-icon"><span class="fi-n">a</span><span class="fi-d">b</span></span>
+    </button>
     <button class="calc-btn special" data-insert="√">√</button>
     <button class="calc-btn special" data-insert="⁴">⁴</button>
     <button class="calc-btn special" data-insert="⁵">⁵</button>
@@ -269,6 +289,20 @@
       el.focus();
     }
 
+    // Inserts a fraction template ()/(). Positions cursor inside the numerator.
+    function insertFrac() {
+      if (!target) return;
+      var el    = target;
+      var start = el.selectionStart;
+      var end   = el.selectionEnd;
+      var val   = el.value;
+      var tpl   = '()/()';
+      el.value  = val.slice(0, start) + tpl + val.slice(end);
+      // Place cursor after the opening '(' of the numerator
+      el.setSelectionRange(start + 1, start + 1);
+      el.focus();
+    }
+
     function backspace() {
       if (!target) return;
       var el    = target;
@@ -297,6 +331,11 @@
     // Insert buttons
     containerEl.querySelectorAll('[data-insert]').forEach(function (btn) {
       btn.addEventListener('click', function () { insert(btn.dataset.insert); });
+    });
+
+    // Fraction template button
+    containerEl.querySelectorAll('[data-frac]').forEach(function (btn) {
+      btn.addEventListener('click', insertFrac);
     });
 
     // Backspace

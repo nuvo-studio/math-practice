@@ -102,6 +102,17 @@
     border-color: var(--accent);
   }
 
+  input[readonly] {
+    background: var(--border);
+    color: var(--text-secondary);
+    cursor: default;
+  }
+
+  input[readonly]:focus {
+    border-color: var(--border);
+    outline: none;
+  }
+
   input[type="url"] {
     font-family: var(--mono);
     font-size: 0.8rem;
@@ -469,7 +480,7 @@
     </div>
     <div class="field">
       <label>Problem ID</label>
-      <input type="text" id="new-pid" placeholder="e.g. p1" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+      <input type="text" id="new-pid" readonly>
     </div>
     <div class="btn-row">
       <button class="btn btn-primary" onclick="addProblem()">Add to list</button>

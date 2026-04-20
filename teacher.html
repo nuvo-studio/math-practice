@@ -475,10 +475,6 @@
       </label>
     </div>
     <div class="field">
-      <label>Title <span style="font-weight:400;font-size:0.75rem;color:var(--text-secondary)">(auto-filled from question if blank)</span></label>
-      <input type="text" id="new-title" placeholder="e.g. Expand 3(x+2)" autocomplete="off" autocorrect="off" spellcheck="false">
-    </div>
-    <div class="field">
       <label>Problem ID</label>
       <input type="text" id="new-pid" readonly>
     </div>
@@ -762,7 +758,7 @@
     const type     = document.getElementById('new-type').value;
     const question = document.getElementById('new-question').value.trim();
     const answer   = document.getElementById('new-answer').value.trim();
-    const title    = document.getElementById('new-title').value.trim() || question;
+    const title    = question;
     const pid      = document.getElementById('new-pid').value.trim();
 
     if (!question || !answer) {
@@ -790,7 +786,6 @@
     pidCounter = nextPidFromList(currentProblems);
     document.getElementById('new-question').value = '';
     document.getElementById('new-answer').value = '';
-    document.getElementById('new-title').value = '';
     document.getElementById('new-formcheck').checked = false;
     updatePidField();
     document.getElementById('new-question').focus();

@@ -1049,15 +1049,15 @@
 
     let isCorrect = false;
 
-    // Primary: Algebrite.compare — returns '1' when algebraically equal
+    // Primary: simplify(a - b) === '0'
     try {
       const normInput  = normalize(input);
       const normAnswer = normalize(problem.answer);
-      const cmp = Algebrite.run(`compare(${normInput}, ${normAnswer})`).trim();
-      isCorrect = cmp === '1';
-      console.log(`[submitTranslate] Algebrite.compare="${cmp}" in ${(performance.now()-t0).toFixed(1)}ms`);
+      const diff = Algebrite.run(`simplify((${normInput})-(${normAnswer}))`).trim();
+      isCorrect = diff === '0';
+      console.log(`[submitTranslate] diff="${diff}" isCorrect=${isCorrect} in ${(performance.now()-t0).toFixed(1)}ms`);
     } catch (e) {
-      console.warn('[submitTranslate] Algebrite.compare threw:', e);
+      console.warn('[submitTranslate] Algebrite threw:', e);
     }
 
     // Fallback: ask Claude to rewrite input into standard notation, then re-check
@@ -1067,11 +1067,11 @@
       hideLoading();
       if (interpreted) {
         try {
-          const cmp2 = Algebrite.run(`compare(${normalize(interpreted)}, ${normalize(problem.answer)})`).trim();
-          isCorrect = cmp2 === '1';
-          console.log(`[submitTranslate] Algebrite.compare after interpret="${cmp2}"`);
+          const diff2 = Algebrite.run(`simplify((${normalize(interpreted)})-(${normalize(problem.answer)}))`).trim();
+          isCorrect = diff2 === '0';
+          console.log(`[submitTranslate] fallback diff="${diff2}" isCorrect=${isCorrect}`);
         } catch (e) {
-          console.warn('[submitTranslate] Algebrite.compare (fallback) threw:', e);
+          console.warn('[submitTranslate] Algebrite (fallback) threw:', e);
         }
       }
     }

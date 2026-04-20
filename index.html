@@ -709,6 +709,15 @@
     }).catch(() => {}); // fire-and-forget, ignore errors silently
   }
 
+  function logStep(step, correct) {
+    if (!STUDENT_ID || !PROBLEM_ID) return;
+    fetch(`${PROXY_URL}/log-step`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ studentId: STUDENT_ID, problemId: PROBLEM_ID, step, correct })
+    }).catch(() => {}); // fire-and-forget
+  }
+
   // ── Teacher: active field tracking ──
   let activeSetupField = null;
   let cardCounter = 0;
@@ -745,6 +754,7 @@
           <option value="Solve">Solve</option>
           <option value="Evaluate">Evaluate</option>
           <option value="Rearrange">Rearrange</option>
+          <option value="Translate">Translate</option>
         </select>
       </div>
       <div class="builder-field">
@@ -1032,6 +1042,98 @@
     return checkEquivalence(studentStep, expectedAnswer, problemType);
   }
 
+  // ── Translate: submit handler ──
+  async function submitTranslate(input, problem) {
+    const t0 = performance.now();
+    console.log('[submitTranslate] entry', { input });
+
+    let isCorrect = false;
+
+    // Primary: Algebrite.compare — returns '1' when algebraically equal
+    try {
+      const normInput  = normalize(input);
+      const normAnswer = normalize(problem.answer);
+      const cmp = Algebrite.run(`compare(${normInput}, ${normAnswer})`).trim();
+      isCorrect = cmp === '1';
+      console.log(`[submitTranslate] Algebrite.compare="${cmp}" in ${(performance.now()-t0).toFixed(1)}ms`);
+    } catch (e) {
+      console.warn('[submitTranslate] Algebrite.compare threw:', e);
+    }
+
+    // Fallback: ask Claude to rewrite input into standard notation, then re-check
+    if (!isCorrect) {
+      showLoading('Interpreting your input...');
+      const interpreted = await askClaudeToInterpret(input);
+      hideLoading();
+      if (interpreted) {
+        try {
+          const cmp2 = Algebrite.run(`compare(${normalize(interpreted)}, ${normalize(problem.answer)})`).trim();
+          isCorrect = cmp2 === '1';
+          console.log(`[submitTranslate] Algebrite.compare after interpret="${cmp2}"`);
+        } catch (e) {
+          console.warn('[submitTranslate] Algebrite.compare (fallback) threw:', e);
+        }
+      }
+    }
+
+    logStep(input, isCorrect);
+
+    if (isCorrect) {
+      wrongCount = 0;
+      stepHistory.push(input);
+      addStepToHistory(input);
+      document.getElementById('feedback').style.display = 'none';
+      markProblemComplete();
+      document.getElementById('input-area').style.display = 'none';
+      document.getElementById('completed-card').style.display = 'block';
+      document.getElementById('next-problem-btn').style.display = 'block';
+      document.getElementById('next-problem-btn').textContent =
+        currentIndex < problems.length - 1 ? 'Next Problem →' : 'Finish ✓';
+    } else {
+      wrongCount++;
+      studentCalc.clear();
+      if (wrongCount >= 2) {
+        showLoading('Getting a hint...');
+        const hint = await askClaudeForTranslateHint(problem, input);
+        hideLoading();
+        showFeedback('nudge', hint || "Think about what each part of the phrase means mathematically.");
+      } else {
+        showFeedback('wrong', "That's not quite right. Try writing the algebraic expression.");
+      }
+      reenableInput();
+    }
+    console.log(`[submitTranslate] total time: ${(performance.now()-t0).toFixed(1)}ms`);
+  }
+
+  async function askClaudeForTranslateHint(problem, wrongInput) {
+    const t0 = performance.now();
+    console.log('[askClaudeForTranslateHint] entry', { wrongInput });
+    try {
+      const response = await fetchWithTimeout(PROXY_URL + '/validate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          system: "You are a warm, encouraging math tutor for a 7th grade student learning to translate word phrases into algebraic expressions. The student made an error. Give a short hint that guides them to think about what each part of the phrase means mathematically — for example, which operation the phrase implies, or what plays the role of the coefficient. Never reveal the correct algebraic expression. Keep it to 1-2 sentences.",
+          messages: [{
+            role: 'user',
+            content: `Word phrase: ${problem.question}\nStudent wrote: ${wrongInput}\n\nGive a gentle hint without revealing the answer.`
+          }]
+        })
+      });
+      if (!response.ok) {
+        console.warn('[askClaudeForTranslateHint] response not ok:', response.status);
+        return null;
+      }
+      const data = await response.json();
+      const result = data.content.map(c => c.text || '').join('').trim() || null;
+      console.log(`[askClaudeForTranslateHint] exit in ${(performance.now()-t0).toFixed(1)}ms:`, result);
+      return result;
+    } catch (e) {
+      console.error(`[askClaudeForTranslateHint] error after ${(performance.now()-t0).toFixed(1)}ms:`, e);
+      return null;
+    }
+  }
+
   function extractExpression(questionText) {
     return questionText
       .replace(/^(expand and simplify|expand|factorise|factorize|simplify|solve|evaluate|find|calculate)\s+/i, '')
@@ -1288,6 +1390,13 @@
     document.getElementById('feedback').style.display = 'none';
 
     const problem = problems[currentIndex];
+
+    // ── Translate: single-step, Algebrite.compare + Claude fallback, no form check ──
+    if (problem.type === 'Translate') {
+      await submitTranslate(input, problem);
+      return;
+    }
+
     const previousExpression = (problem.type === 'Evaluate' || problem.type === 'Rearrange')
       ? problem.answer
       : stepHistory.length > 0
@@ -1327,6 +1436,7 @@
       wrongCount = 0;
       stepHistory.push(input);
       addStepToHistory(input);
+      logStep(input, true);
       document.getElementById('feedback').style.display = 'none';
 
       const isFinal = checkIsFinal(input, problem.answer, problem.type);
@@ -1388,6 +1498,7 @@
       }
     } else {
       wrongCount++;
+      logStep(input, false);
       studentCalc.clear();
 
       if (wrongCount >= 4) {

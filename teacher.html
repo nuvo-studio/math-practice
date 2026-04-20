@@ -291,6 +291,46 @@
   .student-selector-row.new-student { border-style: dashed; color: var(--accent); font-weight: 600; font-size: 0.9rem; }
 
   .selector-note { color: var(--text-secondary); font-size: 0.82rem; font-style: italic; }
+
+  /* Step log */
+  .step-log {
+    margin: 4px 0 6px;
+    padding: 8px 12px;
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-size: 0.82rem;
+  }
+
+  .log-row {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    padding: 5px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .log-row:last-child { border-bottom: none; }
+
+  .log-icon { font-weight: 700; flex-shrink: 0; width: 14px; }
+  .log-row.log-correct .log-icon { color: var(--accent); }
+  .log-row.log-wrong   .log-icon { color: var(--wrong); }
+
+  .log-step {
+    flex: 1;
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    min-width: 0;
+    word-break: break-word;
+  }
+
+  .log-ts {
+    font-size: 0.72rem;
+    color: var(--text-secondary);
+    flex-shrink: 0;
+  }
+
+  .log-empty { color: var(--text-secondary); font-size: 0.82rem; }
 </style>
 </head>
 <body>
@@ -367,14 +407,15 @@
         <option value="Solve">Solve</option>
         <option value="Evaluate">Evaluate</option>
         <option value="Rearrange">Rearrange</option>
+        <option value="Translate">Translate</option>
       </select>
     </div>
     <div class="field">
-      <label>Question</label>
+      <label id="new-question-label">Question</label>
       <input type="text" id="new-question" placeholder="e.g. 3(x + 2)" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
     </div>
     <div class="field">
-      <label>Answer</label>
+      <label id="new-answer-label">Answer</label>
       <input type="text" id="new-answer" placeholder="e.g. 3x + 6" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
     </div>
     <div class="field">
@@ -441,6 +482,19 @@
     document.getElementById(id).addEventListener('focus', function () {
       teacherCalc.setTarget(this);
     });
+  });
+
+  // ── Translate: swap field labels and placeholders ──
+  document.getElementById('new-type').addEventListener('change', function () {
+    const isTranslate = this.value === 'Translate';
+    document.getElementById('new-question-label').textContent = isTranslate ? 'Word description' : 'Question';
+    document.getElementById('new-question').placeholder       = isTranslate
+      ? 'e.g. the triple of a number x, decreased by 4'
+      : 'e.g. 3(x + 2)';
+    document.getElementById('new-answer-label').textContent   = isTranslate ? 'Expected answer' : 'Answer';
+    document.getElementById('new-answer').placeholder         = isTranslate
+      ? 'e.g. 3x - 4'
+      : 'e.g. 3x + 6';
   });
 
   let teacherSecret = '';
@@ -688,11 +742,15 @@
 
     empty.style.display = 'none';
     list.innerHTML = currentProblems.map(p => `
-      <div class="problem-item ${p.completed ? 'completed' : 'pending'}">
-        <span class="pid">${escHtml(p.id)}</span>
-        <span class="ptitle" title="${escHtml(p.title)}">${escHtml(p.title)}</span>
-        <span class="done-badge">${p.completed ? '✅ done' : '🔵 todo'}</span>
-        <button class="btn btn-danger btn-sm" onclick="removeProblem('${escHtml(p.id)}')">Remove</button>
+      <div>
+        <div class="problem-item ${p.completed ? 'completed' : 'pending'}">
+          <span class="pid">${escHtml(p.id)}</span>
+          <span class="ptitle" title="${escHtml(p.title)}">${escHtml(p.title)}</span>
+          <span class="done-badge">${p.completed ? '✅ done' : '🔵 todo'}</span>
+          <button class="btn btn-secondary btn-sm" onclick="viewStepLog('${escHtml(p.id)}', this)">Steps ▾</button>
+          <button class="btn btn-danger btn-sm" onclick="removeProblem('${escHtml(p.id)}')">Remove</button>
+        </div>
+        <div id="log-${escHtml(p.id)}" class="step-log" style="display:none;"></div>
       </div>`).join('');
   }
 
@@ -822,6 +880,50 @@
       .replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;')
       .replace(/'/g, '&#39;');
+  }
+
+  // ── Step log viewer ────────────────────────────────────────────
+  async function viewStepLog(pid, btn) {
+    const logDiv = document.getElementById(`log-${pid}`);
+    if (!logDiv) return;
+
+    // Toggle: hide if already open
+    if (logDiv.style.display !== 'none') {
+      logDiv.style.display = 'none';
+      btn.textContent = 'Steps ▾';
+      return;
+    }
+
+    logDiv.style.display = 'block';
+    btn.textContent = 'Steps ▴';
+    logDiv.innerHTML = '<div class="log-empty">Loading…</div>';
+
+    try {
+      const res = await fetch(
+        `${WORKER}/get-logs?studentId=${encodeURIComponent(selectedStudentId)}&problemId=${encodeURIComponent(pid)}`
+      );
+      const data = await res.json();
+      const logs = (data.logs || []).slice().reverse(); // most recent first
+
+      if (logs.length === 0) {
+        logDiv.innerHTML = '<div class="log-empty">No attempts yet.</div>';
+        return;
+      }
+
+      logDiv.innerHTML = logs.map(entry => {
+        const ts = new Date(entry.timestamp).toLocaleString(undefined, {
+          month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+        });
+        const correct = entry.correct === true;
+        return `<div class="log-row ${correct ? 'log-correct' : 'log-wrong'}">
+          <span class="log-icon">${correct ? '✓' : '✗'}</span>
+          <span class="log-step">${escHtml(String(entry.step))}</span>
+          <span class="log-ts">${ts}</span>
+        </div>`;
+      }).join('');
+    } catch {
+      logDiv.innerHTML = '<div class="log-empty" style="color:var(--wrong)">Failed to load logs.</div>';
+    }
   }
 </script>
 </body>

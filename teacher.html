@@ -457,6 +457,12 @@
       </select>
     </div>
     <div class="field">
+      <label style="text-transform:none;letter-spacing:0;font-size:0.88rem;display:flex;align-items:center;gap:8px;cursor:pointer;font-weight:500;">
+        <input type="checkbox" id="new-formcheck">
+        Require form check (Claude verifies answer structure)
+      </label>
+    </div>
+    <div class="field">
       <label id="new-question-label">Question</label>
       <input type="text" id="new-question" placeholder="e.g. 3(x + 2)" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
     </div>
@@ -467,12 +473,6 @@
     <div class="field">
       <label>Calculator <span style="font-weight:400;font-size:0.75rem;color:var(--text-secondary)">(tap Question or Answer first)</span></label>
       <div id="teacher-calc"></div>
-    </div>
-    <div class="field">
-      <label style="text-transform:none;letter-spacing:0;font-size:0.88rem;display:flex;align-items:center;gap:8px;cursor:pointer;font-weight:500;">
-        <input type="checkbox" id="new-formcheck">
-        Require form check (Claude verifies answer structure)
-      </label>
     </div>
     <div class="field">
       <label>Problem ID</label>

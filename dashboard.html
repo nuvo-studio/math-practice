@@ -426,7 +426,7 @@
         })
       });
       if (!saveRes.ok) throw new Error('save failed');
-      window.location.href = 'index.html?student=' + encodeURIComponent(currentStudentId);
+      window.location.href = 'dashboard.html?student=' + encodeURIComponent(currentStudentId);
     } catch {
       btn.textContent = 'Try again';
       btn.disabled = false;

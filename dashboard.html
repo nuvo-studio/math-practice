@@ -364,10 +364,15 @@
     `);
   }
 
+  const OLD_PRACTICE_HOST = 'credito-scorer.github.io';
+  const NEW_PRACTICE_HOST = 'nuvo-studio.github.io';
+
   function buildProblemUrl(problem, studentId) {
     // Append ?student=X&pid=Y to the problem URL so index.html can track completion
     try {
       const u = new URL(problem.url);
+      // Normalize URLs stored before the GitHub username change
+      if (u.hostname === OLD_PRACTICE_HOST) u.hostname = NEW_PRACTICE_HOST;
       u.searchParams.set('student', studentId);
       u.searchParams.set('pid', problem.id);
       return u.toString();

@@ -727,7 +727,10 @@
       const student = await res.json();
       selectedStudentName = student.name || id;
       document.getElementById('student-name').value = selectedStudentName;
-      currentProblems = student.problems || [];
+      currentProblems = (student.problems || []).map(p => ({
+        ...p,
+        url: p.url ? p.url.replace('https://credito-scorer.github.io/math-practice/', PRACTICE_BASE) : p.url
+      }));
       pidCounter = nextPidFromList(currentProblems);
       updatePidField();
       renderProblems();

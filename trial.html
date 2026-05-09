@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Start Free Trial — Nuvo Math</title>
+  <meta name="description" content="Start your 2-day free trial of Nuvo Math. Step-by-step algebra practice for grades 6–9.">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    /* ── Reset & Base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue:        #2563EB;
+      --blue-dark:   #1E40AF;
+      --blue-light:  #DBEAFE;
+      --blue-xlight: #EFF6FF;
+      --text:        #111827;
+      --text-mid:    #374151;
+      --text-muted:  #6B7280;
+      --border:      #E5E7EB;
+      --bg:          #F9FAFB;
+      --white:       #FFFFFF;
+      --radius:      12px;
+      --radius-lg:   20px;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Nav ── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 24px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .nav-logo {
+      font-weight: 800;
+      font-size: 1.2rem;
+      color: var(--text);
+      text-decoration: none;
+      letter-spacing: -0.03em;
+      flex-shrink: 0;
+    }
+
+    .nav-logo span { color: var(--blue); }
+
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--text-mid);
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: color 0.15s;
+    }
+
+    .nav-links a:hover { color: var(--text); }
+
+    /* ── Hamburger (mobile) ── */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 4px;
+      background: none;
+      border: none;
+    }
+
+    .hamburger span {
+      display: block;
+      width: 22px;
+      height: 2px;
+      background: var(--text);
+      border-radius: 2px;
+      transition: all 0.2s;
+    }
+
+    /* ── Main layout ── */
+    main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 56px 24px;
+    }
+
+    .form-wrap {
+      background: var(--white);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 44px 40px;
+      width: 100%;
+      max-width: 520px;
+    }
+
+    /* ── Form header ── */
+    .form-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--blue);
+      margin-bottom: 10px;
+    }
+
+    .form-heading {
+      font-size: 1.75rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.2;
+      margin-bottom: 10px;
+    }
+
+    .form-sub {
+      font-size: 0.92rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 32px;
+    }
+
+    /* ── Form fields ── */
+    .field {
+      margin-bottom: 18px;
+    }
+
+    .field label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-mid);
+      margin-bottom: 6px;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 11px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.92rem;
+      color: var(--text);
+      background: var(--white);
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    .field select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='7' viewBox='0 0 12 7'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236B7280' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      padding-right: 36px;
+    }
+
+    .field input:focus,
+    .field select:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px var(--blue-light);
+    }
+
+    .field input::placeholder { color: #9CA3AF; }
+
+    .field .optional {
+      font-weight: 400;
+      color: var(--text-muted);
+    }
+
+    /* ── Submit button ── */
+    .submit-btn {
+      width: 100%;
+      padding: 14px;
+      background: var(--blue);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius);
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.15s;
+      margin-top: 8px;
+    }
+
+    .submit-btn:hover { background: var(--blue-dark); }
+    .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    .form-note {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-align: center;
+      margin-top: 14px;
+      line-height: 1.5;
+    }
+
+    /* ── Thank-you state ── */
+    .thankyou {
+      display: none;
+      text-align: center;
+      padding: 16px 0 8px;
+    }
+
+    .thankyou-icon {
+      font-size: 2.8rem;
+      margin-bottom: 16px;
+      line-height: 1;
+    }
+
+    .thankyou h2 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 12px;
+    }
+
+    .thankyou p {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      line-height: 1.65;
+      max-width: 380px;
+      margin: 0 auto;
+    }
+
+    /* ── Footer ── */
+    footer {
+      background: #111827;
+      color: #D1D5DB;
+      padding: 40px 24px;
+    }
+
+    .footer-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      text-align: center;
+    }
+
+    .footer-logo {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: white;
+      letter-spacing: -0.03em;
+    }
+
+    .footer-logo span { color: #93C5FD; }
+
+    .footer-contact {
+      display: flex;
+      gap: 28px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .footer-contact a {
+      color: #9CA3AF;
+      text-decoration: none;
+      font-size: 0.88rem;
+      transition: color 0.15s;
+    }
+
+    .footer-contact a:hover { color: white; }
+
+    .footer-copy {
+      font-size: 0.8rem;
+      color: #4B5563;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .nav-links.open {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        position: absolute;
+        top: 64px;
+        left: 0;
+        right: 0;
+        background: white;
+        padding: 20px 24px 24px;
+        border-bottom: 1px solid var(--border);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+      }
+      .nav-links.open a { font-size: 1rem; padding: 8px 0; }
+      .hamburger { display: flex; }
+
+      main { padding: 32px 16px 48px; align-items: flex-start; }
+      .form-wrap { padding: 32px 24px; }
+      .form-heading { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ════════ NAV ════════ -->
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">Nuvo <span>Math</span></a>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="index.html#how-it-works">How it works</a></li>
+      <li><a href="index.html#curriculum">Curriculum</a></li>
+      <li><a href="index.html#pricing">Pricing</a></li>
+    </ul>
+    <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+
+<!-- ════════ MAIN ════════ -->
+<main>
+  <div class="form-wrap">
+
+    <!-- Form -->
+    <div id="form-section">
+      <p class="form-label">Free Trial</p>
+      <h1 class="form-heading">Start your 2-day free trial</h1>
+      <p class="form-sub">Fill in the details below and we'll send your student's login within a few hours.</p>
+
+      <form id="trial-form" action="https://formspree.io/f/xeenponv" method="POST">
+
+        <div class="field">
+          <label for="parent-name">Parent name</label>
+          <input type="text" id="parent-name" name="parent_name" required placeholder="Your full name">
+        </div>
+
+        <div class="field">
+          <label for="parent-email">Parent email</label>
+          <input type="email" id="parent-email" name="parent_email" required placeholder="you@example.com">
+        </div>
+
+        <div class="field">
+          <label for="student-name">Student name</label>
+          <input type="text" id="student-name" name="student_name" required placeholder="Your child's name">
+        </div>
+
+        <div class="field">
+          <label for="student-grade">Student grade</label>
+          <select id="student-grade" name="student_grade" required>
+            <option value="" disabled selected>Select a grade</option>
+            <option value="Grade 6">Grade 6</option>
+            <option value="Grade 7">Grade 7</option>
+            <option value="Grade 8">Grade 8</option>
+            <option value="Grade 9">Grade 9</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="plan">Plan</label>
+          <select id="plan" name="plan" required>
+            <option value="" disabled selected>Select a plan</option>
+            <option value="Practice — $29/month">Practice &mdash; $29/month</option>
+            <option value="Practice + Tutoring — $99/month">Practice + Tutoring &mdash; $99/month</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="whatsapp">WhatsApp number <span class="optional">(optional)</span></label>
+          <input type="text" id="whatsapp" name="whatsapp" placeholder="Optional — for faster support">
+        </div>
+
+        <button type="submit" class="submit-btn" id="submit-btn">Send my details</button>
+        <p class="form-note">No payment required. We'll reach out within a few hours to set up your account.</p>
+
+      </form>
+    </div>
+
+    <!-- Thank-you (shown after submit) -->
+    <div class="thankyou" id="thankyou">
+      <div class="thankyou-icon">&#x2705;</div>
+      <h2>You're all set!</h2>
+      <p>Check your email — we'll send your student's login link within a few hours. Questions? WhatsApp us at 6014-1676.</p>
+    </div>
+
+  </div>
+</main>
+
+
+<!-- ════════ FOOTER ════════ -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-logo">Nuvo <span>Math</span></div>
+    <div class="footer-contact">
+      <a href="mailto:tutor@nuvostudio.club">tutor@nuvostudio.club</a>
+      <a href="https://wa.me/5076014-1676">WhatsApp: 6014-1676</a>
+    </div>
+    <p class="footer-copy">&copy; 2026 Nuvo Math &middot; nuvostudio.club</p>
+  </div>
+</footer>
+
+
+<script>
+  // ── Mobile nav toggle ──
+  const hamburger = document.getElementById('hamburger');
+  const navLinks  = document.getElementById('nav-links');
+
+  hamburger.addEventListener('click', () => {
+    const open = navLinks.classList.toggle('open');
+    hamburger.setAttribute('aria-expanded', open);
+  });
+
+  navLinks.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => {
+      navLinks.classList.remove('open');
+      hamburger.setAttribute('aria-expanded', false);
+    });
+  });
+
+  // ── Formspree AJAX submit ──
+  const form      = document.getElementById('trial-form');
+  const submitBtn = document.getElementById('submit-btn');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Sending…';
+
+    try {
+      const res = await fetch(form.action, {
+        method: 'POST',
+        body: new FormData(form),
+        headers: { 'Accept': 'application/json' }
+      });
+
+      if (res.ok) {
+        document.getElementById('form-section').style.display = 'none';
+        document.getElementById('thankyou').style.display = 'block';
+      } else {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Send my details';
+        alert('Something went wrong. Please try again or email us at tutor@nuvostudio.club.');
+      }
+    } catch {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Send my details';
+      alert('Something went wrong. Please try again or email us at tutor@nuvostudio.club.');
+    }
+  });
+</script>
+
+</body>
+</html>

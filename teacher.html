@@ -491,60 +491,66 @@
 
   <!-- Student -->
   <div class="card">
-    <div class="card-title">Student</div>
-
-    <!-- No student selected -->
-    <div id="student-placeholder">
-      <p style="color:var(--text-secondary);font-size:0.88rem;">Select a student from the list above to begin.</p>
+    <div class="card-title card-title-toggle" id="student-card-toggle" onclick="toggleStudentCard()">
+      Student
+      <span class="toggle-chevron" id="student-card-chevron">▾</span>
     </div>
+    <div class="student-list-body" id="student-card-body">
 
-    <!-- Student selected: compact view -->
-    <div id="student-compact" style="display:none;">
-      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
-        <div>
-          <div id="compact-name" style="font-size:0.95rem;font-weight:600;"></div>
-          <div id="compact-id" style="font-size:0.75rem;color:var(--text-secondary);font-family:var(--mono);margin-top:2px;"></div>
-          <div id="compact-meta" style="font-size:0.75rem;color:var(--accent);margin-top:3px;"></div>
+      <!-- No student selected -->
+      <div id="student-placeholder">
+        <p style="color:var(--text-secondary);font-size:0.88rem;">Select a student from the list above to begin.</p>
+      </div>
+
+      <!-- Student selected: compact view -->
+      <div id="student-compact" style="display:none;">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
+          <div>
+            <div id="compact-name" style="font-size:0.95rem;font-weight:600;"></div>
+            <div id="compact-id" style="font-size:0.75rem;color:var(--text-secondary);font-family:var(--mono);margin-top:2px;"></div>
+            <div id="compact-meta" style="font-size:0.75rem;color:var(--accent);margin-top:3px;"></div>
+          </div>
+          <button class="btn btn-secondary btn-sm" onclick="showEditForm()">Edit ✏️</button>
         </div>
-        <button class="btn btn-secondary btn-sm" onclick="showEditForm()">Edit ✏️</button>
       </div>
-    </div>
 
-    <!-- Full form: new student creation or editing existing -->
-    <div id="student-form" style="display:none;">
-      <div class="field">
-        <label>Student ID</label>
-        <input type="text" id="student-id" placeholder="e.g. sofia" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+      <!-- Full form: new student creation or editing existing -->
+      <div id="student-form" style="display:none;">
+        <div class="field">
+          <label>Student ID</label>
+          <input type="text" id="student-id" placeholder="e.g. sofia" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+        </div>
+        <div class="field">
+          <label>Student Name</label>
+          <input type="text" id="student-name" placeholder="e.g. Sofia" autocomplete="off" autocorrect="off" spellcheck="false">
+        </div>
+        <div class="field">
+          <label>Curriculum</label>
+          <select id="student-curriculum" onchange="updateGradeOptions(this.value)">
+            <option value="" disabled selected>Select curriculum...</option>
+            <option value="cambridge">Cambridge Lower Secondary</option>
+            <option value="common-core">Common Core (US)</option>
+            <option value="ib-myp">IB MYP</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Grade / Stage</label>
+          <select id="student-grade">
+            <option value="" disabled selected>Select grade...</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Trial expiry date <span style="font-weight:400;color:var(--text-secondary);">(optional — leave blank for full access)</span></label>
+          <input type="date" id="trial-expiry">
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-primary" onclick="saveProfile()" id="save-profile-btn">Save Student</button>
+          <button class="btn btn-secondary" id="cancel-edit-btn" onclick="cancelEdit()" style="display:none;">Cancel</button>
+        </div>
+        <div id="profile-status" class="status-msg" style="display:none;"></div>
       </div>
-      <div class="field">
-        <label>Student Name</label>
-        <input type="text" id="student-name" placeholder="e.g. Sofia" autocomplete="off" autocorrect="off" spellcheck="false">
-      </div>
-      <div class="field">
-        <label>Curriculum</label>
-        <select id="student-curriculum" onchange="updateGradeOptions(this.value)">
-          <option value="" disabled selected>Select curriculum...</option>
-          <option value="cambridge">Cambridge Lower Secondary</option>
-          <option value="common-core">Common Core (US)</option>
-          <option value="ib-myp">IB MYP</option>
-          <option value="other">Other</option>
-        </select>
-      </div>
-      <div class="field">
-        <label>Grade / Stage</label>
-        <select id="student-grade">
-          <option value="" disabled selected>Select grade...</option>
-        </select>
-      </div>
-      <div class="field">
-        <label>Trial expiry date <span style="font-weight:400;color:var(--text-secondary);">(optional — leave blank for full access)</span></label>
-        <input type="date" id="trial-expiry">
-      </div>
-      <div class="btn-row">
-        <button class="btn btn-primary" onclick="saveProfile()" id="save-profile-btn">Save Student</button>
-        <button class="btn btn-secondary" id="cancel-edit-btn" onclick="cancelEdit()" style="display:none;">Cancel</button>
-      </div>
-      <div id="profile-status" class="status-msg" style="display:none;"></div>
+
     </div>
   </div>
 
@@ -824,6 +830,12 @@
     document.getElementById('student-list-toggle').classList.toggle('collapsed');
     document.getElementById('student-list-body').classList.toggle('collapsed');
     document.getElementById('student-list-chevron').classList.toggle('collapsed');
+  }
+
+  function toggleStudentCard() {
+    document.getElementById('student-card-toggle').classList.toggle('collapsed');
+    document.getElementById('student-card-body').classList.toggle('collapsed');
+    document.getElementById('student-card-chevron').classList.toggle('collapsed');
   }
 
   // ── Student card state helpers ────────────────────────────────

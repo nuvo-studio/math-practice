@@ -514,8 +514,21 @@
     </div>
   </div>
 
-  <!-- Step 2: Add problem -->
-  <div class="card" id="add-problem-card" style="display:none;">
+  <!-- Dashboard link -->
+  <div class="card" id="dashboard-card" style="display:none;">
+    <div class="card-title">Student Dashboard Link</div>
+    <p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:10px;">Share this link with the student:</p>
+    <code id="dashboard-link" style="font-family:var(--mono);font-size:0.78rem;word-break:break-all;color:var(--accent);"></code>
+    <div class="btn-row">
+      <button class="btn btn-secondary btn-sm" onclick="copyDashboardLink()">Copy link</button>
+    </div>
+  </div>
+
+  <!-- Problem Bank -->
+  <h2 style="font-size:1.1rem;font-weight:700;letter-spacing:-0.01em;margin-top:32px;margin-bottom:4px;">PROBLEM BANK</h2>
+  <p class="subtitle" style="margin-bottom:16px;">Problems are shared across all students.</p>
+
+  <div class="card" id="add-problem-card">
     <div class="card-title">Add Problem</div>
     <div class="field">
       <label>Type</label>
@@ -598,7 +611,7 @@
   </div>
 
   <!-- Current problem list -->
-  <div class="card" id="problem-list-card" style="display:none;">
+  <div class="card" id="problem-list-card">
     <div class="card-title">Current Problem List</div>
     <div class="filter-bar">
       <select class="filter-select" onchange="problemFilters.curriculum=this.value;renderProblems()">
@@ -640,16 +653,6 @@
     </div>
     <div id="save-status" class="status-msg" style="display:none;"></div>
   </div>
-
-  <!-- Dashboard link -->
-  <div class="card" id="dashboard-card" style="display:none;">
-    <div class="card-title">Student Dashboard Link</div>
-    <p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:10px;">Share this link with the student:</p>
-    <code id="dashboard-link" style="font-family:var(--mono);font-size:0.78rem;word-break:break-all;color:var(--accent);"></code>
-    <div class="btn-row">
-      <button class="btn btn-secondary btn-sm" onclick="copyDashboardLink()">Copy link</button>
-    </div>
-  </div>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -657,7 +660,7 @@
 <script src="calculator.js"></script>
 <script>
   const WORKER = 'https://math-practice-proxy.ronelalmanza20.workers.dev';
-  const DASHBOARD_BASE = 'https://nuvo-studio.github.io/math-practice/dashboard.html';
+  const DASHBOARD_BASE = 'https://nuvostudio.club/home.html';
   const PRACTICE_BASE  = 'https://nuvo-studio.github.io/math-practice/app.html';
 
   // ── Calculator (shared between Question and Answer fields) ──
@@ -861,14 +864,9 @@
     }
   }
 
-  function showDownstreamCards() {
-    document.getElementById('add-problem-card').style.display = 'block';
-    document.getElementById('problem-list-card').style.display = 'block';
-  }
+  function showDownstreamCards() {}
 
   function hideDownstreamCards() {
-    document.getElementById('add-problem-card').style.display = 'none';
-    document.getElementById('problem-list-card').style.display = 'none';
     document.getElementById('dashboard-card').style.display = 'none';
   }
 

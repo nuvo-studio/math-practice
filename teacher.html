@@ -72,6 +72,35 @@
     margin-bottom: 14px;
   }
 
+  /* Collapsible student list */
+  .card-title-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    user-select: none;
+    border-radius: 6px;
+    padding: 3px 6px;
+    margin-left: -6px;
+    margin-right: -6px;
+    transition: background 0.15s;
+  }
+  .card-title-toggle:hover { background: var(--accent-bg); }
+  .card-title-toggle.collapsed { margin-bottom: 0; }
+  .toggle-chevron {
+    font-size: 0.85rem;
+    display: inline-block;
+    line-height: 1;
+    transition: transform 0.25s ease;
+  }
+  .toggle-chevron.collapsed { transform: rotate(-90deg); }
+  .student-list-body {
+    overflow: hidden;
+    max-height: 2000px;
+    transition: max-height 0.3s ease;
+  }
+  .student-list-body.collapsed { max-height: 0; }
+
   /* Form fields */
   .field { margin-bottom: 12px; }
 
@@ -449,9 +478,14 @@
 
   <!-- Student selector -->
   <div class="card">
-    <div class="card-title">All Students</div>
-    <div id="student-selector-list" class="student-selector">
-      <div class="selector-note">Loading…</div>
+    <div class="card-title card-title-toggle" id="student-list-toggle" onclick="toggleStudentList()">
+      All Students
+      <span class="toggle-chevron" id="student-list-chevron">▾</span>
+    </div>
+    <div class="student-list-body" id="student-list-body">
+      <div id="student-selector-list" class="student-selector">
+        <div class="selector-note">Loading…</div>
+      </div>
     </div>
   </div>
 
@@ -783,6 +817,13 @@
 
   function renderNewStudentRow() {
     return `<div class="student-selector-row new-student${selectedStudentId === null ? ' active' : ''}" onclick="newStudent()">+ New Student</div>`;
+  }
+
+  // ── Toggle student list ────────────────────────────────────────
+  function toggleStudentList() {
+    document.getElementById('student-list-toggle').classList.toggle('collapsed');
+    document.getElementById('student-list-body').classList.toggle('collapsed');
+    document.getElementById('student-list-chevron').classList.toggle('collapsed');
   }
 
   // ── Student card state helpers ────────────────────────────────

@@ -191,15 +191,64 @@
     flex-shrink: 0;
   }
 
-  .problem-item .ptitle {
+  .prob-main {
     flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .problem-item .ptitle {
     font-size: 0.9rem;
     font-weight: 500;
-    min-width: 0;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
+
+  .prob-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+
+  .prob-tag {
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 99px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    flex-shrink: 0;
+  }
+
+  .prob-tag--curriculum { background: #EFF6FF; color: #1D4ED8; }
+  .prob-tag--unit       { background: #F5F3FF; color: #6D28D9; }
+  .prob-tag--stage      { background: #ECFDF5; color: #065F46; }
+  .prob-tag--type       { background: #FFF7ED; color: #C2410C; }
+  .prob-tag--untagged   { background: #F3F4F6; color: #9CA3AF; }
+
+  .filter-bar {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+    padding: 10px 12px;
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+  }
+
+  .filter-select {
+    padding: 5px 8px;
+    border: 1.5px solid var(--border);
+    border-radius: 6px;
+    font-family: var(--sans);
+    font-size: 0.78rem;
+    background: var(--card);
+    color: var(--text);
+    cursor: pointer;
+    outline: none;
+  }
+
+  .filter-select:focus { border-color: var(--accent); }
 
   .problem-item .done-badge {
     font-size: 0.75rem;
@@ -480,6 +529,48 @@
       </select>
     </div>
     <div class="field">
+      <label>Curriculum</label>
+      <select id="new-curriculum">
+        <option value="" disabled selected>Select curriculum...</option>
+        <option value="cambridge">Cambridge Lower Secondary</option>
+        <option value="common-core">Common Core (US)</option>
+        <option value="ib-myp">IB MYP</option>
+        <option value="general">General (all curricula)</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Unit</label>
+      <select id="new-unit">
+        <option value="" disabled selected>Select unit...</option>
+        <option value="1">1 &mdash; Algebraic Foundations</option>
+        <option value="2">2 &mdash; Expanding &amp; Simplifying</option>
+        <option value="3">3 &mdash; Factorising</option>
+        <option value="4">4 &mdash; Linear Equations &amp; Inequalities</option>
+        <option value="5">5 &mdash; Formulae &amp; Rearranging</option>
+        <option value="6">6 &mdash; Sequences</option>
+        <option value="7">7 &mdash; Simultaneous Equations</option>
+        <option value="8">8 &mdash; Linear Functions &amp; Graphs</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Stage</label>
+      <select id="new-stage">
+        <option value="" disabled selected>Select stage...</option>
+        <option value="1">Stage 1</option>
+        <option value="2">Stage 2</option>
+        <option value="3">Stage 3</option>
+        <option value="4">Stage 4</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Problem type</label>
+      <select id="new-problem-type">
+        <option value="" disabled selected>Select type...</option>
+        <option value="diagnostic">Diagnostic</option>
+        <option value="practice">Practice</option>
+      </select>
+    </div>
+    <div class="field">
       <label style="text-transform:none;letter-spacing:0;font-size:0.88rem;display:flex;align-items:center;gap:8px;cursor:pointer;font-weight:500;">
         <input type="checkbox" id="new-formcheck">
         Require form check (Claude verifies answer structure)
@@ -509,6 +600,38 @@
   <!-- Current problem list -->
   <div class="card" id="problem-list-card" style="display:none;">
     <div class="card-title">Current Problem List</div>
+    <div class="filter-bar">
+      <select class="filter-select" onchange="problemFilters.curriculum=this.value;renderProblems()">
+        <option value="">All curricula</option>
+        <option value="cambridge">Cambridge</option>
+        <option value="common-core">Common Core</option>
+        <option value="ib-myp">IB MYP</option>
+        <option value="general">General</option>
+      </select>
+      <select class="filter-select" onchange="problemFilters.unit=this.value;renderProblems()">
+        <option value="">All units</option>
+        <option value="1">Unit 1</option>
+        <option value="2">Unit 2</option>
+        <option value="3">Unit 3</option>
+        <option value="4">Unit 4</option>
+        <option value="5">Unit 5</option>
+        <option value="6">Unit 6</option>
+        <option value="7">Unit 7</option>
+        <option value="8">Unit 8</option>
+      </select>
+      <select class="filter-select" onchange="problemFilters.stage=this.value;renderProblems()">
+        <option value="">All stages</option>
+        <option value="1">Stage 1</option>
+        <option value="2">Stage 2</option>
+        <option value="3">Stage 3</option>
+        <option value="4">Stage 4</option>
+      </select>
+      <select class="filter-select" onchange="problemFilters.problemType=this.value;renderProblems()">
+        <option value="">All types</option>
+        <option value="diagnostic">Diagnostic</option>
+        <option value="practice">Practice</option>
+      </select>
+    </div>
     <div id="problems-empty" style="color:var(--text-secondary);font-size:0.88rem;">No problems yet.</div>
     <div class="problem-list" id="problems-display"></div>
     <hr>
@@ -564,6 +687,7 @@
 
   let teacherSecret = '';
   let currentProblems = []; // local working copy
+  let problemFilters = { curriculum: '', unit: '', stage: '', problemType: '' };
   let selectedStudentId = null;
   let selectedStudentName = '';
   let selectedCurriculum = '';
@@ -837,11 +961,15 @@
 
   // ── Add a problem to local list ────────────────────────────────
   function addProblem() {
-    const type     = document.getElementById('new-type').value;
-    const question = document.getElementById('new-question').value.trim();
-    const answer   = document.getElementById('new-answer').value.trim();
-    const title    = question;
-    const pid      = document.getElementById('new-pid').value.trim();
+    const type        = document.getElementById('new-type').value;
+    const curriculum  = document.getElementById('new-curriculum').value;
+    const unit        = document.getElementById('new-unit').value;
+    const stage       = document.getElementById('new-stage').value;
+    const problemType = document.getElementById('new-problem-type').value;
+    const question    = document.getElementById('new-question').value.trim();
+    const answer      = document.getElementById('new-answer').value.trim();
+    const title       = question;
+    const pid         = document.getElementById('new-pid').value.trim();
 
     if (!question || !answer) {
       showToast('Please fill in the question and answer.');
@@ -862,13 +990,17 @@
     const encoded = btoa(encodeURIComponent(data));
     const url     = PRACTICE_BASE + '#' + encoded;
 
-    currentProblems.push({ id: pid, title, url, completed: false });
+    currentProblems.push({ id: pid, title, url, completed: false, curriculum, unit, stage, problemType, type, question, answer, modules });
     renderProblems();
 
     pidCounter = nextPidFromList(currentProblems);
     document.getElementById('new-question').value = '';
     document.getElementById('new-answer').value = '';
     document.getElementById('new-formcheck').checked = false;
+    document.getElementById('new-curriculum').selectedIndex = 0;
+    document.getElementById('new-unit').selectedIndex = 0;
+    document.getElementById('new-stage').selectedIndex = 0;
+    document.getElementById('new-problem-type').selectedIndex = 0;
     updatePidField();
     document.getElementById('new-question').focus();
   }
@@ -876,6 +1008,18 @@
   function removeProblem(pid) {
     currentProblems = currentProblems.filter(p => p.id !== pid);
     renderProblems();
+  }
+
+  function buildTagsHtml(p) {
+    const curriculumLabels = { cambridge: 'Cambridge', 'common-core': 'Common Core', 'ib-myp': 'IB MYP', general: 'General' };
+    const hasAnyTag = p.curriculum || p.unit || p.stage || p.problemType;
+    if (!hasAnyTag) return '<span class="prob-tag prob-tag--untagged">Untagged</span>';
+    const parts = [];
+    if (p.curriculum) parts.push(`<span class="prob-tag prob-tag--curriculum">${escHtml(curriculumLabels[p.curriculum] || p.curriculum)}</span>`);
+    if (p.unit)        parts.push(`<span class="prob-tag prob-tag--unit">Unit ${escHtml(String(p.unit))}</span>`);
+    if (p.stage)       parts.push(`<span class="prob-tag prob-tag--stage">Stage ${escHtml(String(p.stage))}</span>`);
+    if (p.problemType) parts.push(`<span class="prob-tag prob-tag--type">${escHtml(p.problemType.charAt(0).toUpperCase() + p.problemType.slice(1))}</span>`);
+    return parts.join('');
   }
 
   function renderProblems() {
@@ -889,11 +1033,28 @@
     }
 
     empty.style.display = 'none';
-    list.innerHTML = currentProblems.map(p => `
+
+    const filtered = currentProblems.filter(p => {
+      if (problemFilters.curriculum && (p.curriculum || '') !== problemFilters.curriculum) return false;
+      if (problemFilters.unit      && String(p.unit  || '') !== problemFilters.unit)       return false;
+      if (problemFilters.stage     && String(p.stage || '') !== problemFilters.stage)      return false;
+      if (problemFilters.problemType && (p.problemType || '') !== problemFilters.problemType) return false;
+      return true;
+    });
+
+    if (filtered.length === 0) {
+      list.innerHTML = '<div style="color:var(--text-secondary);font-size:0.85rem;padding:6px 0;">No problems match the current filters.</div>';
+      return;
+    }
+
+    list.innerHTML = filtered.map(p => `
       <div>
         <div class="problem-item ${p.completed ? 'completed' : 'pending'}">
           <span class="pid">${escHtml(p.id)}</span>
-          <span class="ptitle" title="${escHtml(p.title)}">${escHtml(p.title)}</span>
+          <div class="prob-main">
+            <span class="ptitle" title="${escHtml(p.title)}">${escHtml(p.title)}</span>
+            <div class="prob-tags">${buildTagsHtml(p)}</div>
+          </div>
           <span class="done-badge">${p.completed ? '✅ done' : '🔵 todo'}</span>
           <button class="btn btn-secondary btn-sm" onclick="viewStepLog('${escHtml(p.id)}', this)">Steps ▾</button>
           <button class="btn btn-danger btn-sm" onclick="removeProblem('${escHtml(p.id)}')">Remove</button>

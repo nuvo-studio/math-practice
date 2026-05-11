@@ -263,6 +263,7 @@
   }
   .hw-tag-practice   { background: var(--accent-bg); color: var(--accent); }
   .hw-tag-diagnostic { background: #FFF7ED; color: #C2410C; }
+  .hw-tag-test       { background: #EFF6FF; color: #1D4ED8; }
   .hw-tag-oneoff     { background: #F5F3FF; color: #6D28D9; }
 
   hr { border: none; border-top: 1px solid var(--border); margin: 12px 0; }
@@ -623,6 +624,7 @@
         <button class="filter-pill active" onclick="setFilter('ptype','',this)">All</button>
         <button class="filter-pill" onclick="setFilter('ptype','practice',this)">Practice</button>
         <button class="filter-pill" onclick="setFilter('ptype','diagnostic',this)">Diagnostic</button>
+        <button class="filter-pill" onclick="setFilter('ptype','test',this)">Test</button>
       </div>
     </div>
 
@@ -684,6 +686,7 @@
                 <option value="" disabled selected>Select...</option>
                 <option value="practice">Practice</option>
                 <option value="diagnostic">Diagnostic</option>
+                <option value="test">Test</option>
               </select>
             </div>
           </div>
@@ -1178,9 +1181,11 @@
 
     list.innerHTML = currentProblems.map(p => {
       const tagClass = p.problemType === 'diagnostic' ? 'hw-tag-diagnostic' :
-                       p.oneOff ? 'hw-tag-oneoff' : 'hw-tag-practice';
+                       p.problemType === 'test'       ? 'hw-tag-test'       :
+                       p.oneOff                       ? 'hw-tag-oneoff'     : 'hw-tag-practice';
       const tagLabel = p.problemType === 'diagnostic' ? 'Diagnostic' :
-                       p.oneOff ? 'One-off' : 'Practice';
+                       p.problemType === 'test'       ? 'Test'        :
+                       p.oneOff                       ? 'One-off'     : 'Practice';
       const qText    = p.question || p.title || p.id;
       return `<div>
         <div class="hw-item">

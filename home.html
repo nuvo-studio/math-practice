@@ -494,12 +494,14 @@
   }
 
   // ── Build lesson URL ──
-  function lessonUrl(curriculum, unitNum, levelNum) {
-    return `lesson.html?curriculum=${encodeURIComponent(curriculum)}&unit=${encodeURIComponent(unitNum)}&stage=${encodeURIComponent(levelNum)}`;
+  function lessonUrl(curriculum, unitNum, levelNum, studentId) {
+    let url = `lesson.html?curriculum=${encodeURIComponent(curriculum)}&unit=${encodeURIComponent(unitNum)}&stage=${encodeURIComponent(levelNum)}`;
+    if (studentId) url += `&student=${encodeURIComponent(studentId)}`;
+    return url;
   }
 
   // ── Render the unit cards ──
-  function renderCurriculum(student) {
+  function renderCurriculum(student, studentId) {
     const progress   = (student.progress && Object.keys(student.progress).length > 0)
       ? student.progress
       : null;
@@ -521,7 +523,7 @@
           return `<span class="level-pill complete">&#x2713; ${label}</span>`;
         }
         if (state === 'available') {
-          const url = lessonUrl(curriculum, u, l);
+          const url = lessonUrl(curriculum, u, l, studentId);
           return `<a href="${url}" class="level-pill available">${label}</a>`;
         }
         // locked
@@ -605,7 +607,7 @@
 
     // Show content and render curriculum map
     document.getElementById('home-content').style.display = 'block';
-    renderCurriculum(student);
+    renderCurriculum(student, studentId);
   }
 
   init();

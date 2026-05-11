@@ -19,6 +19,14 @@
     --accent: #2D6A4F;
     --accent-light: #D8F3DC;
     --accent-bg: #F0FAF3;
+    --teal: #1D9E75;
+    --teal-light: #E6F7F2;
+    --wrong: #C1453B;
+    --wrong-bg: #FDE8E6;
+    --amber: #B45309;
+    --amber-bg: #FEF3C7;
+    --blue: #1D4ED8;
+    --blue-light: #EFF6FF;
     --sans: 'DM Sans', sans-serif;
     --mono: 'DM Mono', monospace;
   }
@@ -30,20 +38,48 @@
     background: var(--bg);
     color: var(--text);
     min-height: 100vh;
-    padding: 24px 16px 60px;
     display: flex;
     flex-direction: column;
     align-items: center;
   }
 
-  .container { max-width: 600px; width: 100%; }
+  /* ── Top nav ── */
+  .lesson-topnav {
+    width: 100%;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+    background: var(--card);
+    flex-shrink: 0;
+  }
 
-  /* Progress bar */
+  .back-link {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--accent);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: opacity 0.15s;
+  }
+
+  .back-link:hover { opacity: 0.75; }
+
+  /* ── Content area ── */
+  .container {
+    max-width: 600px;
+    width: 100%;
+    padding: 28px 16px 60px;
+  }
+
+  /* ── Progress bar ── */
   .progress-bar-container {
     display: flex;
     align-items: center;
     gap: 12px;
-    margin-bottom: 20px;
+    margin-bottom: 24px;
   }
 
   .progress-bar {
@@ -69,7 +105,7 @@
     white-space: nowrap;
   }
 
-  /* Badge */
+  /* ── Badge ── */
   .lesson-badge {
     display: inline-block;
     padding: 4px 12px;
@@ -83,7 +119,16 @@
     margin-bottom: 10px;
   }
 
-  /* Title */
+  /* ── Phase label ── */
+  .phase-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+  }
+
   h1 {
     font-size: 1.5rem;
     font-weight: 700;
@@ -94,11 +139,11 @@
   .subtitle {
     color: var(--text-secondary);
     font-size: 0.88rem;
+    line-height: 1.55;
     margin-bottom: 24px;
-    line-height: 1.5;
   }
 
-  /* Cards */
+  /* ── Cards ── */
   .card {
     background: var(--card);
     border: 1.5px solid var(--border);
@@ -117,7 +162,7 @@
     margin-bottom: 14px;
   }
 
-  /* Rules list */
+  /* ── Rules list ── */
   .rules-list {
     list-style: none;
     display: flex;
@@ -148,7 +193,64 @@
     margin-top: 1px;
   }
 
-  /* Tab switcher */
+  /* ── Equation display ── */
+  .equation-display {
+    font-family: var(--mono);
+    font-size: 1.2rem;
+    font-weight: 500;
+    padding: 16px;
+    background: var(--accent-bg);
+    border: 1.5px solid var(--accent-light);
+    border-radius: 10px;
+    margin-bottom: 10px;
+    min-height: 56px;
+    display: flex;
+    align-items: center;
+    transition: background 0.2s;
+    word-break: break-all;
+  }
+
+  .annotation-box {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--accent);
+    margin-bottom: 10px;
+    min-height: 1.2em;
+  }
+
+  .narration-box {
+    padding: 12px 14px;
+    background: #F8F8F6;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-size: 0.88rem;
+    line-height: 1.55;
+    color: var(--text-secondary);
+    margin-bottom: 16px;
+    min-height: 48px;
+  }
+
+  /* ── Step dots ── */
+  .step-dots {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+
+  .step-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--border);
+    transition: background 0.25s;
+    flex-shrink: 0;
+  }
+
+  .step-dot.active { background: var(--accent); }
+  .step-dot.done   { background: var(--accent-light); }
+
+  /* ── Tabs ── */
   .tab-row {
     display: flex;
     gap: 4px;
@@ -174,66 +276,22 @@
     color: white;
   }
 
-  /* Equation display */
-  .equation-display {
-    font-family: var(--mono);
-    font-size: 1.2rem;
-    font-weight: 500;
+  /* ── Visual panel ── */
+  .visual-panel {
     padding: 16px;
-    background: var(--accent-bg);
-    border: 1.5px solid var(--accent-light);
+    background: var(--bg);
+    border: 1.5px solid var(--border);
     border-radius: 10px;
     margin-bottom: 10px;
-    min-height: 56px;
+    min-height: 120px;
     display: flex;
     align-items: center;
-    transition: background 0.2s;
-    word-break: break-all;
-  }
-
-  /* Annotation */
-  .annotation-box {
-    font-size: 0.82rem;
-    font-weight: 600;
-    color: var(--accent);
-    margin-bottom: 10px;
-    min-height: 1.2em;
-  }
-
-  /* Narration */
-  .narration-box {
-    padding: 12px 14px;
-    background: #F8F8F6;
-    border: 1.5px solid var(--border);
-    border-radius: 8px;
-    font-size: 0.88rem;
-    line-height: 1.55;
+    justify-content: center;
+    font-size: 0.9rem;
     color: var(--text-secondary);
-    margin-bottom: 16px;
-    min-height: 48px;
   }
 
-  /* Step dots */
-  .step-dots {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-    margin-bottom: 16px;
-  }
-
-  .step-dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background: var(--border);
-    transition: background 0.25s;
-    flex-shrink: 0;
-  }
-
-  .step-dot.active { background: var(--accent); }
-  .step-dot.done   { background: var(--accent-light); }
-
-  /* Main button */
+  /* ── Main button ── */
   .main-btn {
     width: 100%;
     padding: 14px;
@@ -250,63 +308,102 @@
 
   .main-btn:hover  { opacity: 0.9; }
   .main-btn:active { transform: scale(0.99); }
+  .main-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-  /* Visual panel */
-  .visual-panel {
-    padding: 16px;
-    background: var(--bg);
-    border: 1.5px solid var(--border);
-    border-radius: 10px;
-    margin-bottom: 10px;
-    min-height: 120px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.9rem;
-    color: var(--text-secondary);
+  /* ── Result cards ── */
+  .result-card {
+    border-radius: 14px;
+    padding: 28px;
+    text-align: center;
+    margin-bottom: 16px;
   }
 
-  /* State card (loading/error) */
+  .result-card .result-icon { font-size: 2.5rem; margin-bottom: 12px; }
+  .result-card h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 8px; }
+  .result-card p  { font-size: 0.9rem; line-height: 1.55; margin-bottom: 20px; }
+
+  .result-card.pass {
+    background: var(--accent-bg);
+    border: 1.5px solid var(--accent-light);
+  }
+  .result-card.pass h2, .result-card.pass p { color: var(--accent); }
+
+  .result-card.fail {
+    background: var(--amber-bg);
+    border: 1.5px solid #F5D06A;
+  }
+  .result-card.fail h2, .result-card.fail p { color: var(--amber); }
+
+  .result-btn {
+    display: inline-block;
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-family: var(--sans);
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+    transition: opacity 0.15s;
+  }
+  .result-btn:hover { opacity: 0.85; }
+  .result-btn.primary { background: var(--accent); color: white; }
+  .result-btn.secondary { background: var(--amber); color: white; }
+
+  /* ── Score display ── */
+  .score-display {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  /* ── State card ── */
   .state-card {
     background: var(--card);
     border: 1.5px solid var(--border);
     border-radius: 16px;
     padding: 40px 24px;
     text-align: center;
-    margin-top: 60px;
   }
 
   .state-card .icon { font-size: 2.5rem; margin-bottom: 12px; }
   .state-card h2    { font-size: 1.1rem; font-weight: 700; margin-bottom: 6px; }
   .state-card p     { color: var(--text-secondary); font-size: 0.9rem; line-height: 1.5; }
 
-  /* ── Back nav ── */
-  .lesson-topnav {
-    width: 100%;
-    padding: 10px 16px;
-    display: flex;
-    align-items: center;
-    border-bottom: 1px solid var(--border);
-    background: var(--card);
-    margin-bottom: 0;
+  /* ── Spinner ── */
+  .spinner-inline {
+    width: 18px;
+    height: 18px;
+    border: 2.5px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 6px;
   }
 
-  .back-link {
-    font-size: 0.82rem;
-    font-weight: 600;
-    color: var(--accent);
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    transition: opacity 0.15s;
-  }
+  @keyframes spin { to { transform: rotate(360deg); } }
 
-  .back-link:hover { opacity: 0.75; }
+  /* ── Homework-style tag ── */
+  .phase-tag {
+    display: inline-block;
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 99px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+  .phase-tag-practice { background: var(--accent-bg); color: var(--accent); }
+  .phase-tag-test     { background: var(--blue-light); color: var(--blue); }
 
   @media (max-width: 500px) {
-    body { padding: 16px 12px 48px; }
-    h1   { font-size: 1.3rem; }
+    body { padding: 0; }
+    .container { padding: 20px 12px 48px; }
+    h1 { font-size: 1.3rem; }
     .equation-display { font-size: 1rem; }
   }
 </style>
@@ -315,14 +412,18 @@
 <nav class="lesson-topnav">
   <a href="home.html" class="back-link">&#8592; Back to curriculum</a>
 </nav>
+
 <div class="container" id="app">
   <div class="state-card">
-    <div class="icon">⏳</div>
-    <h2>Loading lesson…</h2>
+    <div class="icon">&#9203;</div>
+    <h2>Loading lesson&hellip;</h2>
     <p>Just a moment!</p>
   </div>
 </div>
 
+<script src="calculator.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/algebrite@1.4.0/dist/algebrite.bundle-for-browser.js"></script>
+<script src="practice-engine.js"></script>
 <script>
   const WORKER = 'https://math-practice-proxy.ronelalmanza20.workers.dev';
 
@@ -330,94 +431,115 @@
   const curriculum = _params.get('curriculum') || '';
   const unit       = _params.get('unit')       || '';
   const stage      = _params.get('stage')      || '';
-  const studentId  = _params.get('student')    || '';
+  const studentId  = localStorage.getItem('studentId') || _params.get('student') || '';
 
-  let lesson      = null;
-  let currentStep = 0; // index of the next step to reveal
+  // ── Phase state ──────────────────────────────────────────────
+  // phases: 'cover' | 'concepts' | 'example' | 'practice' | 'test'
+  let lesson           = null;
+  let practiceProblems = [];
+  let testProblems     = [];
+  let exampleStep      = 0;
+  let practiceEngine   = null;
 
-  // ── Helpers ────────────────────────────────────────────────────
+  // ── Helpers ──────────────────────────────────────────────────
   function curriculumLabel(c) {
-    const map = {
-      cambridge:     'Cambridge',
-      'common-core': 'Common Core',
-      'ib-myp':      'IB MYP',
-      general:       'General',
-    };
-    return map[c] || c;
+    return { cambridge: 'Cambridge', 'common-core': 'Common Core', 'ib-myp': 'IB MYP', general: 'General' }[c] || c;
   }
 
   function escHtml(str) {
     return String(str)
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#39;');
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
   }
 
   function render(html) {
     document.getElementById('app').innerHTML = html;
   }
 
-  // ── Boot ───────────────────────────────────────────────────────
+  // ── Boot ─────────────────────────────────────────────────────
   async function init() {
     if (!curriculum || !unit || !stage) {
       render(`
         <div class="state-card">
-          <div class="icon">🤔</div>
+          <div class="icon">&#129300;</div>
           <h2>Missing lesson parameters</h2>
           <p>This page requires <code>curriculum</code>, <code>unit</code>, and <code>stage</code> URL parameters.</p>
         </div>`);
       return;
     }
 
-    let res;
-    try {
-      res = await fetch(
-        `${WORKER}/lesson/${encodeURIComponent(curriculum)}/${encodeURIComponent(unit)}/${encodeURIComponent(stage)}`
-      );
-    } catch {
+    // Load lesson, practice problems, and test problems in parallel
+    const [lessonResult, practiceResult, testResult] = await Promise.allSettled([
+      fetch(`${WORKER}/lesson/${encodeURIComponent(curriculum)}/${encodeURIComponent(unit)}/${encodeURIComponent(stage)}`),
+      fetch(`${WORKER}/problems/curriculum/${encodeURIComponent(curriculum)}/${encodeURIComponent(unit)}/${encodeURIComponent(stage)}/practice`),
+      fetch(`${WORKER}/problems/curriculum/${encodeURIComponent(curriculum)}/${encodeURIComponent(unit)}/${encodeURIComponent(stage)}/test`)
+    ]);
+
+    // Handle lesson fetch
+    if (lessonResult.status === 'rejected' || !lessonResult.value.ok) {
+      if (lessonResult.status !== 'rejected' && lessonResult.value.status === 404) {
+        render(`
+          <div class="state-card">
+            <div class="icon">&#128218;</div>
+            <h2>Lesson not found</h2>
+            <p>No lesson has been created for ${escHtml(curriculumLabel(curriculum))} &middot; Unit ${escHtml(unit)} &middot; Level ${escHtml(stage)} yet.</p>
+          </div>`);
+        return;
+      }
       render(`
         <div class="state-card">
-          <div class="icon">📡</div>
-          <h2>Couldn't load lesson</h2>
-          <p>Check your internet connection and try refreshing the page.</p>
+          <div class="icon">&#128225;</div>
+          <h2>Couldn&rsquo;t load lesson</h2>
+          <p>Check your internet connection and try refreshing.</p>
         </div>`);
       return;
     }
 
-    if (res.status === 404) {
-      render(`
-        <div class="state-card">
-          <div class="icon">📚</div>
-          <h2>Lesson not found</h2>
-          <p>No lesson has been created for ${escHtml(curriculumLabel(curriculum))} · Unit ${escHtml(unit)} · Level ${escHtml(stage)} yet.</p>
-        </div>`);
-      return;
+    lesson = await lessonResult.value.json();
+
+    // Practice problems (empty array if failed or 404)
+    if (practiceResult.status === 'fulfilled' && practiceResult.value.ok) {
+      try { practiceProblems = await practiceResult.value.json(); } catch { practiceProblems = []; }
     }
 
-    if (!res.ok) {
-      render(`
-        <div class="state-card">
-          <div class="icon">📡</div>
-          <h2>Couldn't load lesson</h2>
-          <p>Server error. Try refreshing the page.</p>
-        </div>`);
-      return;
+    // Test problems (empty array if failed or 404)
+    if (testResult.status === 'fulfilled' && testResult.value.ok) {
+      try { testProblems = await testResult.value.json(); } catch { testProblems = []; }
     }
 
-    lesson      = await res.json();
-    currentStep = 0;
-    renderLesson();
+    showCover();
   }
 
-  // ── Render the lesson UI ───────────────────────────────────────
-  function renderLesson() {
-    const ex        = lesson.example || {};
-    const steps     = ex.steps       || [];
-    const hasVisual = !!ex.visual;
-    const badgeText = `${curriculumLabel(curriculum)} · Unit ${unit} · Level ${stage}`;
+  // ── Progress bar helper ───────────────────────────────────────
+  // phaseNum: 1=cover, 2=concepts, 3=example, 4=practice, 5=test
+  function progressBarHtml(phaseNum) {
+    const pct = Math.round((phaseNum / 5) * 100);
+    const labels = ['', 'Intro', 'Concepts', 'Example', 'Practice', 'Test'];
+    return `
+      <div class="progress-bar-container">
+        <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+        <div class="progress-text">${labels[phaseNum] || ''}</div>
+      </div>`;
+  }
 
+  function badgeHtml() {
+    return `<div class="lesson-badge">${escHtml(curriculumLabel(curriculum))} &middot; Unit ${escHtml(unit)} &middot; Level ${escHtml(stage)}</div>`;
+  }
+
+  // ── Phase 1: Cover ────────────────────────────────────────────
+  function showCover() {
+    if (practiceEngine) { practiceEngine.destroy(); practiceEngine = null; }
+    render(`
+      ${progressBarHtml(1)}
+      ${badgeHtml()}
+      <h1>${escHtml(lesson.title || 'Lesson')}</h1>
+      <p class="subtitle">${escHtml(lesson.subtitle || '')}</p>
+      <button class="main-btn" onclick="showConcepts()">Begin Lesson &rarr;</button>
+    `);
+  }
+
+  // ── Phase 2: Concepts ─────────────────────────────────────────
+  function showConcepts() {
     const rulesHtml = (lesson.rules || []).map((rule, i) =>
       `<li>
         <span class="rule-num">${i + 1}</span>
@@ -425,128 +547,214 @@
       </li>`
     ).join('');
 
+    render(`
+      ${progressBarHtml(2)}
+      ${badgeHtml()}
+      <h1>${escHtml(lesson.title || 'Lesson')}</h1>
+      <div class="card">
+        <div class="card-title">Key Concepts</div>
+        <ul class="rules-list">${rulesHtml || '<li><span style="color:var(--text-secondary);font-size:0.88rem;">No rules listed.</span></li>'}</ul>
+      </div>
+      <button class="main-btn" onclick="showExample()">Got it &mdash; show me an example &rarr;</button>
+    `);
+  }
+
+  // ── Phase 3: Worked example ───────────────────────────────────
+  function showExample() {
+    exampleStep = 0;
+    renderExamplePhase();
+  }
+
+  function renderExamplePhase() {
+    const ex        = lesson.example || {};
+    const steps     = ex.steps       || [];
+    const hasVisual = !!ex.visual;
+
     const dotsHtml = steps.map((_, i) =>
       `<div class="step-dot" id="dot-${i}"></div>`
     ).join('');
 
     const tabsHtml = hasVisual ? `
       <div class="tab-row">
-        <button class="tab-btn active" id="tab-symbolic" onclick="switchTab('symbolic')">Symbolic</button>
-        <button class="tab-btn"        id="tab-visual"   onclick="switchTab('visual')">Visual</button>
+        <button class="tab-btn active" id="tab-symbolic" onclick="switchExTab('symbolic')">Symbolic</button>
+        <button class="tab-btn"        id="tab-visual"   onclick="switchExTab('visual')">Visual</button>
       </div>` : '';
 
-    const initBtnLabel = steps.length === 0 ? 'Start practice &rarr;' : 'Show step 1';
+    const initBtnLabel = steps.length === 0 ? 'Go to Practice &rarr;' : 'Show step 1';
 
-    document.getElementById('app').innerHTML = `
-      <div class="progress-bar-container">
-        <div class="progress-bar">
-          <div class="progress-fill" id="progress-fill"></div>
-        </div>
-        <div class="progress-text" id="progress-text">Lesson</div>
-      </div>
-
-      <div class="lesson-badge">${escHtml(badgeText)}</div>
+    render(`
+      ${progressBarHtml(3)}
+      ${badgeHtml()}
       <h1>${escHtml(lesson.title || 'Lesson')}</h1>
-      <p class="subtitle">${escHtml(lesson.subtitle || '')}</p>
-
       <div class="card">
-        <div class="card-title">Key concepts</div>
-        <ul class="rules-list">${rulesHtml || '<li><span style="color:var(--text-secondary);font-size:0.88rem;">No rules listed.</span></li>'}</ul>
-      </div>
-
-      <div class="card">
-        <div class="card-title">Worked example</div>
-
+        <div class="card-title">Worked Example</div>
         ${tabsHtml}
-
         <div id="symbolic-panel">
           <div class="equation-display" id="equation-display">${escHtml(ex.start || '')}</div>
           <div class="annotation-box"   id="annotation-box"></div>
         </div>
-
         ${hasVisual ? `<div id="visual-panel" class="visual-panel" style="display:none;">${ex.visual}</div>` : ''}
-
-        <div class="narration-box" id="narration-box">Follow along — tap the button below to step through the example.</div>
-
+        <div class="narration-box" id="narration-box">Follow along &mdash; tap the button below to step through the example.</div>
         ${steps.length > 0 ? `<div class="step-dots" id="step-dots">${dotsHtml}</div>` : ''}
-
-        <button class="main-btn" id="main-btn" onclick="handleMainBtn()">${initBtnLabel}</button>
+        <button class="main-btn" id="main-btn" onclick="handleExampleBtn()">${initBtnLabel}</button>
       </div>
-    `;
+    `);
   }
 
-  // ── Tab switcher ───────────────────────────────────────────────
-  function switchTab(tab) {
+  function switchExTab(tab) {
     const symPanel = document.getElementById('symbolic-panel');
     const visPanel = document.getElementById('visual-panel');
     const tabSym   = document.getElementById('tab-symbolic');
     const tabVis   = document.getElementById('tab-visual');
-
     if (tab === 'symbolic') {
       symPanel.style.display = '';
       if (visPanel) visPanel.style.display = 'none';
-      tabSym.classList.add('active');
-      tabVis.classList.remove('active');
+      tabSym.classList.add('active'); tabVis.classList.remove('active');
     } else {
       symPanel.style.display = 'none';
       if (visPanel) visPanel.style.display = '';
-      tabSym.classList.remove('active');
-      tabVis.classList.add('active');
+      tabSym.classList.remove('active'); tabVis.classList.add('active');
     }
   }
 
-  // ── Step through the example ───────────────────────────────────
-  function handleMainBtn() {
-    const ex    = lesson.example || {};
-    const steps = ex.steps       || [];
+  function handleExampleBtn() {
+    const steps = (lesson.example || {}).steps || [];
 
-    if (currentStep >= steps.length) {
-      // All steps revealed — navigate to practice
-      window.location.href = buildPracticeUrl();
+    if (exampleStep >= steps.length) {
+      showPractice();
       return;
     }
 
-    const step = steps[currentStep];
-
-    // Update equation, annotation, narration
+    const step = steps[exampleStep];
     document.getElementById('equation-display').textContent = step.equation  || '';
     document.getElementById('annotation-box').textContent   = step.annotation || '';
     document.getElementById('narration-box').textContent    = step.narration  || '';
 
-    // Update step dots
     for (let i = 0; i < steps.length; i++) {
       const dot = document.getElementById(`dot-${i}`);
       if (!dot) continue;
-      if (i < currentStep)      dot.className = 'step-dot done';
-      else if (i === currentStep) dot.className = 'step-dot active';
-      else                       dot.className = 'step-dot';
+      if (i < exampleStep)       dot.className = 'step-dot done';
+      else if (i === exampleStep) dot.className = 'step-dot active';
+      else                        dot.className = 'step-dot';
     }
 
-    // Update progress bar
-    const pct = Math.round(((currentStep + 1) / steps.length) * 100);
+    const pct  = Math.round(((exampleStep + 1) / steps.length) * 100);
     const fill = document.getElementById('progress-fill');
     if (fill) fill.style.width = pct + '%';
 
-    currentStep++;
+    exampleStep++;
 
-    // Update button label
     const btn = document.getElementById('main-btn');
-    if (currentStep >= steps.length) {
-      btn.innerHTML = 'Start practice &rarr;';
-    } else {
-      btn.textContent = `Show step ${currentStep + 1}`;
-    }
+    btn.innerHTML = exampleStep >= steps.length
+      ? 'Try it yourself &rarr;'
+      : `Show step ${exampleStep + 1}`;
   }
 
-  // ── Build practice URL ─────────────────────────────────────────
-  function buildPracticeUrl() {
-    const sid = localStorage.getItem('studentId') || studentId;
-    let url = 'app.html'
-      + '?curriculum=' + encodeURIComponent(curriculum)
-      + '&unit='       + encodeURIComponent(unit)
-      + '&stage='      + encodeURIComponent(stage);
-    if (sid) url += '&student=' + encodeURIComponent(sid);
-    return url;
+  // ── Phase 4: Practice ─────────────────────────────────────────
+  function showPractice() {
+    if (practiceProblems.length === 0) {
+      // Skip to test if no practice problems
+      showTest();
+      return;
+    }
+
+    render(`
+      ${progressBarHtml(4)}
+      ${badgeHtml()}
+      <h1>${escHtml(lesson.title || 'Lesson')} <span class="phase-tag phase-tag-practice">Practice</span></h1>
+      <p class="subtitle">Work through these practice problems. Hints are available.</p>
+      <div id="pe-container"></div>
+    `);
+
+    practiceEngine = null;
+    window.PracticeEngine.init({
+      studentId:  studentId || null,
+      curriculum, unit, stage,
+      mode:       'practice',
+      problems:   practiceProblems,
+      container:  document.getElementById('pe-container'),
+      onComplete: function() {
+        showTest();
+      }
+    });
+  }
+
+  // ── Phase 5: Test ─────────────────────────────────────────────
+  function showTest() {
+    if (testProblems.length === 0) {
+      // No test problems — mark as complete automatically if student is known
+      markProgressAndShow('complete', null, null);
+      return;
+    }
+
+    render(`
+      ${progressBarHtml(5)}
+      ${badgeHtml()}
+      <h1>${escHtml(lesson.title || 'Lesson')} <span class="phase-tag phase-tag-test">Level Test</span></h1>
+      <p class="subtitle">Answer all questions. No hints this time!</p>
+      <div id="pe-container"></div>
+    `);
+
+    practiceEngine = null;
+    window.PracticeEngine.init({
+      studentId:  studentId || null,
+      curriculum, unit, stage,
+      mode:       'test',
+      problems:   testProblems,
+      container:  document.getElementById('pe-container'),
+      onComplete: function(result) {
+        const { passed, score, total } = result;
+        markProgressAndShow(passed ? 'complete' : null, score, total);
+      }
+    });
+  }
+
+  // ── Update progress + show result card ───────────────────────
+  async function markProgressAndShow(status, score, total) {
+    // Update progress on the server if we have a student and a status to set
+    if (studentId && status === 'complete') {
+      try {
+        await fetch(`${WORKER}/student/${encodeURIComponent(studentId)}/progress`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ unit, stage, status: 'complete' })
+        });
+      } catch (e) {
+        console.warn('Failed to update progress:', e);
+      }
+    }
+
+    const noTest = (score === null && total === null);
+
+    if (noTest || status === 'complete') {
+      // Passed (or auto-complete)
+      const scoreText = noTest
+        ? 'Level complete!'
+        : `You got ${score} of ${total} correct.`;
+
+      render(`
+        ${progressBarHtml(5)}
+        <div class="result-card pass">
+          <div class="result-icon">&#127941;</div>
+          <div class="score-display">${noTest ? '' : `${score} / ${total}`}</div>
+          <h2>Level ${escHtml(stage)} Complete!</h2>
+          <p>${escHtml(scoreText)} Great work &mdash; the next level is now unlocked.</p>
+          <a href="home.html" class="result-btn primary">Back to curriculum &rarr;</a>
+        </div>
+      `);
+    } else {
+      // Failed
+      render(`
+        ${progressBarHtml(5)}
+        <div class="result-card fail">
+          <div class="result-icon">&#128218;</div>
+          <div class="score-display">${score} / ${total}</div>
+          <h2>Keep Practicing!</h2>
+          <p>You got ${score} of ${total} correct. Review the example again and try the test once more.</p>
+          <button class="result-btn secondary" onclick="showExample()">Review example &rarr;</button>
+        </div>
+      `);
+    }
   }
 
   init();

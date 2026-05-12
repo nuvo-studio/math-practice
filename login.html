@@ -407,6 +407,11 @@
 
       if (res.ok) {
         localStorage.setItem('studentId', studentId);
+        const urlParams = new URLSearchParams(window.location.search);
+        const curriculum = urlParams.get('curriculum');
+        if (curriculum) {
+          localStorage.setItem('curriculum', curriculum);
+        }
         window.location.href = 'home.html';
       } else if (res.status === 404) {
         errorMsg.textContent = Lang.t('login_error_notfound');

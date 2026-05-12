@@ -196,8 +196,8 @@
 
       // === index.html ===
       hero_eyebrow: 'Cambridge Lower Secondary \u00B7 Grades 6\u20139',
-      hero_headline: 'Master Algebra.<br>At Your Own Pace.',
-      hero_sub: 'Step-by-step guided practice that builds real understanding \u2014 paired with live weekly tutoring so your student never gets stuck alone.',
+      hero_headline: 'Prepare for the UTP Admission Test.<br>Practice anytime.',
+      hero_sub: 'Step-by-step guided practice with hints, examples, and immediate feedback \u2014 so you arrive at the exam with confidence.',
       hero_cta_primary: 'Start Practicing',
       hero_cta_secondary: 'See How It Works',
       hero_signin_note: 'Already enrolled?',
@@ -242,7 +242,18 @@
 
       // === PAA curriculum ===
       paa_curriculum_label: 'PAA',
-      paa_unit_aritmetica:  'Aritm\u00E9tica'
+      paa_unit_aritmetica:  'Aritm\u00E9tica',
+
+      // === filter.html ===
+      filter_heading: 'What do you want to practice?',
+      filter_sub: 'Choose the option that best fits what you need.',
+      filter_card1_title: 'UTP Admission Test',
+      filter_card1_desc: 'Prepare for the university admission exam with guided practice in Arithmetic, Algebra, Geometry, and more.',
+      filter_card1_btn: 'Get started \u2192',
+      filter_card2_title: 'Secondary School Math',
+      filter_card2_desc: 'Strengthen algebra and math for grades 6\u20139 with the Cambridge, Common Core, or IB curriculum.',
+      filter_card2_btn: 'Contact Ronel \u2192',
+      filter_back: '\u2190 Back'
     },
 
     es: {
@@ -439,8 +450,8 @@
 
       // === index.html ===
       hero_eyebrow: 'Cambridge Lower Secondary \u00B7 Grados 6\u20139',
-      hero_headline: 'Domina el \u00C1lgebra.<br>A tu propio ritmo.',
-      hero_sub: 'Pr\u00E1ctica guiada paso a paso que construye comprensi\u00F3n real \u2014 combinada con tutor\u00EDas semanales en vivo para que tu estudiante nunca se quede atascado.',
+      hero_headline: 'Prep\u00E1rate para la Prueba de Admisi\u00F3n de la UTP.<br>Practica cuando quieras.',
+      hero_sub: 'Pr\u00E1ctica guiada paso a paso con pistas, ejemplos y retroalimentaci\u00F3n inmediata \u2014 para que llegues al examen con confianza.',
       hero_cta_primary: 'Empezar a practicar',
       hero_cta_secondary: 'Ver c\u00F3mo funciona',
       hero_signin_note: '\u00BFYa inscrito?',
@@ -485,7 +496,18 @@
 
       // === PAA curriculum ===
       paa_curriculum_label: 'PAA',
-      paa_unit_aritmetica:  'Aritm\u00E9tica'
+      paa_unit_aritmetica:  'Aritm\u00E9tica',
+
+      // === filter.html ===
+      filter_heading: '\u00BFQu\u00E9 quieres practicar?',
+      filter_sub: 'Elige la opci\u00F3n que mejor se adapte a lo que necesitas.',
+      filter_card1_title: 'Prueba de Admisi\u00F3n \u2014 UTP',
+      filter_card1_desc: 'Prep\u00E1rate para el examen de admisi\u00F3n con pr\u00E1ctica guiada en Aritm\u00E9tica, \u00C1lgebra, Geometr\u00EDa y m\u00E1s.',
+      filter_card1_btn: 'Empezar \u2192',
+      filter_card2_title: 'Matem\u00E1ticas de Secundaria',
+      filter_card2_desc: 'Refuerza \u00E1lgebra y matem\u00E1ticas de grados 6 a 9 con el curr\u00EDculo Cambridge, Common Core o IB.',
+      filter_card2_btn: 'Contactar a Ronel \u2192',
+      filter_back: '\u2190 Volver'
     }
   };
 

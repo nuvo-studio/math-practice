@@ -253,7 +253,14 @@
       filter_card2_title: 'Secondary School Math',
       filter_card2_desc: 'Strengthen algebra and math for grades 6\u20139 with the Cambridge, Common Core, or IB curriculum.',
       filter_card2_btn: 'Contact Ronel \u2192',
-      filter_back: '\u2190 Back'
+      filter_back: '\u2190 Back',
+
+      // === guest paywall ===
+      guest_paywall_title: 'Ready to keep practicing?',
+      guest_paywall_subtitle: 'You\u2019ve completed your free practice. Subscribe to access all levels of the Admission Test \u2014 Arithmetic, Algebra, Geometry, and more.',
+      guest_paywall_subscribe_btn: 'Subscribe \u2192',
+      guest_paywall_login_btn: 'I have an account \u2192 Sign in',
+      guest_paywall_contact: 'Questions? WhatsApp 6014-1676'
     },
 
     es: {
@@ -507,7 +514,14 @@
       filter_card2_title: 'Matem\u00E1ticas de Secundaria',
       filter_card2_desc: 'Refuerza \u00E1lgebra y matem\u00E1ticas de grados 6 a 9 con el curr\u00EDculo Cambridge, Common Core o IB.',
       filter_card2_btn: 'Contactar a Ronel \u2192',
-      filter_back: '\u2190 Volver'
+      filter_back: '\u2190 Volver',
+
+      // === guest paywall ===
+      guest_paywall_title: '\u00BFListo para seguir practicando?',
+      guest_paywall_subtitle: 'Completaste tu pr\u00E1ctica gratuita. Suscr\u00EDbete para acceder a todos los niveles de la Prueba de Admisi\u00F3n \u2014 Aritm\u00E9tica, \u00C1lgebra, Geometr\u00EDa y m\u00E1s.',
+      guest_paywall_subscribe_btn: 'Suscribirme \u2192',
+      guest_paywall_login_btn: 'Ya tengo cuenta \u2192 Iniciar sesi\u00F3n',
+      guest_paywall_contact: '\u00BFPreguntas? WhatsApp 6014-1676'
     }
   };
 

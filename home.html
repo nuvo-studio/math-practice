@@ -446,6 +446,7 @@
 
   // ── Curriculum display label ──
   function curriculumLabel(curriculum, grade) {
+    if (curriculum === 'PAA') return Lang.t('paa_curriculum_label');
     const names = {
       cambridge:     'Cambridge',
       'common-core': 'Common Core',
@@ -503,8 +504,65 @@
     return url;
   }
 
+  // ── PAA unlock logic (3-level, single unit) ──
+  function getPAALevelState(levelNum, unitKey, progress) {
+    if (levelNum === 1) return 'available';  // always unlocked
+    const prevStatus = (progress[unitKey] || {})[String(levelNum - 1)];
+    if (prevStatus === 'complete') return 'available';
+    if (prevStatus === 'current')  return 'available';
+    return 'locked';
+  }
+
+  // ── Render PAA curriculum (Aritmética · 3 levels) ──
+  function renderPAACurriculum(student, studentId) {
+    const progress = student.progress || {};
+    const grid = document.getElementById('units-grid');
+    grid.innerHTML = '';
+
+    const unitKey  = 'aritmetica';
+    const unitName = Lang.t('paa_unit_aritmetica');
+    const card = document.createElement('div');
+    card.className = 'unit-card';
+
+    const pillsHtml = [1, 2, 3].map(function(l) {
+      const aritState = (progress[unitKey] || {})[String(l)];
+      let state;
+      if (aritState === 'complete') {
+        state = 'complete';
+      } else if (aritState === 'current') {
+        state = 'available';
+      } else {
+        state = getPAALevelState(l, unitKey, progress);
+      }
+      const label = Lang.t('level_label') + ' ' + l;
+      if (state === 'complete') {
+        return '<span class="level-pill complete">&#x2713; ' + label + '</span>';
+      }
+      if (state === 'available') {
+        const url = 'lesson.html?curriculum=PAA&unit=' + encodeURIComponent(unitKey) +
+                    '&stage=' + l + (studentId ? '&student=' + encodeURIComponent(studentId) : '');
+        return '<a href="' + url + '" class="level-pill available">' + label + '</a>';
+      }
+      return '<span class="level-pill locked">&#x1F512; ' + label + '</span>';
+    }).join('');
+
+    card.innerHTML =
+      '<div class="unit-card-header">' +
+        '<span class="unit-number-badge">' + Lang.t('unit_label') + ' 1</span>' +
+        '<span class="unit-name">' + unitName + '</span>' +
+      '</div>' +
+      '<div class="level-pills">' + pillsHtml + '</div>';
+
+    grid.appendChild(card);
+  }
+
   // ── Render the unit cards ──
   function renderCurriculum(student, studentId) {
+    if (student.curriculum === 'PAA') {
+      renderPAACurriculum(student, studentId);
+      return;
+    }
+
     const progress   = (student.progress && Object.keys(student.progress).length > 0)
       ? student.progress
       : null;

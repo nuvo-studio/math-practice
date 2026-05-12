@@ -238,7 +238,11 @@
       plan_tutoring_f3: 'Personalized homework assignments',
       plan_tutoring_f4: 'Direct WhatsApp support',
       plan_tutoring_cta: 'Start Free Trial',
-      pricing_note: 'No contracts. Cancel anytime.'
+      pricing_note: 'No contracts. Cancel anytime.',
+
+      // === PAA curriculum ===
+      paa_curriculum_label: 'PAA',
+      paa_unit_aritmetica:  'Aritm\u00E9tica'
     },
 
     es: {
@@ -477,7 +481,11 @@
       plan_tutoring_f3: 'Tareas personalizadas',
       plan_tutoring_f4: 'Soporte directo por WhatsApp',
       plan_tutoring_cta: 'Comenzar Prueba Gratuita',
-      pricing_note: 'Sin contratos. Cancela cuando quieras.'
+      pricing_note: 'Sin contratos. Cancela cuando quieras.',
+
+      // === PAA curriculum ===
+      paa_curriculum_label: 'PAA',
+      paa_unit_aritmetica:  'Aritm\u00E9tica'
     }
   };
 

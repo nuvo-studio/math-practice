@@ -122,6 +122,30 @@
     font-weight: 600; font-size: 1rem; cursor: pointer; transition: opacity 0.2s;
   }
   .pe-next-btn:hover { opacity: 0.9; }
+  .pe-mcq-options {
+    display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px;
+  }
+  .pe-mcq-btn {
+    width: 100%; padding: 12px 16px; text-align: left;
+    border: 1.5px solid var(--border, #E8E8E4);
+    border-radius: 10px; background: var(--card, #FFFFFF);
+    font-family: var(--sans, sans-serif); font-size: 0.95rem;
+    font-weight: 500; color: var(--text, #1A1A1A);
+    cursor: pointer; transition: background 0.15s, border-color 0.15s;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .pe-mcq-btn:hover:not(:disabled) { border-color: var(--accent, #2D6A4F); background: var(--accent-bg, #F0FAF3); }
+  .pe-mcq-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+  .pe-mcq-btn.pe-mcq-correct { background: var(--pe-correct-bg); border-color: var(--pe-correct); color: var(--pe-correct); }
+  .pe-mcq-btn.pe-mcq-wrong   { background: var(--pe-wrong-bg);   border-color: var(--pe-wrong);   color: var(--pe-wrong); }
+  .pe-mcq-letter {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 24px; height: 24px; border-radius: 50%;
+    background: var(--accent-bg, #F0FAF3); color: var(--accent, #2D6A4F);
+    font-size: 0.8rem; font-weight: 700; flex-shrink: 0;
+  }
+  .pe-mcq-btn.pe-mcq-correct .pe-mcq-letter { background: var(--pe-correct); color: white; }
+  .pe-mcq-btn.pe-mcq-wrong   .pe-mcq-letter { background: var(--pe-wrong);   color: white; }
   @media (max-width: 500px) {
     .pe-wrap .problem-card { padding: 20px; }
     .pe-wrap .problem-text { font-size: 1rem; }
@@ -608,6 +632,7 @@
     let elProblemLabel, elProblemText;
     let elStepsContainer, elFeedback, elLoading;
     let elInputArea, elInput, elPreview, elCalcGrid;
+    let elMcqOptions;
     let elCompletedCard, elNextBtn;
     let studentCalc = null;
     let _keydownHandler = null;
@@ -632,6 +657,7 @@
             <div class="spinner"></div>
             <span>Checking your step\u2026</span>
           </div>
+          <div class="pe-mcq-options" style="display:none;"></div>
           <div class="pe-input-area">
             <input type="text" class="pe-step-input"
               placeholder="Type or tap buttons to enter your answer\u2026"
@@ -656,6 +682,7 @@
       elStepsContainer = wrap.querySelector('.pe-steps-container');
       elFeedback       = wrap.querySelector('.feedback');
       elLoading        = wrap.querySelector('.loading-indicator');
+      elMcqOptions     = wrap.querySelector('.pe-mcq-options');
       elInputArea      = wrap.querySelector('.pe-input-area');
       elInput          = wrap.querySelector('.pe-step-input');
       elPreview        = wrap.querySelector('.math-preview');
@@ -767,10 +794,29 @@
       elFeedback.style.display      = 'none';
       elCompletedCard.style.display = 'none';
       elNextBtn.style.display       = 'none';
-      elInputArea.style.display     = 'flex';
-      studentCalc.clear();
-      studentCalc.closePanels();
-      elCalcGrid.classList.remove('disabled');
+
+      if (p.format === 'mcq') {
+        elInputArea.style.display  = 'none';
+        elMcqOptions.style.display = 'flex';
+        elMcqOptions.innerHTML = '';
+        const letters = ['A', 'B', 'C', 'D'];
+        letters.forEach(function(letter, i) {
+          const btn = document.createElement('button');
+          btn.className = 'pe-mcq-btn';
+          btn.dataset.option = letter;
+          const optText = (p.options || [])[i] || '';
+          btn.innerHTML = `<span class="pe-mcq-letter">${letter}</span>${escapeHtml(optText)}`;
+          btn.addEventListener('click', function() { submitMCQ(letter); });
+          elMcqOptions.appendChild(btn);
+        });
+      } else {
+        elMcqOptions.style.display = 'none';
+        elInputArea.style.display  = 'flex';
+        studentCalc.clear();
+        studentCalc.closePanels();
+        elCalcGrid.classList.remove('disabled');
+      }
+
       updateProgress();
     }
 
@@ -875,7 +921,7 @@
         return;
       }
 
-      const previousExpression = (problem.type === 'Evaluate' || problem.type === 'Rearrange')
+      const previousExpression = (problem.type === 'Evaluate' || problem.type === 'Rearrange' || problem.format === 'open')
         ? problem.answer
         : stepHistory.length > 0
           ? stepHistory[stepHistory.length - 1]
@@ -993,8 +1039,13 @@
             reenableInput();
           }
         } else {
-          // Practice mode: hint escalation (verbatim from app.html)
-          if (wrongCount >= 4) {
+          // Practice mode: pre-written hints take priority over Claude hints
+          const preHints = problem.hints || [];
+          if (preHints.length > 0) {
+            const hintIdx = Math.min(wrongCount - 1, preHints.length - 1);
+            showFeedback('nudge', preHints[hintIdx]);
+            reenableInput();
+          } else if (wrongCount >= 4) {
             showLoading('Getting help...');
             console.log('[submitStep] calling askClaudeForReveal...');
             const tR = performance.now();
@@ -1004,6 +1055,7 @@
             showFeedback('reveal', nextStep
               ? `Here's a valid next step: ${nextStep}`
               : "That step doesn't look right. Keep trying!");
+            reenableInput();
           } else if (wrongCount >= 2) {
             showLoading('Getting a hint...');
             console.log('[submitStep] calling askClaudeForHint...');
@@ -1012,13 +1064,61 @@
             console.log(`[submitStep] askClaudeForHint returned in ${(performance.now()-tH).toFixed(1)}ms:`, hint);
             hideLoading();
             showFeedback('nudge', hint || "That step doesn't look right. Try again!");
+            reenableInput();
           } else {
             showFeedback('wrong', "That step doesn't look right. Try again!");
+            reenableInput();
           }
-          reenableInput();
         }
       }
       console.log(`[submitStep] total time: ${(performance.now()-t0).toFixed(1)}ms`);
+    }
+
+    // ── MCQ answer handler ───────────────────────────────────────────────────
+    function submitMCQ(letter) {
+      const problem = problems[currentIndex];
+      const isCorrect = letter === problem.answer;
+      logStep(letter, isCorrect);
+
+      // Flash selected button
+      const selectedBtn = elMcqOptions.querySelector(`[data-option="${letter}"]`);
+      if (isCorrect) {
+        selectedBtn.className = 'pe-mcq-btn pe-mcq-correct';
+        // Disable all options
+        elMcqOptions.querySelectorAll('.pe-mcq-btn').forEach(function(b) { b.disabled = true; });
+        elFeedback.style.display = 'none';
+        if (mode === 'test') testResults[currentIndex] = true;
+        setTimeout(function() {
+          elMcqOptions.style.display = 'none';
+          elCompletedCard.style.display = 'block';
+          elNextBtn.style.display = 'block';
+          elNextBtn.textContent = currentIndex < problems.length - 1 ? 'Next Problem \u2192' : 'Finish \u2713';
+        }, 500);
+      } else {
+        wrongCount++;
+        selectedBtn.className = 'pe-mcq-btn pe-mcq-wrong';
+        setTimeout(function() { selectedBtn.className = 'pe-mcq-btn'; }, 700);
+
+        if (mode === 'test') {
+          if (wrongCount >= 3) {
+            testResults[currentIndex] = false;
+            elMcqOptions.querySelectorAll('.pe-mcq-btn').forEach(function(b) { b.disabled = true; });
+            showFeedback('wrong', 'Incorrect. Moving to the next problem.');
+            setTimeout(function() { nextProblem(); }, 1500);
+          } else {
+            showFeedback('wrong', "That's not correct. Try again!");
+          }
+        } else {
+          // Practice mode: pre-written hints
+          const preHints = problem.hints || [];
+          if (preHints.length > 0) {
+            const hintIdx = Math.min(wrongCount - 1, preHints.length - 1);
+            showFeedback('nudge', preHints[hintIdx]);
+          } else {
+            showFeedback('wrong', "That's not correct. Try again!");
+          }
+        }
+      }
     }
 
     function nextProblem() {

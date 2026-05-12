@@ -2012,6 +2012,7 @@
 
   // ── Trial status check ──
   async function checkTrialStatus() {
+    if (PARAM_GUEST) return;
     if (!STUDENT_ID) return;
     try {
       const res = await fetch(`${PROXY_URL}/student/${encodeURIComponent(STUDENT_ID)}`);

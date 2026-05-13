@@ -69,30 +69,37 @@ function enrichLesson(existing) {
       'Coefficient changes; variable part stays the same'
     ],
     conceptVisual: `
-      <div class="concept-visual-grid">
-        <div class="concept-visual-card">
-          <strong>1. Split the expression into terms</strong><br>
-          <div class="visual-term-row" style="margin-top:10px;">
-            <span class="visual-term-chip">4x</span>
-            <span class="visual-term-chip">3y</span>
-            <span class="visual-term-chip">2x</span>
-            <span class="visual-term-chip">-y</span>
+      <div class="lesson-visual-board">
+        <div class="visual-expression-strip">
+          <span class="term-card term-card--x">4x</span>
+          <span class="term-card term-card--y">3y</span>
+          <span class="term-card term-card--x">2x</span>
+          <span class="term-card term-card--y">-y</span>
+        </div>
+        <div class="visual-note">Same colour means same variable part, so those terms can be placed in the same bucket.</div>
+        <div class="visual-group-grid">
+          <div class="visual-group-box">
+            <div class="visual-group-title">x bucket</div>
+            <div class="coefficient-row">
+              <span class="term-card term-card--x">4x</span>
+              <span class="operator-badge">+</span>
+              <span class="term-card term-card--x">2x</span>
+              <span class="operator-badge">=</span>
+              <span class="term-card term-card--x">6x</span>
+            </div>
+          </div>
+          <div class="visual-group-box">
+            <div class="visual-group-title">y bucket</div>
+            <div class="coefficient-row">
+              <span class="term-card term-card--y">3y</span>
+              <span class="operator-badge">+</span>
+              <span class="term-card term-card--y">-y</span>
+              <span class="operator-badge">=</span>
+              <span class="term-card term-card--y">2y</span>
+            </div>
           </div>
         </div>
-        <div class="concept-visual-card">
-          <strong>2. Match by variable part</strong><br>
-          <div class="visual-term-row" style="margin-top:10px;">
-            <span class="visual-term-chip">x terms: 4x, 2x</span>
-            <span class="visual-term-chip">y terms: 3y, -y</span>
-          </div>
-        </div>
-        <div class="concept-visual-card">
-          <strong>3. Combine coefficients only</strong><br>
-          <div class="visual-term-row" style="margin-top:10px;">
-            <span class="visual-term-chip">4 + 2 = 6, so 4x + 2x = 6x</span>
-            <span class="visual-term-chip">3 - 1 = 2, so 3y - y = 2y</span>
-          </div>
-        </div>
+        <div class="visual-result">4x + 3y + 2x - y = 6x + 2y</div>
       </div>
     `,
     example: {
@@ -109,11 +116,14 @@ function enrichLesson(existing) {
           annotation: 'Spot the like terms first',
           narration: 'Look for terms with the same variable part. The x terms are 4x and 2x. The y terms are 3y and negative y.',
           visual: `
-            <div class="visual-term-row">
-              <span class="visual-term-chip">4x</span>
-              <span class="visual-term-chip">3y</span>
-              <span class="visual-term-chip">2x</span>
-              <span class="visual-term-chip">-y</span>
+            <div class="lesson-visual-board">
+              <div class="visual-expression-strip">
+                <span class="term-card term-card--x">4x</span>
+                <span class="term-card term-card--y">3y</span>
+                <span class="term-card term-card--x">2x</span>
+                <span class="term-card term-card--y">-y</span>
+              </div>
+              <div class="visual-note">The expression is a row of term cards. Colour helps us see which cards belong together.</div>
             </div>
           `,
         },
@@ -122,9 +132,26 @@ function enrichLesson(existing) {
           annotation: 'Grouped by variable',
           narration: 'Group like terms together: x terms in one group and y terms in another. Grouping makes the combining step easier to see.',
           visual: `
-            <div class="visual-term-row">
-              <span class="visual-term-chip">x group: 4x + 2x</span>
-              <span class="visual-term-chip">y group: 3y - y</span>
+            <div class="lesson-visual-board">
+              <div class="visual-group-grid">
+                <div class="visual-group-box">
+                  <div class="visual-group-title">x bucket</div>
+                  <div class="coefficient-row">
+                    <span class="term-card term-card--x">4x</span>
+                    <span class="operator-badge">+</span>
+                    <span class="term-card term-card--x">2x</span>
+                  </div>
+                </div>
+                <div class="visual-group-box">
+                  <div class="visual-group-title">y bucket</div>
+                  <div class="coefficient-row">
+                    <span class="term-card term-card--y">3y</span>
+                    <span class="operator-badge">+</span>
+                    <span class="term-card term-card--y">-y</span>
+                  </div>
+                </div>
+              </div>
+              <div class="visual-note">Nothing has been calculated yet. We only sorted the cards by variable part.</div>
             </div>
           `,
         },
@@ -133,10 +160,18 @@ function enrichLesson(existing) {
           annotation: 'x terms combined: 4 + 2 = 6',
           narration: 'Combine the x coefficients: 4 plus 2 equals 6. Keep the x, so 4x plus 2x becomes 6x.',
           visual: `
-            <div class="visual-term-row">
-              <span class="visual-term-chip">4 + 2 = 6</span>
-              <span class="visual-term-chip">4x + 2x = 6x</span>
-              <span class="visual-term-chip">3y - y still waiting</span>
+            <div class="lesson-visual-board">
+              <div class="visual-group-box">
+                <div class="visual-group-title">combine the x bucket</div>
+                <div class="coefficient-row">
+                  <span class="term-card term-card--x">4x</span>
+                  <span class="operator-badge">+</span>
+                  <span class="term-card term-card--x">2x</span>
+                  <span class="operator-badge">=</span>
+                  <span class="term-card term-card--x">6x</span>
+                </div>
+              </div>
+              <div class="visual-note">The variable card stays x. Only the coefficients 4 and 2 combine.</div>
             </div>
           `,
         },
@@ -145,10 +180,25 @@ function enrichLesson(existing) {
           annotation: 'Done — fully simplified',
           narration: 'Now combine the y coefficients: 3 minus 1 equals 2. The final expression is 6x plus 2y.',
           visual: `
-            <div class="visual-term-row">
-              <span class="visual-term-chip">3 - 1 = 2</span>
-              <span class="visual-term-chip">3y - y = 2y</span>
-              <span class="visual-term-chip">Final: 6x + 2y</span>
+            <div class="lesson-visual-board">
+              <div class="visual-group-grid">
+                <div class="visual-group-box">
+                  <div class="visual-group-title">x bucket result</div>
+                  <div class="coefficient-row"><span class="term-card term-card--x">6x</span></div>
+                </div>
+                <div class="visual-group-box">
+                  <div class="visual-group-title">y bucket result</div>
+                  <div class="coefficient-row">
+                    <span class="term-card term-card--y">3y</span>
+                    <span class="operator-badge">+</span>
+                    <span class="term-card term-card--y">-y</span>
+                    <span class="operator-badge">=</span>
+                    <span class="term-card term-card--y">2y</span>
+                  </div>
+                </div>
+              </div>
+              <div class="visual-result">6x + 2y</div>
+              <div class="visual-note">The final answer keeps one x term and one y term because x and y are different buckets.</div>
             </div>
           `,
         },

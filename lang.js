@@ -563,7 +563,7 @@
       step_3_p: 'Sesiones semanales por Google Meet con un maestro real para revisar el progreso, responder preguntas m\u00E1s dif\u00EDciles y mantener el impulso.',
       curriculum_section_label: 'Curr\u00EDculos disponibles',
       curriculum_section_title: 'Elige la ruta curricular ideal',
-      curriculum_section_sub: 'Nuvo Math soporta m\u00FAltiples rutas curriculares para que cada familia elija el marco que mejor se alinea con su colegio y objetivos.',
+      curriculum_section_sub: 'Para que cada estudiante elija el marco que mejor se alinea con su colegio u objetivos.',
       curriculum_section_badge: 'Soporte multi-curr\u00EDculo \u00B7 Grados 6\u20139 + preparaci\u00F3n de admisi\u00F3n UTP',
       curriculum_cambridge_name: 'Cambridge Lower Secondary',
       curriculum_cambridge_sub: 'Ruta internacional estructurada para grados 6\u20139, enfocada en comprensi\u00F3n profunda y progresi\u00F3n por etapas.',

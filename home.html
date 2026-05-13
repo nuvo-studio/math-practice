@@ -723,37 +723,17 @@
     guestBanner.style.display = 'block';
     guestBanner.textContent = Lang.t('guest_secondary_trial_banner');
 
-    const cards = [
-      {
-        number: '1',
-        title: Lang.t('guest_secondary_card1_title'),
-        desc: Lang.t('guest_secondary_card1_desc'),
-        status: Lang.t('guest_unit_available'),
-        href: 'lesson.html?curriculum=cambridge&unit=1&level=1&guest=true',
-        locked: false
-      },
-      {
-        number: '2',
-        title: Lang.t('guest_secondary_card2_title'),
-        desc: Lang.t('guest_secondary_card2_desc'),
-        status: Lang.t('guest_unit_locked'),
-        locked: true
-      },
-      {
-        number: '3',
-        title: Lang.t('guest_secondary_card3_title'),
-        desc: Lang.t('guest_secondary_card3_desc'),
-        status: Lang.t('guest_unit_locked'),
-        locked: true
-      },
-      {
-        number: '4',
-        title: Lang.t('guest_secondary_card4_title'),
-        desc: Lang.t('guest_secondary_card4_desc'),
-        status: Lang.t('guest_unit_locked'),
-        locked: true
-      }
-    ];
+    const cards = [1,2,3,4,5,6,7,8].map(function (u) {
+      const locked = u !== 1;
+      return {
+        number: String(u),
+        title: UNIT_NAMES[u],
+        desc: Lang.t('guest_secondary_unit_desc_generic'),
+        status: locked ? Lang.t('guest_unit_locked') : Lang.t('guest_unit_available'),
+        href: 'lesson.html?curriculum=cambridge&unit=' + u + '&level=1&guest=true',
+        locked: locked
+      };
+    });
 
     grid.innerHTML = cards.map((card) => {
       const cardClass = card.locked ? 'unit-card guest-locked' : 'unit-card';

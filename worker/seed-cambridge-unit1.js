@@ -69,37 +69,48 @@ function enrichLesson(existing) {
       'Coefficient changes; variable part stays the same'
     ],
     conceptVisual: `
-      <div class="lesson-visual-board">
-        <div class="visual-expression-strip">
-          <span class="term-card term-card--x">4x</span>
-          <span class="term-card term-card--y">3y</span>
-          <span class="term-card term-card--x">2x</span>
-          <span class="term-card term-card--y">-y</span>
+      <div class="algebra-tile-board">
+        <div class="tile-stage">
+          <div class="tile-stage-title">Start with tiles for each term</div>
+          <div class="tile-row">
+            <span class="algebra-tile algebra-tile--x">x</span>
+            <span class="algebra-tile algebra-tile--x">x</span>
+            <span class="algebra-tile algebra-tile--x">x</span>
+            <span class="algebra-tile algebra-tile--x">x</span>
+            <span class="algebra-tile algebra-tile--y">y</span>
+            <span class="algebra-tile algebra-tile--y">y</span>
+            <span class="algebra-tile algebra-tile--y">y</span>
+            <span class="algebra-tile algebra-tile--x">x</span>
+            <span class="algebra-tile algebra-tile--x">x</span>
+            <span class="algebra-tile algebra-tile--y algebra-tile--negative">-y</span>
+          </div>
         </div>
-        <div class="visual-note">Same colour means same variable part, so those terms can be placed in the same bucket.</div>
+        <div class="tile-arrow">Sort by shape and colour ↓</div>
         <div class="visual-group-grid">
-          <div class="visual-group-box">
-            <div class="visual-group-title">x bucket</div>
-            <div class="coefficient-row">
-              <span class="term-card term-card--x">4x</span>
-              <span class="operator-badge">+</span>
-              <span class="term-card term-card--x">2x</span>
-              <span class="operator-badge">=</span>
-              <span class="term-card term-card--x">6x</span>
+          <div class="tile-stage">
+            <div class="tile-stage-title">x tiles combine</div>
+            <div class="tile-row">
+              <span class="algebra-tile algebra-tile--x">x</span>
+              <span class="algebra-tile algebra-tile--x">x</span>
+              <span class="algebra-tile algebra-tile--x">x</span>
+              <span class="algebra-tile algebra-tile--x">x</span>
+              <span class="algebra-tile algebra-tile--x">x</span>
+              <span class="algebra-tile algebra-tile--x">x</span>
             </div>
           </div>
-          <div class="visual-group-box">
-            <div class="visual-group-title">y bucket</div>
-            <div class="coefficient-row">
-              <span class="term-card term-card--y">3y</span>
-              <span class="operator-badge">+</span>
-              <span class="term-card term-card--y">-y</span>
-              <span class="operator-badge">=</span>
-              <span class="term-card term-card--y">2y</span>
+          <div class="tile-stage">
+            <div class="tile-stage-title">one y cancels with -y</div>
+            <div class="tile-row">
+              <span class="algebra-tile algebra-tile--y">y</span>
+              <span class="algebra-tile algebra-tile--y">y</span>
+              <span class="tile-cancel-pair">
+                <span class="algebra-tile algebra-tile--y">y</span>
+                <span class="algebra-tile algebra-tile--y algebra-tile--negative">-y</span>
+              </span>
             </div>
           </div>
         </div>
-        <div class="visual-result">4x + 3y + 2x - y = 6x + 2y</div>
+        <div class="tile-equation">Six x-tiles and two y-tiles remain: 6x + 2y</div>
       </div>
     `,
     example: {
@@ -116,14 +127,23 @@ function enrichLesson(existing) {
           annotation: 'Spot the like terms first',
           narration: 'Look for terms with the same variable part. The x terms are 4x and 2x. The y terms are 3y and negative y.',
           visual: `
-            <div class="lesson-visual-board">
-              <div class="visual-expression-strip">
-                <span class="term-card term-card--x">4x</span>
-                <span class="term-card term-card--y">3y</span>
-                <span class="term-card term-card--x">2x</span>
-                <span class="term-card term-card--y">-y</span>
+            <div class="algebra-tile-board">
+              <div class="tile-stage">
+                <div class="tile-stage-title">Expression as physical tiles</div>
+                <div class="tile-row">
+                  <span class="algebra-tile algebra-tile--x">x</span>
+                  <span class="algebra-tile algebra-tile--x">x</span>
+                  <span class="algebra-tile algebra-tile--x">x</span>
+                  <span class="algebra-tile algebra-tile--x">x</span>
+                  <span class="algebra-tile algebra-tile--y">y</span>
+                  <span class="algebra-tile algebra-tile--y">y</span>
+                  <span class="algebra-tile algebra-tile--y">y</span>
+                  <span class="algebra-tile algebra-tile--x">x</span>
+                  <span class="algebra-tile algebra-tile--x">x</span>
+                  <span class="algebra-tile algebra-tile--y algebra-tile--negative">-y</span>
+                </div>
               </div>
-              <div class="visual-note">The expression is a row of term cards. Colour helps us see which cards belong together.</div>
+              <div class="visual-note">Each tile represents one variable piece. Tall blue tiles are x. Wide green tiles are y. Red means a negative y.</div>
             </div>
           `,
         },
@@ -132,26 +152,30 @@ function enrichLesson(existing) {
           annotation: 'Grouped by variable',
           narration: 'Group like terms together: x terms in one group and y terms in another. Grouping makes the combining step easier to see.',
           visual: `
-            <div class="lesson-visual-board">
+            <div class="algebra-tile-board">
               <div class="visual-group-grid">
-                <div class="visual-group-box">
-                  <div class="visual-group-title">x bucket</div>
-                  <div class="coefficient-row">
-                    <span class="term-card term-card--x">4x</span>
-                    <span class="operator-badge">+</span>
-                    <span class="term-card term-card--x">2x</span>
+                <div class="tile-stage">
+                  <div class="tile-stage-title">x bucket</div>
+                  <div class="tile-row">
+                    <span class="algebra-tile algebra-tile--x">x</span>
+                    <span class="algebra-tile algebra-tile--x">x</span>
+                    <span class="algebra-tile algebra-tile--x">x</span>
+                    <span class="algebra-tile algebra-tile--x">x</span>
+                    <span class="algebra-tile algebra-tile--x">x</span>
+                    <span class="algebra-tile algebra-tile--x">x</span>
                   </div>
                 </div>
-                <div class="visual-group-box">
-                  <div class="visual-group-title">y bucket</div>
-                  <div class="coefficient-row">
-                    <span class="term-card term-card--y">3y</span>
-                    <span class="operator-badge">+</span>
-                    <span class="term-card term-card--y">-y</span>
+                <div class="tile-stage">
+                  <div class="tile-stage-title">y bucket</div>
+                  <div class="tile-row">
+                    <span class="algebra-tile algebra-tile--y">y</span>
+                    <span class="algebra-tile algebra-tile--y">y</span>
+                    <span class="algebra-tile algebra-tile--y">y</span>
+                    <span class="algebra-tile algebra-tile--y algebra-tile--negative">-y</span>
                   </div>
                 </div>
               </div>
-              <div class="visual-note">Nothing has been calculated yet. We only sorted the cards by variable part.</div>
+              <div class="visual-note">Like terms are not just similar text. They are the same kind of object, so they can be counted together.</div>
             </div>
           `,
         },
@@ -160,18 +184,22 @@ function enrichLesson(existing) {
           annotation: 'x terms combined: 4 + 2 = 6',
           narration: 'Combine the x coefficients: 4 plus 2 equals 6. Keep the x, so 4x plus 2x becomes 6x.',
           visual: `
-            <div class="lesson-visual-board">
-              <div class="visual-group-box">
-                <div class="visual-group-title">combine the x bucket</div>
-                <div class="coefficient-row">
-                  <span class="term-card term-card--x">4x</span>
+            <div class="algebra-tile-board">
+              <div class="tile-stage">
+                <div class="tile-stage-title">count the x tiles</div>
+                <div class="tile-row">
+                  <span class="algebra-tile algebra-tile--x">x</span>
+                  <span class="algebra-tile algebra-tile--x">x</span>
+                  <span class="algebra-tile algebra-tile--x">x</span>
+                  <span class="algebra-tile algebra-tile--x">x</span>
                   <span class="operator-badge">+</span>
-                  <span class="term-card term-card--x">2x</span>
+                  <span class="algebra-tile algebra-tile--x">x</span>
+                  <span class="algebra-tile algebra-tile--x">x</span>
                   <span class="operator-badge">=</span>
                   <span class="term-card term-card--x">6x</span>
                 </div>
               </div>
-              <div class="visual-note">The variable card stays x. Only the coefficients 4 and 2 combine.</div>
+              <div class="visual-note">The coefficient is the number of x tiles. Four x tiles plus two x tiles makes six x tiles.</div>
             </div>
           `,
         },
@@ -180,25 +208,28 @@ function enrichLesson(existing) {
           annotation: 'Done — fully simplified',
           narration: 'Now combine the y coefficients: 3 minus 1 equals 2. The final expression is 6x plus 2y.',
           visual: `
-            <div class="lesson-visual-board">
+            <div class="algebra-tile-board">
               <div class="visual-group-grid">
-                <div class="visual-group-box">
-                  <div class="visual-group-title">x bucket result</div>
-                  <div class="coefficient-row"><span class="term-card term-card--x">6x</span></div>
+                <div class="tile-stage">
+                  <div class="tile-stage-title">x result</div>
+                  <div class="tile-row">
+                    <span class="term-card term-card--x">6x</span>
+                  </div>
                 </div>
-                <div class="visual-group-box">
-                  <div class="visual-group-title">y bucket result</div>
-                  <div class="coefficient-row">
-                    <span class="term-card term-card--y">3y</span>
-                    <span class="operator-badge">+</span>
-                    <span class="term-card term-card--y">-y</span>
-                    <span class="operator-badge">=</span>
-                    <span class="term-card term-card--y">2y</span>
+                <div class="tile-stage">
+                  <div class="tile-stage-title">y result after cancellation</div>
+                  <div class="tile-row">
+                    <span class="algebra-tile algebra-tile--y">y</span>
+                    <span class="algebra-tile algebra-tile--y">y</span>
+                    <span class="tile-cancel-pair">
+                      <span class="algebra-tile algebra-tile--y">y</span>
+                      <span class="algebra-tile algebra-tile--y algebra-tile--negative">-y</span>
+                    </span>
                   </div>
                 </div>
               </div>
-              <div class="visual-result">6x + 2y</div>
-              <div class="visual-note">The final answer keeps one x term and one y term because x and y are different buckets.</div>
+              <div class="tile-equation">Remaining tiles: 6x + 2y</div>
+              <div class="visual-note">A positive y tile and a negative y tile cancel out, leaving two y tiles.</div>
             </div>
           `,
         },

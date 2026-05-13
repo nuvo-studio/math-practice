@@ -715,39 +715,8 @@
     text-decoration: underline;
   }
 
-  /* ── Guest paywall ── */
-  #guest-paywall {
-    display: none;
-    max-width: 540px;
-    width: 100%;
-    margin-top: 60px;
-    text-align: center;
-    padding: 0 8px;
-  }
-
-  #guest-paywall .paywall-logo {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: var(--text);
-    margin-bottom: 28px;
-    letter-spacing: -0.02em;
-  }
-
-  #guest-paywall h2 {
-    font-size: 1.5rem;
-    font-weight: 700;
-    margin-bottom: 10px;
-    letter-spacing: -0.02em;
-  }
-
-  #guest-paywall .paywall-subtitle {
-    color: var(--text-secondary);
-    font-size: 0.95rem;
-    line-height: 1.55;
-    margin-bottom: 28px;
-  }
 </style>
-<script src="lang.js?v=20260513-spanish-default"></script>
+<script src="lang.js?v=20260513-lesson-app-unified"></script>
 <script src="calculator.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/algebrite@1.4.0/dist/algebrite.bundle-for-browser.js"></script>
 </head>
@@ -759,13 +728,13 @@
 <!-- ── Trial expired overlay (replaces all content when trial has ended) ── -->
 <div id="trial-expired">
   <div class="expired-logo">Nuvo Math</div>
-  <h2>Your free trial has ended</h2>
-  <p>You're one step away from full access. Choose a plan to keep practicing.</p>
+  <h2 data-i18n="trial_expired_heading">Your access has ended</h2>
+  <p data-i18n="trial_expired_body">Submit the enrollment form to choose a plan and arrange payment.</p>
   <div class="expired-btn-row">
-    <a id="expired-practice-btn" href="#" class="expired-btn expired-btn-outline">Practice &mdash; $29/month</a>
-    <a href="https://wa.me/5076014-1676" target="_blank" class="expired-btn expired-btn-primary">Practice + Tutoring &mdash; $99/month</a>
+    <a id="expired-practice-btn" href="#" class="expired-btn expired-btn-outline" data-i18n="trial_practice_btn">Enrollment form →</a>
+    <a href="https://wa.me/5076014-1676" target="_blank" class="expired-btn expired-btn-primary" data-i18n="trial_tutoring_btn">WhatsApp us →</a>
   </div>
-  <p class="expired-note">Questions? Email <a href="mailto:tutor@nuvostudio.club">tutor@nuvostudio.club</a> or WhatsApp 6014-1676.</p>
+  <p class="expired-note" data-i18n="trial_expired_note">Questions? Email tutor@nuvostudio.club or WhatsApp 6014-1676.</p>
 </div>
 
 <!-- ════════ SETUP / TEACHER MODE ════════ -->
@@ -854,20 +823,6 @@
   <button id="next-problem-btn" onclick="nextProblem()">Next Problem →</button>
 </div>
 
-<!-- ════════ GUEST PAYWALL ════════ -->
-<div id="guest-paywall">
-  <div class="paywall-logo">Nuvo Math</div>
-  <h2 data-i18n="guest_paywall_title">¿Listo para seguir practicando?</h2>
-  <p class="paywall-subtitle" data-i18n="guest_paywall_subtitle">Completaste tu práctica gratuita. Suscríbete para acceder a todos los niveles de la Prueba de Admisión — Aritmética, Álgebra, Geometría y más.</p>
-  <div class="expired-btn-row">
-    <a href="mailto:tutor@nuvostudio.club?subject=Quiero%20suscribirme%20a%20Nuvo%20Math"
-       class="expired-btn expired-btn-primary" data-i18n="guest_paywall_subscribe_btn">Suscribirme →</a>
-    <a href="login.html?curriculum=PAA"
-       class="expired-btn expired-btn-outline" data-i18n="guest_paywall_login_btn">Ya tengo cuenta → Iniciar sesión</a>
-  </div>
-  <p class="expired-note" data-i18n="guest_paywall_contact">¿Preguntas? WhatsApp 6014-1676</p>
-</div>
-
 <!-- ════════ DONE SCREEN ════════ -->
 <div id="done-screen">
   <div class="done-icon">🎉</div>
@@ -906,19 +861,31 @@
   const PARAM_MODE       = _urlParams.get('mode') || '';
   const PARAM_RETURN_TO  = _urlParams.get('returnTo') || '';
 
+  function currentProblemRowId() {
+    if (PROBLEM_ID) return PROBLEM_ID;
+    try {
+      const p = problems[currentIndex];
+      return p && p.id ? String(p.id) : null;
+    } catch (e) {
+      return null;
+    }
+  }
+
   function markProblemComplete() {
-    if (!STUDENT_ID || !PROBLEM_ID) return;
-    fetch(`${PROXY_URL}/student/${encodeURIComponent(STUDENT_ID)}/complete/${encodeURIComponent(PROBLEM_ID)}`, {
+    const pid = currentProblemRowId();
+    if (!STUDENT_ID || !pid) return;
+    fetch(`${PROXY_URL}/student/${encodeURIComponent(STUDENT_ID)}/complete/${encodeURIComponent(pid)}`, {
       method: 'POST'
     }).catch(() => {}); // fire-and-forget, ignore errors silently
   }
 
   function logStep(step, correct) {
-    if (!STUDENT_ID || !PROBLEM_ID) return;
+    const pid = currentProblemRowId();
+    if (!STUDENT_ID || !pid) return;
     fetch(`${PROXY_URL}/log-step`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ studentId: STUDENT_ID, problemId: PROBLEM_ID, step, correct })
+      body: JSON.stringify({ studentId: STUDENT_ID, problemId: pid, step, correct })
     }).catch(() => {}); // fire-and-forget
   }
 
@@ -1536,7 +1503,7 @@
     }
     // Curriculum/lesson flow: fetch+filter problems from the problem bank
     if (PARAM_CURRICULUM && PARAM_UNIT && PARAM_STAGE) {
-      loadCurriculumProblems(PARAM_CURRICULUM, PARAM_UNIT, PARAM_STAGE);
+      loadCurriculumProblemsFromBank(false);
       return;
     }
     // Direct access with no params — redirect based on localStorage
@@ -1547,38 +1514,56 @@
     }
   }
 
-  // ── Load problems filtered by curriculum/unit/stage ──
-  async function loadCurriculumProblems(curriculum, unit, stage) {
+  async function fetchBankProblemsForLesson(curriculumKey, unitVal, levelVal, problemType) {
+    try {
+      const res = await fetch(
+        `${PROXY_URL}/problems/curriculum/${encodeURIComponent(curriculumKey)}/${encodeURIComponent(unitVal)}/${encodeURIComponent(levelVal)}/${encodeURIComponent(problemType)}`
+      );
+      if (!res.ok) throw new Error('Failed');
+      return await res.json();
+    } catch (e) {
+      console.error('Failed to load curriculum problems:', e);
+      return [];
+    }
+  }
+
+  async function loadCurriculumProblemsFromBank(useGuestBreadcrumb) {
     document.getElementById('setup-screen').style.display = 'none';
     document.getElementById('practice-screen').style.display = 'block';
 
+    const curriculumLabelMap = {
+      PAA: 'PAA',
+      cambridge: 'Cambridge',
+      'common-core': 'Common Core',
+      'ib-myp': 'IB MYP'
+    };
+    const defaultUnit = PARAM_CURRICULUM === 'PAA' ? 'aritmetica' : '1';
+    const unitVal = PARAM_UNIT || defaultUnit;
+    const levelVal = PARAM_STAGE || PARAM_LEVEL || '1';
+    const problemType = PARAM_MODE === 'test' ? 'test' : 'practice';
+
     const breadcrumb = document.getElementById('curriculum-breadcrumb');
     if (breadcrumb) {
-      const labels = { cambridge: 'Cambridge', 'common-core': 'Common Core', 'ib-myp': 'IB MYP', general: 'General' };
-      breadcrumb.textContent = (labels[curriculum] || curriculum) + ' \u00b7 Unit ' + unit + ' \u00b7 Level ' + stage;
+      if (useGuestBreadcrumb) {
+        const guestPhase = PARAM_MODE === 'test' ? 'Prueba' : 'Pr\u00e1ctica';
+        breadcrumb.textContent = (curriculumLabelMap[PARAM_CURRICULUM] || PARAM_CURRICULUM) + ' \u00b7 Unidad ' + unitVal + ' \u00b7 Nivel ' + levelVal + ' \u00b7 ' + guestPhase;
+      } else {
+        const phaseLabel = PARAM_MODE === 'test' ? 'Test' : 'Practice';
+        breadcrumb.textContent = (curriculumLabelMap[PARAM_CURRICULUM] || PARAM_CURRICULUM) + ' \u00b7 Unit ' + unitVal + ' \u00b7 Level ' + levelVal + ' \u00b7 ' + phaseLabel;
+      }
       breadcrumb.style.display = 'block';
     }
 
-    try {
-      const res = await fetch(`${PROXY_URL}/problems`);
-      if (!res.ok) throw new Error('Failed');
-      const bank = await res.json();
-      problems = bank.filter(p =>
-        p.curriculum === curriculum &&
-        String(p.unit)  === String(unit) &&
-        String(p.stage) === String(stage)
-      );
-    } catch (e) {
-      console.error('Failed to load curriculum problems:', e);
-      problems = [];
-    }
+    problems = await fetchBankProblemsForLesson(PARAM_CURRICULUM, unitVal, levelVal, problemType);
 
     if (problems.length === 0) {
       document.getElementById('practice-screen').style.display = 'none';
       const doneEl = document.getElementById('done-screen');
       doneEl.style.display = 'block';
-      doneEl.querySelector('h2').textContent = 'No problems found';
-      doneEl.querySelector('p').textContent  = 'There are no practice problems for this lesson yet.';
+      doneEl.querySelector('h2').textContent = useGuestBreadcrumb ? 'No hay problemas disponibles' : 'No problems found';
+      doneEl.querySelector('p').textContent  = useGuestBreadcrumb
+        ? 'No hay problemas de pr\u00e1ctica para este nivel a\u00fan.'
+        : 'There are no problems for this lesson yet.';
       return;
     }
 
@@ -1592,78 +1577,25 @@
       localStorage.setItem('nuvo_guest_count', '0');
     }
 
-    // Already used up free practice problems — show paywall immediately
     const guestCount = parseInt(localStorage.getItem('nuvo_guest_count') || '0', 10);
+
+    // Guest used free practice quota — send to enrollment form
     if (PARAM_MODE !== 'test' && guestCount >= 5) {
-      showGuestPaywall();
+      redirectGuestToEnrollment();
       return;
     }
 
-    document.getElementById('setup-screen').style.display = 'none';
-    document.getElementById('practice-screen').style.display = 'block';
-
-    const curriculumLabelMap = {
-      PAA: 'PAA',
-      cambridge: 'Cambridge',
-      'common-core': 'Common Core',
-      'ib-myp': 'IB MYP'
-    };
-    const defaultUnit = PARAM_CURRICULUM === 'PAA' ? 'aritmetica' : '1';
-    const unit = PARAM_UNIT || defaultUnit;
-    const level = PARAM_STAGE || PARAM_LEVEL || '1';
-
-    const breadcrumb = document.getElementById('curriculum-breadcrumb');
-    if (breadcrumb) {
-      const guestPhase = PARAM_MODE === 'test' ? 'Prueba' : 'Pr\u00e1ctica';
-      breadcrumb.textContent = (curriculumLabelMap[PARAM_CURRICULUM] || PARAM_CURRICULUM) + ' \u00b7 Unidad ' + unit + ' \u00b7 Nivel ' + level + ' \u00b7 ' + guestPhase;
-      breadcrumb.style.display = 'block';
-    }
-
-    const problemType = PARAM_MODE === 'test' ? 'test' : 'practice';
-    try {
-      const res = await fetch(
-        `${PROXY_URL}/problems/curriculum/${encodeURIComponent(PARAM_CURRICULUM)}/${encodeURIComponent(unit)}/${encodeURIComponent(level)}/${encodeURIComponent(problemType)}`
-      );
-      if (!res.ok) throw new Error('Failed');
-      problems = await res.json();
-    } catch (e) {
-      console.error('Failed to load guest problems:', e);
-      problems = [];
-    }
-
-    if (problems.length === 0) {
-      document.getElementById('practice-screen').style.display = 'none';
-      const doneEl = document.getElementById('done-screen');
-      doneEl.style.display = 'block';
-      doneEl.querySelector('h2').textContent = 'No hay problemas disponibles';
-      doneEl.querySelector('p').textContent  = 'No hay problemas de pr\u00e1ctica para este nivel a\u00fan.';
-      return;
-    }
-
-    loadProblem(0);
+    await loadCurriculumProblemsFromBank(true);
   }
 
-  // ── Show guest paywall inline (hides practice area) ──
-  function showGuestPaywall() {
-    ['setup-screen', 'practice-screen', 'done-screen', 'trial-expired'].forEach(function (id) {
-      const el = document.getElementById(id);
-      if (el) el.style.display = 'none';
-    });
-    document.getElementById('trial-banner').style.display = 'none';
-    const paywall = document.getElementById('guest-paywall');
-    if (paywall) {
-      paywall.style.display = 'block';
-      Lang.apply();
-      const subtitleEl = paywall.querySelector('.paywall-subtitle');
-      const loginBtn = paywall.querySelector('[data-i18n="guest_paywall_login_btn"]');
-      if (PARAM_CURRICULUM && PARAM_CURRICULUM !== 'PAA') {
-        if (subtitleEl) subtitleEl.textContent = Lang.t('guest_paywall_subtitle_secondary');
-        if (loginBtn) loginBtn.setAttribute('href', 'login.html?curriculum=' + encodeURIComponent(PARAM_CURRICULUM));
-      } else {
-        if (subtitleEl) subtitleEl.textContent = Lang.t('guest_paywall_subtitle');
-        if (loginBtn) loginBtn.setAttribute('href', 'login.html?curriculum=PAA');
-      }
-    }
+  function guestEnrollmentFormUrl() {
+    var curriculum = PARAM_CURRICULUM || 'PAA';
+    var lang = (typeof Lang !== 'undefined' && Lang.detect) ? Lang.detect() : 'es';
+    return 'trial.html?from=guest&curriculum=' + encodeURIComponent(curriculum) + '&lang=' + encodeURIComponent(lang);
+  }
+
+  function redirectGuestToEnrollment() {
+    window.location.replace(guestEnrollmentFormUrl());
   }
 
   // ── Navigate back to curriculum home ──
@@ -1972,34 +1904,35 @@
     if (PARAM_GUEST && PARAM_MODE !== 'test') {
       const count = parseInt(localStorage.getItem('nuvo_guest_count') || '0', 10);
       if (count >= 5) {
-        showGuestPaywall();
+        redirectGuestToEnrollment();
         return;
       }
     }
     if (currentIndex < problems.length - 1) {
       loadProblem(currentIndex + 1);
-    } else if (PARAM_GUEST) {
+      return;
+    }
+    if (PARAM_RETURN_TO) {
+      window.location.href = PARAM_RETURN_TO;
+      return;
+    }
+    if (PARAM_GUEST) {
       if (PARAM_MODE === 'test') {
-        if (PARAM_RETURN_TO) {
-          window.location.href = PARAM_RETURN_TO;
-        } else {
-          window.location.href = 'lesson.html?curriculum=PAA&unit=aritmetica&stage=1&guest=true&phase=complete';
-        }
-      } else if (PARAM_RETURN_TO) {
-        window.location.href = PARAM_RETURN_TO;
+        window.location.href = 'lesson.html?curriculum=PAA&unit=aritmetica&stage=1&guest=true&phase=complete';
       } else {
-        // All problems exhausted in guest practice mode — show paywall
-        showGuestPaywall();
+        redirectGuestToEnrollment();
       }
-    } else if (PARAM_CURRICULUM && PARAM_UNIT && PARAM_STAGE) {
-      // Curriculum flow: show done screen with back-to-curriculum button
+      return;
+    }
+    if (PARAM_CURRICULUM && PARAM_UNIT && PARAM_STAGE) {
+      // Curriculum flow (no lesson return URL): show done screen with back-to-curriculum button
       document.getElementById('practice-screen').style.display = 'none';
       document.getElementById('done-screen').style.display = 'block';
       const backBtn = document.getElementById('back-to-curriculum-btn');
       if (backBtn) backBtn.style.display = 'block';
-    } else {
-      window.location.href = 'home.html';
+      return;
     }
+    window.location.href = 'home.html';
   }
 
   // Enter key submits on student screen
@@ -2064,21 +1997,23 @@
           const el = document.getElementById(id);
           if (el) el.style.display = 'none';
         });
-        // Pre-fill mailto with student name
-        const sName = encodeURIComponent(student.name || STUDENT_ID);
-        const subject = encodeURIComponent('Subscribe: Practice Plan');
-        const body = encodeURIComponent(`Hi, I'd like to subscribe to the Practice plan for ${student.name || STUDENT_ID}.`);
+        const lang = Lang.detect();
         document.getElementById('expired-practice-btn').href =
-          `mailto:tutor@nuvostudio.club?subject=${subject}&body=${body}`;
+          'trial.html?from=access_ended&lang=' + encodeURIComponent(lang);
         document.getElementById('trial-expired').style.display = 'block';
+        Lang.apply();
       } else {
         // Active — compute days remaining and show banner
         const expiry = new Date(student.trialExpiry + 'T00:00:00');
         const todayMidnight = new Date(today.getFullYear(), today.getMonth(), today.getDate());
         const daysLeft = Math.round((expiry - todayMidnight) / (1000 * 60 * 60 * 24));
-        const dayWord = daysLeft === 1 ? 'day' : 'days';
+        const dayWord = daysLeft === 1 ? Lang.t('trial_day_singular') : Lang.t('trial_day_plural');
+        const enrollHref = 'trial.html?from=access_reminder&lang=' + encodeURIComponent(Lang.detect());
         const banner = document.getElementById('trial-banner');
-        banner.innerHTML = `Free trial &middot; <strong>${daysLeft} ${dayWord} remaining</strong> &mdash; <a href="https://nuvostudio.club/#pricing">Choose a plan</a>`;
+        banner.innerHTML = Lang.t('trial_banner_active_prefix') +
+          ' <strong>' + daysLeft + ' ' + dayWord + '</strong> ' +
+          Lang.t('trial_banner_active_mid') +
+          ' <a href="' + enrollHref + '">' + Lang.t('trial_banner_active_link') + '</a>';
         banner.style.display = 'block';
       }
     } catch {

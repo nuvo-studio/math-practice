@@ -400,11 +400,11 @@
 <!-- ════════ TRIAL EXPIRED ════════ -->
 <div id="trial-expired">
   <div class="expired-logo">Nuvo Math</div>
-  <h2 data-i18n="trial_expired_heading">Your free trial has ended</h2>
-  <p data-i18n="trial_expired_body">You're one step away from full access. Choose a plan to keep practicing.</p>
+  <h2 data-i18n="trial_expired_heading">Your access has ended</h2>
+  <p data-i18n="trial_expired_body">Submit the enrollment form to choose a plan and arrange payment.</p>
   <div class="expired-btn-row">
-    <a id="expired-practice-btn" href="#" class="expired-btn expired-btn-outline" data-i18n="trial_practice_btn">Practice — $29/month</a>
-    <a href="https://wa.me/5076014-1676" target="_blank" class="expired-btn expired-btn-primary" data-i18n="trial_tutoring_btn">Practice + Tutoring — $99/month</a>
+    <a id="expired-practice-btn" href="#" class="expired-btn expired-btn-outline" data-i18n="trial_practice_btn">Enrollment form →</a>
+    <a href="https://wa.me/5076014-1676" target="_blank" class="expired-btn expired-btn-primary" data-i18n="trial_tutoring_btn">WhatsApp us →</a>
   </div>
   <p class="expired-note" data-i18n="trial_expired_note">Questions? Email tutor@nuvostudio.club or WhatsApp 6014-1676.</p>
 </div>
@@ -437,7 +437,7 @@
 </main>
 
 
-<script src="lang.js?v=20260513-spanish-default"></script>
+<script src="lang.js?v=20260513-guest-trial-flow"></script>
 <script>
   const WORKER = 'https://math-practice-proxy.ronelalmanza20.workers.dev';
   const URL_PARAMS = new URLSearchParams(window.location.search);
@@ -764,11 +764,9 @@
       String(today.getDate()).padStart(2, '0');
 
     if (todayStr > student.trialExpiry) {
-      const sName   = encodeURIComponent(student.name || '');
-      const subject = encodeURIComponent('Subscribe: Practice Plan');
-      const body    = encodeURIComponent(`Hi, I'd like to subscribe to the Practice plan for ${student.name || ''}.`);
+      const lang = Lang.detect();
       document.getElementById('expired-practice-btn').href =
-        `mailto:tutor@nuvostudio.club?subject=${subject}&body=${body}`;
+        'trial.html?from=access_ended&lang=' + encodeURIComponent(lang);
       document.getElementById('trial-expired').style.display = 'block';
       return true;
     }

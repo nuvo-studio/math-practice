@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Start Free Trial — Nuvo Math</title>
-  <meta name="description" content="Start your 2-day free trial of Nuvo Math. Step-by-step algebra practice for grades 6–9.">
+  <title>Enrollment — Nuvo Math</title>
+  <meta id="trial-meta-desc" name="description" content="Request student access to Nuvo Math. Choose a plan; we follow up with payment and login details.">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -302,6 +302,18 @@
       color: #4B5563;
     }
 
+    .trial-context-banner {
+      display: none;
+      background: var(--blue-xlight);
+      border: 1px solid var(--blue-light);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      margin-bottom: 22px;
+      font-size: 0.92rem;
+      color: var(--text-mid);
+      line-height: 1.55;
+    }
+
     /* ── Responsive ── */
     @media (max-width: 768px) {
       .nav-links { display: none; }
@@ -349,56 +361,60 @@
 <main>
   <div class="form-wrap">
 
+    <div id="trial-context-banner" class="trial-context-banner" role="status"></div>
+
     <!-- Form -->
     <div id="form-section">
-      <p class="form-label">Free Trial</p>
-      <h1 class="form-heading">Start your 2-day free trial</h1>
-      <p class="form-sub">Fill in the details below and we'll send your student's login within a few hours.</p>
+      <p class="form-label" data-i18n="trial_form_eyebrow">Enrollment</p>
+      <h1 class="form-heading" data-i18n="trial_form_heading">Request your student account</h1>
+      <p class="form-sub" data-i18n="trial_form_sub">Share your details and choose a plan. We follow up within a few hours to confirm payment and send login access.</p>
 
       <form id="trial-form" action="https://formspree.io/f/xeenponv" method="POST">
+        <input type="hidden" name="signup_source" id="f-signup-source" value="direct">
+        <input type="hidden" name="curriculum_interest" id="f-curriculum-interest" value="">
 
         <div class="field">
-          <label for="parent-name">Parent name</label>
+          <label for="parent-name" data-i18n="trial_label_parent_name">Parent name</label>
           <input type="text" id="parent-name" name="parent_name" required placeholder="Your full name">
         </div>
 
         <div class="field">
-          <label for="parent-email">Parent email</label>
+          <label for="parent-email" data-i18n="trial_label_parent_email">Parent email</label>
           <input type="email" id="parent-email" name="parent_email" required placeholder="you@example.com">
         </div>
 
         <div class="field">
-          <label for="student-name">Student name</label>
+          <label for="student-name" data-i18n="trial_label_student_name">Student name</label>
           <input type="text" id="student-name" name="student_name" required placeholder="Your child's name">
         </div>
 
         <div class="field">
-          <label for="student-grade">Student grade</label>
+          <label for="student-grade" data-i18n="trial_label_student_grade">Student grade</label>
           <select id="student-grade" name="student_grade" required>
-            <option value="" disabled selected>Select a grade</option>
-            <option value="Grade 6">Grade 6</option>
-            <option value="Grade 7">Grade 7</option>
-            <option value="Grade 8">Grade 8</option>
-            <option value="Grade 9">Grade 9</option>
+            <option value="" disabled selected data-i18n="trial_grade_ph">Select a grade</option>
+            <option value="Grade 6" data-i18n="trial_grade_6">Grade 6</option>
+            <option value="Grade 7" data-i18n="trial_grade_7">Grade 7</option>
+            <option value="Grade 8" data-i18n="trial_grade_8">Grade 8</option>
+            <option value="Grade 9" data-i18n="trial_grade_9">Grade 9</option>
           </select>
         </div>
 
         <div class="field">
-          <label for="plan">Plan</label>
+          <label for="plan" data-i18n="trial_label_plan">Plan</label>
           <select id="plan" name="plan" required>
-            <option value="" disabled selected>Select a plan</option>
-            <option value="Practice — $29/month">Practice &mdash; $29/month</option>
-            <option value="Practice + Tutoring — $99/month">Practice + Tutoring &mdash; $99/month</option>
+            <option value="" disabled selected data-i18n="trial_plan_ph">Select a plan</option>
+            <option value="Basic Plan — $29/month" data-i18n="trial_plan_opt_practice">Basic Plan — $29/month</option>
+            <option value="Pro Plan — $99/month" data-i18n="trial_plan_opt_tutoring">Pro Plan — $99/month</option>
           </select>
         </div>
 
         <div class="field">
-          <label for="whatsapp">WhatsApp number <span class="optional">(optional)</span></label>
-          <input type="text" id="whatsapp" name="whatsapp" placeholder="Optional — for faster support">
+          <label for="whatsapp"><span data-i18n="trial_label_whatsapp_optional">WhatsApp number (optional)</span></label>
+          <input type="text" id="whatsapp" name="whatsapp" data-i18n-placeholder="trial_whatsapp_ph" placeholder="Optional — for faster support">
         </div>
 
-        <button type="submit" class="submit-btn" id="submit-btn">Send my details</button>
-        <p class="form-note">No payment required. We'll reach out within a few hours to set up your account.</p>
+        <button type="submit" class="submit-btn" id="submit-btn" data-i18n="trial_submit_btn">Send my details</button>
+        <p class="form-note" data-i18n="trial_form_note">We reply within a few hours with payment options and next steps before activating your account.</p>
 
       </form>
     </div>
@@ -406,8 +422,8 @@
     <!-- Thank-you (shown after submit) -->
     <div class="thankyou" id="thankyou">
       <div class="thankyou-icon">&#x2705;</div>
-      <h2>You're all set!</h2>
-      <p>Check your email — we'll send your student's login link within a few hours. Questions? WhatsApp us at 6014-1676.</p>
+      <h2 data-i18n="trial_thankyou_heading">You're all set!</h2>
+      <p data-i18n="trial_thankyou_body">Check your email — we'll send follow-up and your student login within a few hours.</p>
     </div>
 
   </div>
@@ -427,6 +443,37 @@
 </footer>
 
 
+<script src="lang.js?v=20260513-plan-basico-pro"></script>
+<script>
+  (function initTrialPage() {
+    Lang.apply();
+    document.title = Lang.t('trial_doc_title');
+    var meta = document.getElementById('trial-meta-desc');
+    if (meta) meta.setAttribute('content', Lang.t('trial_meta_description'));
+
+    var params = new URLSearchParams(window.location.search);
+    var from = params.get('from') || '';
+    var curriculum = params.get('curriculum') || '';
+    document.getElementById('f-curriculum-interest').value = curriculum;
+
+    var source = 'direct';
+    if (from === 'guest') source = 'guest_free_cap';
+    else if (from === 'guest_lesson') source = 'guest_lesson_complete';
+    else if (from === 'access_ended') source = 'access_ended';
+    else if (from === 'access_reminder') source = 'access_reminder';
+    document.getElementById('f-signup-source').value = source;
+
+    var banner = document.getElementById('trial-context-banner');
+    var key = null;
+    if (from === 'guest') key = 'trial_banner_guest_cap';
+    else if (from === 'guest_lesson') key = 'trial_banner_guest_lesson';
+    else if (from === 'access_ended' || from === 'access_reminder') key = 'trial_banner_access_ended';
+    if (key) {
+      banner.style.display = 'block';
+      banner.textContent = Lang.t(key);
+    }
+  })();
+</script>
 <script>
   // ── Mobile nav toggle ──
   const hamburger = document.getElementById('hamburger');
@@ -451,7 +498,7 @@
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     submitBtn.disabled = true;
-    submitBtn.textContent = 'Sending…';
+    submitBtn.textContent = typeof Lang !== 'undefined' && Lang.detect() === 'es' ? 'Enviando\u2026' : 'Sending\u2026';
 
     try {
       const res = await fetch(form.action, {
@@ -465,13 +512,17 @@
         document.getElementById('thankyou').style.display = 'block';
       } else {
         submitBtn.disabled = false;
-        submitBtn.textContent = 'Send my details';
-        alert('Something went wrong. Please try again or email us at tutor@nuvostudio.club.');
+        submitBtn.textContent = typeof Lang !== 'undefined' ? Lang.t('trial_submit_btn') : 'Send my details';
+        alert(typeof Lang !== 'undefined' && Lang.detect() === 'es'
+          ? 'Algo sali\u00F3 mal. Intenta de nuevo o escr\u00EDbenos a tutor@nuvostudio.club.'
+          : 'Something went wrong. Please try again or email us at tutor@nuvostudio.club.');
       }
     } catch {
       submitBtn.disabled = false;
-      submitBtn.textContent = 'Send my details';
-      alert('Something went wrong. Please try again or email us at tutor@nuvostudio.club.');
+      submitBtn.textContent = typeof Lang !== 'undefined' ? Lang.t('trial_submit_btn') : 'Send my details';
+      alert(typeof Lang !== 'undefined' && Lang.detect() === 'es'
+        ? 'Algo sali\u00F3 mal. Intenta de nuevo o escr\u00EDbenos a tutor@nuvostudio.club.'
+        : 'Something went wrong. Please try again or email us at tutor@nuvostudio.club.');
     }
   });
 </script>

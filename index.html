@@ -187,7 +187,811 @@
     #hero {
       background: var(--white);
       padding: 108px 24px 96px;
+      text-align: left;
+    }
+
+    .hero-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(260px, 440px);
+      gap: 48px 56px;
+      /* start: keeps headline/copy anchored; center would shift the left column when demo height changes */
+      align-items: start;
+    }
+
+    .hero-copy {
+      text-align: left;
+    }
+
+    .hero-copy .hero-eyebrow {
+      margin-left: 0;
+    }
+
+    .hero-copy .hero-headline {
+      margin-left: 0;
+      margin-right: 0;
+      max-width: 600px;
+    }
+
+    .hero-copy .hero-sub {
+      margin-left: 0;
+      max-width: 520px;
+    }
+
+    .hero-copy .hero-ctas {
+      justify-content: flex-start;
+    }
+
+    .hero-demo-wrap {
+      position: relative;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .hero-demo {
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-lg);
+      background: var(--white);
+      box-shadow:
+        0 1px 2px rgba(15, 23, 42, 0.04),
+        0 18px 48px rgba(15, 23, 42, 0.08);
+      overflow: hidden;
+      text-align: left;
+    }
+
+    .hero-demo-chrome {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      background: linear-gradient(180deg, #F8FAFC 0%, #F1F5F9 100%);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .hero-demo-dots {
+      display: flex;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .hero-demo-dots span {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #CBD5E1;
+    }
+
+    .hero-demo-dots span:nth-child(1) { background: #FCA5A5; }
+    .hero-demo-dots span:nth-child(2) { background: #FCD34D; }
+    .hero-demo-dots span:nth-child(3) { background: #86EFAC; }
+
+    .hero-demo-chrome-title {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      letter-spacing: 0.02em;
+    }
+
+    .hero-demo-body {
+      padding: 22px 20px 24px;
+    }
+
+    .hero-demo-prompt {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.02em;
+      line-height: 1.35;
+      margin-bottom: 0;
+    }
+
+    #hero-demo [data-demo-part="prompt"] {
+      overflow: hidden;
+      max-height: 120px;
+      opacity: 1;
+      transform: none;
+      margin-bottom: 18px;
+      transition:
+        max-height 0.5s ease,
+        opacity 0.4s ease,
+        margin-bottom 0.4s ease,
+        transform 0.4s ease;
+    }
+
+    #hero-demo:is([data-phase="10"], [data-phase="11"], [data-phase="12"], [data-phase="reset"]) [data-demo-part="prompt"] {
+      max-height: 0;
+      opacity: 0;
+      margin-bottom: 0;
+      transform: translateY(8px);
+    }
+
+    .hero-demo-block {
+      margin-top: 0;
+    }
+
+    .hero-demo-badge {
+      display: inline-block;
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--blue-dark);
+      background: var(--blue-light);
+      padding: 4px 10px;
+      border-radius: 6px;
+      margin-bottom: 8px;
+    }
+
+    .hero-demo-step-q {
+      font-size: 0.92rem;
+      color: var(--text-mid);
+      line-height: 1.45;
+    }
+
+    .hero-demo-hint {
+      border-left: 3px solid var(--blue);
+      padding: 10px 12px 10px 14px;
+      background: var(--blue-xlight);
+      border-radius: 0 8px 8px 0;
+    }
+
+    .hero-demo-hint-tag {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--blue-dark);
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .hero-demo-hint p {
+      font-size: 0.88rem;
+      color: var(--text-mid);
+      line-height: 1.45;
+    }
+
+    .hero-demo-feedback {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 12px 14px;
+      background: #ECFDF5;
+      border: 1px solid #A7F3D0;
+      border-radius: 10px;
+    }
+
+    .hero-demo-feedback .hero-demo-check {
+      flex-shrink: 0;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #10B981;
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+      margin-top: 1px;
+    }
+
+    .hero-demo-feedback p {
+      font-size: 0.9rem;
+      color: #065F46;
+      line-height: 1.45;
+      font-weight: 500;
+    }
+
+    .hero-demo-bridge {
       text-align: center;
+      padding: 0 4px;
+    }
+
+    .hero-demo-bridge p {
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.11em;
+      color: var(--text-muted);
+      line-height: 1.45;
+    }
+
+    .hero-demo-bridge--tutor p {
+      color: #6B21A8;
+    }
+
+    .hero-tutor-panel {
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      background: linear-gradient(180deg, #FAFAFA 0%, #F4F4F5 100%);
+      overflow: hidden;
+      text-align: left;
+    }
+
+    .hero-tutor-chrome {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 14px;
+      background: #fff;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .hero-tutor-chrome-brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--text-mid);
+    }
+
+    .hero-tutor-live-pill {
+      font-size: 0.65rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #fff;
+      background: #DC2626;
+      padding: 3px 10px;
+      border-radius: 6px;
+    }
+
+    .hero-tutor-body {
+      padding: 16px 16px 18px;
+    }
+
+    .hero-tutor-title {
+      font-size: 0.98rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 6px;
+      letter-spacing: -0.02em;
+    }
+
+    .hero-tutor-sub {
+      font-size: 0.84rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+      margin-bottom: 14px;
+    }
+
+    .hero-tutor-video-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 0;
+    }
+
+    .hero-tutor-tile {
+      position: relative;
+      aspect-ratio: 4 / 3;
+      border-radius: 10px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: stretch;
+      border: 1px solid #D4D4D8;
+      background: linear-gradient(165deg, #fffbeb 0%, #fde68a 45%, #fbbf24 100%);
+    }
+
+    .hero-tutor-tile--host {
+      border-color: #93C5FD;
+      background: linear-gradient(165deg, #eff6ff 0%, #bfdbfe 50%, #60a5fa 100%);
+    }
+
+    .hero-tutor-avatar {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 8px 34px;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    @keyframes hero-tutor-float {
+      0%, 100% {
+        transform: translate3d(0, 0, 0) scale(1);
+      }
+      50% {
+        transform: translate3d(0, -4px, 0) scale(1.03);
+      }
+    }
+
+    .hero-tutor-avatar-motion {
+      width: 74%;
+      max-width: 118px;
+      animation: hero-tutor-float 5.2s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+      will-change: transform;
+    }
+
+    .hero-tutor-tile--host .hero-tutor-avatar-motion {
+      animation-delay: -2.6s;
+    }
+
+    .hero-tutor-svg {
+      width: 100%;
+      height: auto;
+      display: block;
+      filter: drop-shadow(0 6px 16px rgba(15, 23, 42, 0.1));
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .hero-tutor-avatar-motion {
+        animation: none;
+      }
+    }
+
+    .hero-tutor-tile-cap {
+      position: relative;
+      z-index: 1;
+      align-self: flex-start;
+      margin: 8px;
+      padding: 4px 9px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.92);
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--text-mid);
+      line-height: 1.2;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+    }
+
+    .hero-tutor-tile--host .hero-tutor-tile-cap {
+      color: var(--blue-dark);
+    }
+
+    .hero-tutor-extra {
+      margin-top: 12px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      background: var(--blue-xlight);
+      border: 1px solid var(--blue-light);
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--blue-dark);
+      line-height: 1.4;
+    }
+
+    #hero-demo [data-demo-part="step"],
+    #hero-demo [data-demo-part="hint"],
+    #hero-demo [data-demo-part="feedback"] {
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+      transform: translateY(8px);
+      margin-top: 0;
+      margin-bottom: 0;
+      transition:
+        max-height 0.55s ease,
+        opacity 0.45s ease,
+        transform 0.45s ease,
+        margin-top 0.45s ease,
+        margin-bottom 0.45s ease;
+    }
+
+    #hero-demo:is([data-phase="1"], [data-phase="2"], [data-phase="3"]) [data-demo-part="step"] {
+      max-height: 220px;
+      opacity: 1;
+      transform: none;
+      margin-top: 4px;
+      margin-bottom: 0;
+    }
+
+    #hero-demo:is([data-phase="2"], [data-phase="3"]) [data-demo-part="hint"] {
+      max-height: 200px;
+      opacity: 1;
+      transform: none;
+      margin-top: 14px;
+      margin-bottom: 0;
+    }
+
+    #hero-demo[data-phase="3"] [data-demo-part="feedback"] {
+      max-height: 160px;
+      opacity: 1;
+      transform: none;
+      margin-top: 14px;
+      margin-bottom: 0;
+    }
+
+    #hero-demo [data-demo-part="bridge-engine"],
+    #hero-demo [data-demo-part="bridge-tutor"],
+    #hero-demo [data-demo-part="tutor-wrap"],
+    #hero-demo [data-demo-part="tutor-extra"] {
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+      transform: translateY(8px);
+      margin-top: 0;
+      margin-bottom: 0;
+      transition:
+        max-height 0.55s ease,
+        opacity 0.45s ease,
+        transform 0.45s ease,
+        margin-top 0.45s ease,
+        margin-bottom 0.45s ease;
+    }
+
+    #hero-demo[data-phase="4"] [data-demo-part="bridge-engine"] {
+      max-height: 80px;
+      opacity: 1;
+      transform: none;
+      margin-top: 18px;
+      margin-bottom: 6px;
+    }
+
+    #hero-demo [data-demo-part="engine-wrap"] {
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+      transform: translateY(10px);
+      margin-top: 0;
+      margin-bottom: 0;
+      border: 1px solid transparent;
+      transition:
+        max-height 0.6s ease,
+        opacity 0.48s ease,
+        transform 0.48s ease,
+        margin-top 0.48s ease,
+        border-color 0.35s ease;
+    }
+
+    #hero-demo:is([data-phase="5"], [data-phase="6"], [data-phase="7"], [data-phase="8"], [data-phase="9"]) [data-demo-part="engine-wrap"] {
+      max-height: 1200px;
+      opacity: 1;
+      transform: none;
+      margin-top: 12px;
+      margin-bottom: 0;
+      border-color: #D1D9D4;
+    }
+
+    #hero-demo[data-phase="10"] [data-demo-part="bridge-tutor"] {
+      max-height: 80px;
+      opacity: 1;
+      transform: none;
+      margin-top: 20px;
+      margin-bottom: 6px;
+    }
+
+    #hero-demo:is([data-phase="11"], [data-phase="12"]) [data-demo-part="tutor-wrap"] {
+      max-height: 560px;
+      opacity: 1;
+      transform: none;
+      margin-top: 10px;
+      margin-bottom: 0;
+    }
+
+    #hero-demo[data-phase="12"] [data-demo-part="tutor-extra"],
+    #hero-demo[data-phase="full"] [data-demo-part="tutor-extra"] {
+      max-height: 120px;
+      opacity: 1;
+      transform: none;
+      margin-top: 12px;
+      margin-bottom: 0;
+    }
+
+    .hero-unified-engine {
+      background: #ECEFEB;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .hero-engine-shell {
+      padding: 16px 16px 18px;
+    }
+
+    .hero-engine-progress-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .hero-engine-progress-track {
+      flex: 1;
+      height: 5px;
+      background: #D1D9D4;
+      border-radius: 99px;
+      overflow: hidden;
+    }
+
+    .hero-engine-progress-bar {
+      height: 100%;
+      width: 100%;
+      background: #166534;
+      border-radius: 99px;
+    }
+
+    .hero-engine-progress-count {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #166534;
+      letter-spacing: 0.04em;
+      flex-shrink: 0;
+    }
+
+    .hero-engine-problem-card {
+      background: var(--white);
+      border: 1px solid #DDE5DF;
+      border-radius: 12px;
+      padding: 16px 16px 18px;
+      margin-bottom: 14px;
+    }
+
+    .hero-engine-meta {
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #166534;
+      margin-bottom: 10px;
+    }
+
+    .hero-engine-expr {
+      font-family: ui-monospace, 'SFMono-Regular', Menlo, Monaco, Consolas, monospace;
+      font-size: 1.18rem;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.02em;
+      line-height: 1.35;
+    }
+
+    .hero-engine-work {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .hero-engine-line {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 11px 14px;
+      border-radius: 10px;
+      background: #DCFCE7;
+      border: 1px solid #BBF7D0;
+    }
+
+    .hero-engine-line-check {
+      font-weight: 800;
+      color: #14532D;
+      font-size: 0.95rem;
+      flex-shrink: 0;
+      line-height: 1;
+    }
+
+    .hero-engine-mono {
+      font-family: ui-monospace, 'SFMono-Regular', Menlo, Monaco, Consolas, monospace;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: #14532D;
+      line-height: 1.4;
+    }
+
+    .hero-engine-nudge {
+      padding: 11px 14px;
+      border-radius: 10px;
+      background: #FEF9C3;
+      border: 1px solid #FDE047;
+    }
+
+    .hero-engine-nudge p {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #A16207;
+      line-height: 1.45;
+    }
+
+    .hero-engine-input-faux {
+      display: flex;
+      align-items: center;
+      min-height: 46px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: 2px solid #166534;
+      background: var(--white);
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.35;
+    }
+
+    .hero-engine-caret {
+      display: inline-block;
+      width: 2px;
+      height: 1.05em;
+      background: #166534;
+      margin-right: 6px;
+      flex-shrink: 0;
+      opacity: 0;
+      vertical-align: middle;
+    }
+
+    @keyframes hero-engine-caret-blink {
+      0%, 49% { opacity: 1; }
+      50%, 100% { opacity: 0; }
+    }
+
+    #hero-demo[data-phase="9"] .hero-engine-caret {
+      opacity: 1;
+      animation: hero-engine-caret-blink 1.05s step-end infinite;
+    }
+
+    #hero-demo[data-phase="full"] .hero-engine-caret {
+      opacity: 1;
+      animation: none;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      #hero-demo[data-phase="full"] .hero-engine-caret {
+        animation: none;
+        opacity: 1;
+      }
+    }
+
+    #hero-demo [data-engine-part] {
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+      transform: translateY(8px);
+      margin-top: 0;
+      margin-bottom: 0;
+      transition:
+        max-height 0.55s ease,
+        opacity 0.45s ease,
+        transform 0.45s ease,
+        margin-top 0.45s ease,
+        margin-bottom 0.45s ease;
+    }
+
+    #hero-demo:is([data-phase="6"], [data-phase="7"], [data-phase="8"], [data-phase="9"]) [data-engine-part="l1"] {
+      max-height: 100px;
+      opacity: 1;
+      transform: none;
+      margin-top: 0;
+      margin-bottom: 10px;
+    }
+
+    #hero-demo:is([data-phase="7"], [data-phase="8"], [data-phase="9"]) [data-engine-part="l2"] {
+      max-height: 100px;
+      opacity: 1;
+      transform: none;
+      margin-top: 0;
+      margin-bottom: 10px;
+    }
+
+    #hero-demo:is([data-phase="8"], [data-phase="9"]) [data-engine-part="nudge"] {
+      max-height: 120px;
+      opacity: 1;
+      transform: none;
+      margin-top: 0;
+      margin-bottom: 12px;
+    }
+
+    #hero-demo[data-phase="9"] [data-engine-part="inp"] {
+      max-height: 80px;
+      opacity: 1;
+      transform: none;
+      margin-top: 0;
+      margin-bottom: 0;
+    }
+
+    #hero-demo[data-phase="full"] [data-demo-part="bridge-engine"],
+    #hero-demo[data-phase="full"] [data-demo-part="bridge-tutor"],
+    #hero-demo[data-phase="full"] [data-demo-part="tutor-wrap"],
+    #hero-demo[data-phase="full"] [data-demo-part="tutor-extra"] {
+      max-height: 560px;
+      opacity: 1;
+      transform: none;
+      transition: none;
+      margin-top: 16px;
+      margin-bottom: 0;
+    }
+
+    #hero-demo[data-phase="full"] [data-demo-part="bridge-engine"] {
+      margin-top: 18px;
+      margin-bottom: 6px;
+    }
+
+    #hero-demo[data-phase="full"] [data-demo-part="bridge-tutor"] {
+      margin-top: 20px;
+    }
+
+    #hero-demo[data-phase="full"] [data-demo-part="tutor-wrap"] {
+      margin-top: 10px;
+    }
+
+    #hero-demo[data-phase="full"] [data-demo-part="tutor-extra"] {
+      margin-top: 12px;
+    }
+
+    #hero-demo[data-phase="full"] [data-demo-part="prompt"] {
+      max-height: 120px;
+      opacity: 1;
+      margin-bottom: 18px;
+      transform: none;
+      transition: none;
+    }
+
+    #hero-demo[data-phase="full"] [data-demo-part="step"],
+    #hero-demo[data-phase="full"] [data-demo-part="hint"],
+    #hero-demo[data-phase="full"] [data-demo-part="feedback"] {
+      max-height: 280px;
+      opacity: 1;
+      transform: none;
+      margin-top: 14px;
+      margin-bottom: 0;
+      transition: none;
+    }
+
+    #hero-demo[data-phase="full"] [data-demo-part="step"] {
+      margin-top: 4px;
+    }
+
+    #hero-demo[data-phase="full"] [data-demo-part="engine-wrap"] {
+      max-height: 1200px;
+      opacity: 1;
+      transform: none;
+      margin-top: 12px;
+      margin-bottom: 0;
+      border-color: #D1D9D4;
+      transition: none;
+    }
+
+    #hero-demo[data-phase="full"] [data-engine-part="l1"],
+    #hero-demo[data-phase="full"] [data-engine-part="l2"],
+    #hero-demo[data-phase="full"] [data-engine-part="nudge"],
+    #hero-demo[data-phase="full"] [data-engine-part="inp"] {
+      max-height: 200px;
+      opacity: 1;
+      transform: none;
+      transition: none;
+      margin-top: 0;
+    }
+
+    #hero-demo[data-phase="full"] [data-engine-part="l1"] {
+      margin-bottom: 10px;
+    }
+
+    #hero-demo[data-phase="full"] [data-engine-part="l2"] {
+      margin-bottom: 10px;
+    }
+
+    #hero-demo[data-phase="full"] [data-engine-part="nudge"] {
+      margin-bottom: 12px;
+    }
+
+    #hero-demo[data-phase="reset"] [data-demo-part="prompt"],
+    #hero-demo[data-phase="reset"] [data-demo-part="step"],
+    #hero-demo[data-phase="reset"] [data-demo-part="hint"],
+    #hero-demo[data-phase="reset"] [data-demo-part="feedback"],
+    #hero-demo[data-phase="reset"] [data-demo-part="bridge-engine"],
+    #hero-demo[data-phase="reset"] [data-demo-part="bridge-tutor"],
+    #hero-demo[data-phase="reset"] [data-demo-part="engine-wrap"],
+    #hero-demo[data-phase="reset"] [data-demo-part="tutor-wrap"],
+    #hero-demo[data-phase="reset"] [data-demo-part="tutor-extra"],
+    #hero-demo[data-phase="reset"] [data-engine-part] {
+      max-height: 0;
+      opacity: 0;
+      transform: translateY(8px);
+      margin-top: 0;
+      margin-bottom: 0;
+      transition: none;
+      border-color: transparent;
     }
 
     .hero-eyebrow {
@@ -210,24 +1014,19 @@
       line-height: 1.08;
       margin-bottom: 14px;
       max-width: 760px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    .hero-kicker {
-      color: var(--text-muted);
-      font-size: 0.95rem;
-      font-weight: 700;
-      letter-spacing: 0.02em;
-      margin: 0 auto 18px;
     }
 
     .hero-sub {
       font-size: 1.15rem;
       color: var(--text-muted);
       max-width: 560px;
-      margin: 0 auto 40px;
+      margin: 0 0 40px;
       line-height: 1.7;
+    }
+
+    .hero-sub strong {
+      font-weight: 700;
+      color: var(--text-mid);
     }
 
     .hero-ctas {
@@ -646,9 +1445,41 @@
     /* ─────────────────────────────────────────
        RESPONSIVE
     ───────────────────────────────────────── */
+    @media (max-width: 960px) {
+      .hero-layout {
+        grid-template-columns: 1fr;
+        gap: 44px;
+      }
+
+      .hero-copy {
+        text-align: center;
+      }
+
+      .hero-copy .hero-headline {
+        margin-left: auto;
+        margin-right: auto;
+        max-width: 600px;
+      }
+
+      .hero-copy .hero-sub {
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .hero-copy .hero-ctas {
+        justify-content: center;
+      }
+
+      .hero-demo-wrap {
+        max-width: 440px;
+        margin: 0 auto;
+        width: 100%;
+      }
+    }
+
     @media (max-width: 768px) {
       section { padding: 64px 20px; }
-      #hero { padding: 80px 20px 68px; }
+      #hero { padding: 80px 20px 72px; }
 
       .nav-links { display: none; }
       .nav-links.open {
@@ -707,14 +1538,149 @@
 <!-- ════════ HERO ════════ -->
 <section id="hero">
   <div class="container">
-    <p class="hero-eyebrow" data-i18n="hero_eyebrow">Prueba de Admisión de la UTP</p>
-    <h1 class="hero-headline" data-i18n-html="hero_headline">Prepárate para la Prueba de Admisión.</h1>
-    <p class="hero-kicker" data-i18n="hero_kicker">Practica cuando quieras.</p>
-    <p class="hero-sub" data-i18n="hero_sub">Práctica guiada paso a paso con pistas, ejemplos y retroalimentación inmediata — para que llegues al examen con confianza.</p>
-    <div class="hero-ctas">
-      <a href="filter.html" class="btn btn-primary" data-i18n="hero_cta_primary">Start Practicing</a>
+    <div class="hero-layout">
+      <div class="hero-copy">
+        <p class="hero-eyebrow" data-i18n="hero_eyebrow">Guided math + live tutoring</p>
+        <h1 class="hero-headline" data-i18n-html="hero_headline">Prepare for the UTP exam.</h1>
+        <p class="hero-sub" data-i18n-html="hero_sub"><strong>Practice anytime.</strong> Step-by-step guided practice with hints, examples, and immediate feedback — so you arrive at the exam with confidence.</p>
+        <div class="hero-ctas">
+          <a href="filter.html" class="btn btn-primary" data-i18n="hero_cta_primary">Start Practicing</a>
+        </div>
+        <p class="hero-signin-note"><span data-i18n="hero_signin_note">Already enrolled?</span> <a href="login.html" data-i18n="hero_signin_link">Sign in &rarr;</a></p>
+      </div>
+      <div class="hero-demo-wrap">
+        <p class="sr-only" data-i18n="hero_demo_aria">Animated preview: guided practice with a hint and instant feedback</p>
+        <p class="sr-only" data-i18n="hero_engine_aria">Animated preview: each line is checked before you continue</p>
+        <p class="sr-only" data-i18n="hero_tutor_aria">Animated preview: weekly live tutoring on Google Meet</p>
+        <div class="hero-demo" id="hero-demo" data-phase="0" aria-hidden="true">
+          <div class="hero-demo-chrome">
+            <div class="hero-demo-dots" aria-hidden="true"><span></span><span></span><span></span></div>
+            <span class="hero-demo-chrome-title" data-i18n="hero_demo_title">Guided practice</span>
+          </div>
+          <div class="hero-demo-body">
+            <p class="hero-demo-prompt" data-demo-part="prompt" data-i18n="hero_demo_prompt">Solve for x: 2x + 3 = 11</p>
+            <div class="hero-demo-block" data-demo-part="step">
+              <span class="hero-demo-badge" data-i18n="hero_demo_step_label">Step 1 of 3</span>
+              <p class="hero-demo-step-q" data-i18n="hero_demo_step_q">What should you do first to isolate the term with x?</p>
+            </div>
+            <div class="hero-demo-block hero-demo-hint" data-demo-part="hint">
+              <span class="hero-demo-hint-tag" data-i18n="hero_demo_hint_tag">Hint</span>
+              <p data-i18n="hero_demo_hint_text">Subtract 3 from both sides.</p>
+            </div>
+            <div class="hero-demo-block hero-demo-feedback" data-demo-part="feedback">
+              <span class="hero-demo-check" aria-hidden="true">&#10003;</span>
+              <p data-i18n="hero_demo_feedback">Nice &mdash; that keeps the equation balanced.</p>
+            </div>
+
+            <div class="hero-demo-bridge" data-demo-part="bridge-engine">
+              <p data-i18n="hero_bridge_engine">Next — in the practice workspace, every line is checked.</p>
+            </div>
+
+            <div class="hero-unified-engine" data-demo-part="engine-wrap">
+              <div class="hero-engine-shell">
+                <div class="hero-engine-progress-row">
+                  <div class="hero-engine-progress-track" aria-hidden="true">
+                    <div class="hero-engine-progress-bar"></div>
+                  </div>
+                  <span class="hero-engine-progress-count" data-i18n="hero_engine_count">1/1</span>
+                </div>
+                <div class="hero-engine-problem-card">
+                  <div class="hero-engine-meta" data-i18n="hero_engine_meta">Problem 1 of 1 · Simplify</div>
+                  <div class="hero-engine-expr" data-i18n="hero_engine_expr">3x − 2y + 6x + 9y</div>
+                </div>
+                <div class="hero-engine-work">
+                  <div class="hero-engine-line" data-engine-part="l1">
+                    <span class="hero-engine-line-check" aria-hidden="true">&#10003;</span>
+                    <span class="hero-engine-mono" data-i18n="hero_engine_line1">(3x + 6x) + (−2y + 9y)</span>
+                  </div>
+                  <div class="hero-engine-line" data-engine-part="l2">
+                    <span class="hero-engine-line-check" aria-hidden="true">&#10003;</span>
+                    <span class="hero-engine-mono" data-i18n="hero_engine_line2">9x + (−2y + 9y)</span>
+                  </div>
+                  <div class="hero-engine-nudge" data-engine-part="nudge">
+                    <p data-i18n="hero_engine_nudge">Correct value, but try to simplify or factor further!</p>
+                  </div>
+                  <div class="hero-engine-input-faux" data-engine-part="inp">
+                    <span class="hero-engine-caret" aria-hidden="true"></span>
+                    <span data-i18n="hero_engine_placeholder">Type or tap buttons to enter your answer...</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="hero-demo-bridge hero-demo-bridge--tutor" data-demo-part="bridge-tutor">
+              <p data-i18n="hero_bridge_tutor">Then — connect live with a tutor on Google Meet.</p>
+            </div>
+
+            <div class="hero-tutor-panel" data-demo-part="tutor-wrap">
+              <div class="hero-tutor-chrome">
+                <div class="hero-tutor-chrome-brand">
+                  <span aria-hidden="true">&#128247;</span>
+                  <span data-i18n="hero_tutor_meet_label">Google Meet</span>
+                </div>
+                <span class="hero-tutor-live-pill" data-i18n="hero_tutor_live_badge">Live</span>
+              </div>
+              <div class="hero-tutor-body">
+                <p class="hero-tutor-title" data-i18n="hero_tutor_title">Weekly live session</p>
+                <p class="hero-tutor-sub" data-i18n="hero_tutor_sub">Review progress, work through harder problems, and stay on track with a real teacher.</p>
+                <div class="hero-tutor-video-row">
+                  <div class="hero-tutor-tile hero-tutor-tile--student">
+                    <div class="hero-tutor-avatar" aria-hidden="true">
+                      <div class="hero-tutor-avatar-motion">
+                        <svg class="hero-tutor-svg" viewBox="0 0 100 110" xmlns="http://www.w3.org/2000/svg" focusable="false">
+                          <defs>
+                            <linearGradient id="htStudFace" x1="0%" y1="0%" x2="0%" y2="100%">
+                              <stop offset="0%" stop-color="#FDE68A"/>
+                              <stop offset="100%" stop-color="#FBBF24"/>
+                            </linearGradient>
+                          </defs>
+                          <path fill="#64748B" d="M12 92c10-22 66-22 76 0v18H12z"/>
+                          <circle cx="50" cy="46" r="24" fill="url(#htStudFace)"/>
+                          <path fill="#451A03" d="M24 40c0-24 52-24 52 0-4-18-16-26-26-26S28 22 24 40z"/>
+                          <ellipse cx="39" cy="48" rx="3.2" ry="4" fill="#0F172A"/>
+                          <ellipse cx="61" cy="48" rx="3.2" ry="4" fill="#0F172A"/>
+                          <path fill="none" stroke="#B45309" stroke-width="2.2" stroke-linecap="round" d="M36 60q14 12 28 0"/>
+                          <rect x="40" y="76" width="20" height="14" rx="3" fill="#E2E8F0" stroke="#94A3B8" stroke-width="1.5"/>
+                          <line x1="50" y1="76" x2="50" y2="90" stroke="#94A3B8" stroke-width="1.5"/>
+                        </svg>
+                      </div>
+                    </div>
+                    <span class="hero-tutor-tile-cap" data-i18n="hero_tutor_tile_you">You</span>
+                  </div>
+                  <div class="hero-tutor-tile hero-tutor-tile--host">
+                    <div class="hero-tutor-avatar" aria-hidden="true">
+                      <div class="hero-tutor-avatar-motion">
+                        <svg class="hero-tutor-svg" viewBox="0 0 100 110" xmlns="http://www.w3.org/2000/svg" focusable="false">
+                          <defs>
+                            <linearGradient id="htTutFace" x1="0%" y1="0%" x2="0%" y2="100%">
+                              <stop offset="0%" stop-color="#FFEDD5"/>
+                              <stop offset="100%" stop-color="#FDBA74"/>
+                            </linearGradient>
+                          </defs>
+                          <path fill="#1E40AF" d="M10 94c12-24 68-24 80 0v16H10z"/>
+                          <circle cx="50" cy="46" r="24" fill="url(#htTutFace)"/>
+                          <path fill="#1E293B" d="M26 36c0-20 48-20 48 0-3-14-12-20-24-20S29 22 26 36z"/>
+                          <path fill="none" stroke="#334155" stroke-width="3" stroke-linecap="round" d="M28 46c0-17 44-17 44 0"/>
+                          <rect x="22" y="41" width="10" height="17" rx="3" fill="#475569"/>
+                          <rect x="68" y="41" width="10" height="17" rx="3" fill="#475569"/>
+                          <path fill="none" stroke="#475569" stroke-width="2" stroke-linecap="round" d="M22 54H14c-2 0-3 1.5-3 3.5v6"/>
+                          <circle cx="11" cy="66" r="3.2" fill="#475569"/>
+                          <ellipse cx="41" cy="50" rx="2.6" ry="3.2" fill="#0F172A"/>
+                          <ellipse cx="59" cy="50" rx="2.6" ry="3.2" fill="#0F172A"/>
+                          <path fill="none" stroke="#C2410C" stroke-width="2" stroke-linecap="round" d="M40 62q10 8 20 0"/>
+                        </svg>
+                      </div>
+                    </div>
+                    <span class="hero-tutor-tile-cap" data-i18n="hero_tutor_tile_tutor">Tutor</span>
+                  </div>
+                </div>
+                <div class="hero-tutor-extra" data-demo-part="tutor-extra" data-i18n="hero_tutor_extra">Bring questions from this week’s practice →</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    <p class="hero-signin-note"><span data-i18n="hero_signin_note">Already enrolled?</span> <a href="login.html" data-i18n="hero_signin_link">Sign in &rarr;</a></p>
   </div>
 </section>
 
@@ -879,7 +1845,7 @@
     <div class="pricing-grid">
 
       <div class="pricing-card featured fade-in">
-        <p class="plan-name" data-i18n="plan_practice_name">Practice Engine Guided Plan</p>
+        <p class="plan-name" data-i18n="plan_practice_name">Basic Plan</p>
         <div class="plan-price">$29<span>&thinsp;/month</span></div>
         <ul class="plan-features">
           <li data-i18n="plan_practice_f1">Full 7-unit curriculum</li>
@@ -887,19 +1853,19 @@
           <li data-i18n="plan_practice_f3">Unlimited problems</li>
           <li data-i18n="plan_practice_f4">Progress tracking dashboard</li>
         </ul>
-        <a href="trial.html" class="btn btn-primary plan-cta" data-i18n="plan_practice_cta">Start Free Trial</a>
+        <a href="trial.html" class="btn btn-primary plan-cta" data-i18n="plan_practice_cta">Get full access</a>
       </div>
 
       <div class="pricing-card fade-in">
-        <p class="plan-name" data-i18n="plan_tutoring_name">Tutor Guided Plan</p>
+        <p class="plan-name" data-i18n="plan_tutoring_name">Pro Plan</p>
         <div class="plan-price">$99<span>&thinsp;/month</span></div>
         <ul class="plan-features">
-          <li data-i18n="plan_tutoring_f1">Everything in Practice</li>
+          <li data-i18n="plan_tutoring_f1">Everything in the Basic plan</li>
           <li data-i18n="plan_tutoring_f2">4 live sessions/month via Google Meet</li>
           <li data-i18n="plan_tutoring_f3">Personalized homework assignments</li>
           <li data-i18n="plan_tutoring_f4">Direct WhatsApp support</li>
         </ul>
-        <a href="trial.html" class="btn btn-outline plan-cta" data-i18n="plan_tutoring_cta">Start Free Trial</a>
+        <a href="trial.html" class="btn btn-outline plan-cta" data-i18n="plan_tutoring_cta">Get full access</a>
       </div>
 
     </div>
@@ -923,9 +1889,61 @@
 </footer>
 
 
-<script src="lang.js?v=20260513-footer-tagline"></script>
+<script src="lang.js?v=20260513-plan-basico-pro"></script>
 <script>
   Lang.apply();
+
+  // ── Hero unified demo: guided 0–3, bridge 4, engine 5–9, tutor 10–12, reset ──
+  (function () {
+    var el = document.getElementById('hero-demo');
+    if (!el) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      el.setAttribute('data-phase', 'full');
+      return;
+    }
+    var sleep = function (ms) {
+      return new Promise(function (resolve) {
+        setTimeout(resolve, ms);
+      });
+    };
+    /* ~0.75× playback speed → hold each beat ~4/3 as long */
+    var HERO_DEMO_PACE = 4 / 3;
+    function wait(ms) {
+      return sleep(Math.round(ms * HERO_DEMO_PACE));
+    }
+    (async function loop() {
+      for (;;) {
+        el.setAttribute('data-phase', '0');
+        await wait(1000);
+        el.setAttribute('data-phase', '1');
+        await wait(1200);
+        el.setAttribute('data-phase', '2');
+        await wait(1300);
+        el.setAttribute('data-phase', '3');
+        await wait(2200);
+        el.setAttribute('data-phase', '4');
+        await wait(900);
+        el.setAttribute('data-phase', '5');
+        await wait(750);
+        el.setAttribute('data-phase', '6');
+        await wait(1000);
+        el.setAttribute('data-phase', '7');
+        await wait(1150);
+        el.setAttribute('data-phase', '8');
+        await wait(1500);
+        el.setAttribute('data-phase', '9');
+        await wait(2200);
+        el.setAttribute('data-phase', '10');
+        await wait(850);
+        el.setAttribute('data-phase', '11');
+        await wait(750);
+        el.setAttribute('data-phase', '12');
+        await wait(1800);
+        el.setAttribute('data-phase', 'reset');
+        await wait(500);
+      }
+    })();
+  })();
 
   // ── Mobile nav toggle ──
   const hamburger = document.getElementById('hamburger');

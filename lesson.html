@@ -947,10 +947,9 @@
   </div>
 </div>
 
-<script src="lang.js?v=20260513-spanish-default"></script>
+<script src="lang.js?v=20260513-lesson-app-unified"></script>
 <script src="calculator.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/algebrite@1.4.0/dist/algebrite.bundle-for-browser.js"></script>
-<script src="practice-engine.js"></script>
 <script>
   const WORKER = 'https://math-practice-proxy.ronelalmanza20.workers.dev';
 
@@ -967,10 +966,7 @@
   // ── Phase state ──────────────────────────────────────────────
   // phases: 'cover' | 'concepts' | 'example' | 'practice' | 'test'
   let lesson           = null;
-  let practiceProblems = [];
-  let testProblems     = [];
   let exampleStep      = 0;
-  let practiceEngine   = null;
   let activeConceptTab = 'written';
   let activeExampleTab = 'symbolic';
 
@@ -1074,16 +1070,18 @@
     return 'lesson.html?' + q.toString();
   }
 
-  function guestAppUrl(mode, nextPhase) {
+  /** Practice and test run in app.html (same engine for guests and logged-in students). */
+  function curriculumAppUrl(mode, nextPhase) {
     const returnUrl = buildLessonUrl({ phase: nextPhase });
     const q = new URLSearchParams({
       curriculum: curriculum,
       unit: unit,
       stage: stage,
-      guest: 'true',
       mode: mode,
       returnTo: returnUrl
     });
+    if (guestMode) q.set('guest', 'true');
+    if (studentId && !guestMode) q.set('student', studentId);
     return 'app.html?' + q.toString();
   }
 
@@ -1092,6 +1090,7 @@
     const loginCurriculum = isPAA ? 'PAA' : 'cambridge';
     const titleKey = isPAA ? 'guest_lesson_complete_title' : 'guest_lesson_complete_title_secondary';
     const subtitleKey = isPAA ? 'guest_lesson_complete_subtitle' : 'guest_lesson_complete_subtitle_secondary';
+    const trialUrl = 'trial.html?from=guest_lesson&curriculum=' + encodeURIComponent(curriculum) + '&lang=' + encodeURIComponent(Lang.detect());
     render(`
       ${progressBarHtml(5)}
       <div class="result-card pass">
@@ -1099,7 +1098,7 @@
         <h2>${Lang.t(titleKey)}</h2>
         <p>${Lang.t(subtitleKey)}</p>
         <div style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center;">
-          <a class="result-btn primary" href="mailto:tutor@nuvostudio.club?subject=${encodeURIComponent('Quiero suscribirme a Nuvo Math')}">${Lang.t('guest_paywall_subscribe_btn')}</a>
+          <a class="result-btn primary" href="${trialUrl}">${Lang.t('guest_paywall_subscribe_btn')}</a>
           <a class="result-btn" style="background:transparent;color:var(--accent);border:1.5px solid var(--accent);" href="login.html?curriculum=${encodeURIComponent(loginCurriculum)}">${Lang.t('guest_paywall_login_btn')}</a>
         </div>
       </div>
@@ -1118,16 +1117,26 @@
       return;
     }
 
-    // Load lesson, practice problems, and test problems in parallel
-    const [lessonResult, practiceResult, testResult] = await Promise.allSettled([
-      fetch(`${WORKER}/lesson/${encodeURIComponent(curriculum)}/${encodeURIComponent(unit)}/${encodeURIComponent(stage)}`),
-      fetch(`${WORKER}/problems/curriculum/${encodeURIComponent(curriculum)}/${encodeURIComponent(unit)}/${encodeURIComponent(stage)}/practice`),
-      fetch(`${WORKER}/problems/curriculum/${encodeURIComponent(curriculum)}/${encodeURIComponent(unit)}/${encodeURIComponent(stage)}/test`)
-    ]);
+    // Hand off to app.html for test phase (same URL for guests and logged-in)
+    if (phaseParam === 'test') {
+      window.location.replace(curriculumAppUrl('test', 'complete'));
+      return;
+    }
 
-    // Handle lesson fetch
-    if (lessonResult.status === 'rejected' || !lessonResult.value.ok) {
-      if (lessonResult.status !== 'rejected' && lessonResult.value.status === 404) {
+    if (guestMode && phaseParam === 'complete') {
+      showGuestCompletionCard();
+      return;
+    }
+
+    if (!guestMode && phaseParam === 'complete' && studentId) {
+      await markProgressAndShow('complete', null, null);
+      return;
+    }
+
+    const lessonRes = await fetch(`${WORKER}/lesson/${encodeURIComponent(curriculum)}/${encodeURIComponent(unit)}/${encodeURIComponent(stage)}`);
+
+    if (!lessonRes.ok) {
+      if (lessonRes.status === 404) {
         render(`
           <div class="state-card">
             <div class="icon">&#128218;</div>
@@ -1145,31 +1154,13 @@
       return;
     }
 
-    lesson = await lessonResult.value.json();
-
-    // Practice problems (empty array if failed or 404)
-    if (practiceResult.status === 'fulfilled' && practiceResult.value.ok) {
-      try { practiceProblems = await practiceResult.value.json(); } catch { practiceProblems = []; }
-    }
-
-    // Test problems (empty array if failed or 404)
-    if (testResult.status === 'fulfilled' && testResult.value.ok) {
-      try { testProblems = await testResult.value.json(); } catch { testProblems = []; }
-    }
+    lesson = await lessonRes.json();
 
     const backLink = document.querySelector('.back-link');
     if (guestMode) {
       backLink.href = 'home.html?curriculum=' + encodeURIComponent(curriculum) + '&guest=true';
     }
 
-    if (guestMode && phaseParam === 'test') {
-      showTest();
-      return;
-    }
-    if (guestMode && phaseParam === 'complete') {
-      showGuestCompletionCard();
-      return;
-    }
     showCover();
   }
 
@@ -1191,7 +1182,6 @@
 
   // ── Phase 1: Cover ────────────────────────────────────────────
   function showCover() {
-    if (practiceEngine) { practiceEngine.destroy(); practiceEngine = null; }
     render(`
       ${progressBarHtml(1)}
       ${badgeHtml()}
@@ -1363,73 +1353,38 @@
     if (prevBtn) prevBtn.disabled = exampleStep <= 0;
   }
 
-  // ── Phase 4: Practice ─────────────────────────────────────────
-  function showPractice() {
-    if (guestMode) {
-      window.location.href = guestAppUrl('practice', 'test');
-      return;
-    }
-
-    if (practiceProblems.length === 0) {
-      // Skip to test if no practice problems
+  // ── Phase 4: Practice (always app.html — same engine as guests) ──
+  async function showPractice() {
+    try {
+      const r = await fetch(`${WORKER}/problems/curriculum/${encodeURIComponent(curriculum)}/${encodeURIComponent(unit)}/${encodeURIComponent(stage)}/practice`);
+      const arr = r.ok ? await r.json() : [];
+      if (!arr.length) {
+        showTest();
+        return;
+      }
+    } catch (e) {
       showTest();
       return;
     }
-
-    render(`
-      ${progressBarHtml(4)}
-      ${badgeHtml()}
-      <h1>${escHtml(lesson.title || 'Lesson')} <span class="phase-tag phase-tag-practice">${Lang.t('practice_tag')}</span></h1>
-      <p class="subtitle">${Lang.t('practice_subtitle')}</p>
-      <div id="pe-container"></div>
-    `);
-
-    practiceEngine = null;
-    window.PracticeEngine.init({
-      studentId:  studentId || null,
-      curriculum, unit, stage,
-      mode:       'practice',
-      problems:   practiceProblems,
-      container:  document.getElementById('pe-container'),
-      onComplete: function() {
-        showTest();
-      }
-    });
+    window.location.href = curriculumAppUrl('practice', 'test');
   }
 
-  // ── Phase 5: Test ─────────────────────────────────────────────
-  function showTest() {
-    if (guestMode) {
-      window.location.href = guestAppUrl('test', 'complete');
-      return;
-    }
-
-    if (testProblems.length === 0) {
-      // No test problems — mark as complete automatically if student is known
-      markProgressAndShow('complete', null, null);
-      return;
-    }
-
-    render(`
-      ${progressBarHtml(5)}
-      ${badgeHtml()}
-      <h1>${escHtml(lesson.title || 'Lesson')} <span class="phase-tag phase-tag-test">${Lang.t('test_tag')}</span></h1>
-      <p class="subtitle">${Lang.t('test_subtitle')}</p>
-      <div id="pe-container"></div>
-    `);
-
-    practiceEngine = null;
-    window.PracticeEngine.init({
-      studentId:  studentId || null,
-      curriculum, unit, stage,
-      mode:       'test',
-      problems:   testProblems,
-      container:  document.getElementById('pe-container'),
-      onComplete: function(result) {
-        const { passed, score, total } = result;
-        markProgressAndShow(passed ? 'complete' : null, score, total);
+  // ── Phase 5: Test (always app.html) ─────────────────────────────
+  async function showTest() {
+    try {
+      const r = await fetch(`${WORKER}/problems/curriculum/${encodeURIComponent(curriculum)}/${encodeURIComponent(unit)}/${encodeURIComponent(stage)}/test`);
+      const arr = r.ok ? await r.json() : [];
+      if (!arr.length) {
+        if (guestMode) showGuestCompletionCard();
+        else await markProgressAndShow('complete', null, null);
+        return;
       }
-    });
+    } catch (e) {
+      if (guestMode) showGuestCompletionCard();
+      else await markProgressAndShow('complete', null, null);
+      return;
+    }
+    window.location.href = curriculumAppUrl('test', 'complete');
   }
 
   // ── Update progress + show result card ───────────────────────

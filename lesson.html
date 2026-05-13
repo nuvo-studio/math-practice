@@ -347,6 +347,104 @@
     padding: 8px 12px;
   }
 
+  .lesson-visual-board {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .visual-expression-strip {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    padding: 12px;
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+  }
+
+  .term-card {
+    min-width: 58px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1.5px solid var(--border);
+    font-family: var(--mono);
+    font-weight: 700;
+    color: var(--text);
+    text-align: center;
+    background: var(--card);
+  }
+
+  .term-card--x {
+    border-color: #93C5FD;
+    background: #EFF6FF;
+    color: #1D4ED8;
+  }
+
+  .term-card--y {
+    border-color: #99F6E4;
+    background: #ECFDF5;
+    color: #0F766E;
+  }
+
+  .visual-group-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 10px;
+  }
+
+  .visual-group-box {
+    padding: 12px;
+    border-radius: 12px;
+    background: var(--card);
+    border: 1.5px solid var(--border);
+  }
+
+  .visual-group-title {
+    font-size: 0.72rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+  }
+
+  .coefficient-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    font-family: var(--mono);
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .operator-badge {
+    color: var(--text-secondary);
+    font-weight: 700;
+  }
+
+  .visual-result {
+    padding: 14px;
+    border-radius: 12px;
+    background: var(--accent-bg);
+    border: 1.5px solid var(--accent-light);
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--accent);
+  }
+
+  .visual-note {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    text-align: center;
+  }
+
   .voice-btn {
     margin-top: 12px;
     width: auto;

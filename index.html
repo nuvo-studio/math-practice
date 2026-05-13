@@ -367,46 +367,79 @@
       margin-top: 20px;
     }
 
-    .units-grid {
+    .curricula-accordion {
+      margin-top: 38px;
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
       gap: 12px;
-      margin-top: 44px;
+      max-width: 920px;
+      margin-left: auto;
+      margin-right: auto;
     }
 
-    .unit-card {
+    .curriculum-item {
       background: var(--white);
       border: 1.5px solid var(--border);
       border-radius: var(--radius);
-      padding: 20px 22px;
-      display: flex;
-      gap: 16px;
-      align-items: flex-start;
+      overflow: hidden;
     }
 
-    .unit-num {
-      font-size: 0.7rem;
-      font-weight: 800;
-      color: var(--blue);
-      background: var(--blue-xlight);
-      padding: 3px 8px;
-      border-radius: 6px;
-      flex-shrink: 0;
-      margin-top: 3px;
-      letter-spacing: 0.03em;
+    .curriculum-item > summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 18px 22px;
+      display: grid;
+      gap: 6px;
+      position: relative;
+      user-select: none;
     }
 
-    .unit-text h4 {
-      font-size: 0.95rem;
-      font-weight: 700;
-      margin-bottom: 5px;
-      letter-spacing: -0.01em;
-    }
+    .curriculum-item > summary::-webkit-details-marker { display: none; }
 
-    .unit-text p {
-      font-size: 0.83rem;
+    .curriculum-item > summary::after {
+      content: "+";
+      position: absolute;
+      right: 18px;
+      top: 16px;
+      font-size: 1.15rem;
       color: var(--text-muted);
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .curriculum-item[open] > summary::after { content: "−"; }
+
+    .curriculum-item-name {
+      font-size: 1rem;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      color: var(--text);
+      padding-right: 26px;
+    }
+
+    .curriculum-item-sub {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+      padding-right: 26px;
+    }
+
+    .curriculum-item-body {
+      border-top: 1px solid var(--border);
+      padding: 14px 22px 18px;
+      color: var(--text-mid);
+      font-size: 0.9rem;
       line-height: 1.55;
+    }
+
+    .curriculum-item-points {
+      margin: 8px 0 0 18px;
+      display: grid;
+      gap: 6px;
+    }
+
+    .curriculum-item-points li {
+      color: var(--text-muted);
+      font-size: 0.86rem;
     }
 
     /* ─────────────────────────────────────────
@@ -759,64 +792,66 @@
       <span>&#x1F4D0;</span> <span data-i18n="curriculum_section_badge">International curriculum aligned &middot; Grades 6&ndash;9</span>
     </div>
 
-    <div class="units-grid fade-in-group">
-
-      <div class="unit-card">
-        <span class="unit-num">01</span>
-        <div class="unit-text">
-          <h4>Algebraic Foundations</h4>
-          <p>Variables, terms, and expressions — building the language of algebra from scratch.</p>
+    <div class="curricula-accordion fade-in-group">
+      <details class="curriculum-item" open>
+        <summary>
+          <div class="curriculum-item-name" data-i18n="curriculum_cambridge_name">Cambridge Lower Secondary</div>
+          <div class="curriculum-item-sub" data-i18n="curriculum_cambridge_sub">A structured international pathway for grades 6–9 focused on deep conceptual understanding and progression.</div>
+        </summary>
+        <div class="curriculum-item-body">
+          <div data-i18n="curriculum_cambridge_body">Clear stage-by-stage progression with strong emphasis on algebraic fluency, reasoning, and exam readiness.</div>
+          <ul class="curriculum-item-points">
+            <li data-i18n="curriculum_cambridge_p1">Stage-based structure (7, 8, 9)</li>
+            <li data-i18n="curriculum_cambridge_p2">Strong algebra and graph foundations</li>
+            <li data-i18n="curriculum_cambridge_p3">Excellent preparation for international assessments</li>
+          </ul>
         </div>
-      </div>
+      </details>
 
-      <div class="unit-card">
-        <span class="unit-num">02</span>
-        <div class="unit-text">
-          <h4>Expanding &amp; Simplifying</h4>
-          <p>Distributive property, collecting like terms, and simplifying complex expressions.</p>
+      <details class="curriculum-item">
+        <summary>
+          <div class="curriculum-item-name" data-i18n="curriculum_commoncore_name">Common Core (US)</div>
+          <div class="curriculum-item-sub" data-i18n="curriculum_commoncore_sub">Skills-aligned progression for middle school students with emphasis on problem solving and real-world application.</div>
+        </summary>
+        <div class="curriculum-item-body">
+          <div data-i18n="curriculum_commoncore_body">Focuses on conceptual understanding, procedural skill, and application through context-rich tasks.</div>
+          <ul class="curriculum-item-points">
+            <li data-i18n="curriculum_commoncore_p1">Grade-based goals (6, 7, 8)</li>
+            <li data-i18n="curriculum_commoncore_p2">High focus on expressions, equations, and functions</li>
+            <li data-i18n="curriculum_commoncore_p3">Frequent real-world modeling practice</li>
+          </ul>
         </div>
-      </div>
+      </details>
 
-      <div class="unit-card">
-        <span class="unit-num">03</span>
-        <div class="unit-text">
-          <h4>Linear Equations</h4>
-          <p>Solving one- and two-step equations, including with fractions and negative values.</p>
+      <details class="curriculum-item">
+        <summary>
+          <div class="curriculum-item-name" data-i18n="curriculum_ib_name">IB MYP Mathematics</div>
+          <div class="curriculum-item-sub" data-i18n="curriculum_ib_sub">Inquiry-driven curriculum that connects algebra to communication, reasoning, and authentic contexts.</div>
+        </summary>
+        <div class="curriculum-item-body">
+          <div data-i18n="curriculum_ib_body">Balances technique with conceptual exploration and clear mathematical communication in structured criteria.</div>
+          <ul class="curriculum-item-points">
+            <li data-i18n="curriculum_ib_p1">Concept-driven learning and reflection</li>
+            <li data-i18n="curriculum_ib_p2">Investigation and explanation, not just answers</li>
+            <li data-i18n="curriculum_ib_p3">Strong bridge to advanced secondary math programs</li>
+          </ul>
         </div>
-      </div>
+      </details>
 
-      <div class="unit-card">
-        <span class="unit-num">04</span>
-        <div class="unit-text">
-          <h4>Factorising</h4>
-          <p>Finding common factors, factorising expressions, and verifying by expanding back.</p>
+      <details class="curriculum-item">
+        <summary>
+          <div class="curriculum-item-name" data-i18n="curriculum_paa_name">UTP Admission Prep (PAA)</div>
+          <div class="curriculum-item-sub" data-i18n="curriculum_paa_sub">Targeted preparation for Panama’s university admission exam with practical arithmetic and algebra strategies.</div>
+        </summary>
+        <div class="curriculum-item-body">
+          <div data-i18n="curriculum_paa_body">Designed for fast exam transfer: core arithmetic, percentages, ratios, number sense, and timed-problem thinking.</div>
+          <ul class="curriculum-item-points">
+            <li data-i18n="curriculum_paa_p1">Aritmética units aligned with PAA style questions</li>
+            <li data-i18n="curriculum_paa_p2">Step-by-step methods for speed and accuracy</li>
+            <li data-i18n="curriculum_paa_p3">Practice and test phases that mirror admission prep flow</li>
+          </ul>
         </div>
-      </div>
-
-      <div class="unit-card">
-        <span class="unit-num">05</span>
-        <div class="unit-text">
-          <h4>Formulae &amp; Rearranging</h4>
-          <p>Substituting values into formulae and rearranging to change the subject.</p>
-        </div>
-      </div>
-
-      <div class="unit-card">
-        <span class="unit-num">06</span>
-        <div class="unit-text">
-          <h4>Sequences</h4>
-          <p>Term-to-term rules, nth term expressions, and working with arithmetic sequences.</p>
-        </div>
-      </div>
-
-      <div class="unit-card">
-        <span class="unit-num">07</span>
-        <div class="unit-text">
-          <h4>Simultaneous Equations</h4>
-          <p>Solving pairs of linear equations by substitution and elimination methods.</p>
-        </div>
-      </div>
-
+      </details>
     </div>
   </div>
 </section>
@@ -877,7 +912,7 @@
 </footer>
 
 
-<script src="lang.js?v=20260513-curriculum"></script>
+<script src="lang.js?v=20260513-curricula-accordion"></script>
 <script>
   Lang.apply();
 

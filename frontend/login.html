@@ -304,20 +304,7 @@
 </head>
 <body>
 
-<!-- ════════ NAV ════════ -->
-<nav>
-  <div class="nav-inner">
-    <a href="index.html" class="nav-logo">Nuvo <span>Math</span></a>
-    <ul class="nav-links" id="nav-links">
-      <li><a href="index.html#how-it-works" data-i18n="nav_how_it_works">How it works</a></li>
-      <li><a href="index.html#curriculum" data-i18n="nav_curriculum">Curriculum</a></li>
-      <li><a href="index.html#pricing" data-i18n="nav_pricing">Pricing</a></li>
-    </ul>
-    <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false">
-      <span></span><span></span><span></span>
-    </button>
-  </div>
-</nav>
+<div id="nav-root"></div>
 
 
 <!-- ════════ MAIN ════════ -->
@@ -372,22 +359,6 @@
 
   Lang.apply();
 
-  // ── Mobile nav ──
-  const hamburger = document.getElementById('hamburger');
-  const navLinks  = document.getElementById('nav-links');
-
-  hamburger.addEventListener('click', () => {
-    const open = navLinks.classList.toggle('open');
-    hamburger.setAttribute('aria-expanded', open);
-  });
-
-  navLinks.querySelectorAll('a').forEach(link => {
-    link.addEventListener('click', () => {
-      navLinks.classList.remove('open');
-      hamburger.setAttribute('aria-expanded', false);
-    });
-  });
-
   // ── Login form ──
   const form      = document.getElementById('login-form');
   const submitBtn = document.getElementById('submit-btn');
@@ -433,5 +404,6 @@
   });
 </script>
 
+<script src="nav.js"></script>
 </body>
 </html>

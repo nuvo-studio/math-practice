@@ -341,20 +341,7 @@
 </head>
 <body>
 
-<!-- ════════ NAV ════════ -->
-<nav>
-  <div class="nav-inner">
-    <a href="index.html" class="nav-logo">Nuvo <span>Math</span></a>
-    <ul class="nav-links" id="nav-links">
-      <li><a href="index.html#how-it-works">How it works</a></li>
-      <li><a href="index.html#curriculum">Curriculum</a></li>
-      <li><a href="index.html#pricing">Pricing</a></li>
-    </ul>
-    <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false">
-      <span></span><span></span><span></span>
-    </button>
-  </div>
-</nav>
+<div id="nav-root"></div>
 
 
 <!-- ════════ MAIN ════════ -->
@@ -475,22 +462,6 @@
   })();
 </script>
 <script>
-  // ── Mobile nav toggle ──
-  const hamburger = document.getElementById('hamburger');
-  const navLinks  = document.getElementById('nav-links');
-
-  hamburger.addEventListener('click', () => {
-    const open = navLinks.classList.toggle('open');
-    hamburger.setAttribute('aria-expanded', open);
-  });
-
-  navLinks.querySelectorAll('a').forEach(link => {
-    link.addEventListener('click', () => {
-      navLinks.classList.remove('open');
-      hamburger.setAttribute('aria-expanded', false);
-    });
-  });
-
   // ── Formspree AJAX submit ──
   const form      = document.getElementById('trial-form');
   const submitBtn = document.getElementById('submit-btn');
@@ -527,5 +498,6 @@
   });
 </script>
 
+<script src="nav.js"></script>
 </body>
 </html>

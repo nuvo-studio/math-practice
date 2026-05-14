@@ -1526,25 +1526,7 @@
 </head>
 <body>
 
-<!-- ════════ NAV ════════ -->
-<nav id="nav">
-  <div class="nav-inner">
-    <a href="#" class="nav-logo">Nuvo <span>Math</span></a>
-
-    <ul class="nav-links" id="nav-links">
-      <li><a href="#how-it-works" data-i18n="nav_how_it_works">How it works</a></li>
-      <li><a href="#curriculum" data-i18n="nav_curriculum">Curriculum</a></li>
-      <li><a href="#pricing" data-i18n="nav_pricing">Pricing</a></li>
-    </ul>
-
-    <a href="login.html" class="nav-signin nav-cta" data-i18n="nav_signin">Sign in</a>
-    <a href="filter.html" class="btn btn-primary nav-cta" data-i18n="nav_get_started">Get Started</a>
-
-    <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false">
-      <span></span><span></span><span></span>
-    </button>
-  </div>
-</nav>
+<div id="nav-root"></div>
 
 
 <!-- ════════ HERO ════════ -->
@@ -1920,22 +1902,6 @@
     })();
   })();
 
-  // ── Mobile nav toggle ──
-  const hamburger = document.getElementById('hamburger');
-  const navLinks  = document.getElementById('nav-links');
-
-  hamburger.addEventListener('click', () => {
-    const open = navLinks.classList.toggle('open');
-    hamburger.setAttribute('aria-expanded', open);
-  });
-
-  navLinks.querySelectorAll('a').forEach(link => {
-    link.addEventListener('click', () => {
-      navLinks.classList.remove('open');
-      hamburger.setAttribute('aria-expanded', false);
-    });
-  });
-
   // ── Scroll fade-in ──
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
@@ -1949,5 +1915,6 @@
   document.querySelectorAll('.fade-in, .fade-in-group').forEach(el => observer.observe(el));
 </script>
 
+<script src="nav.js"></script>
 </body>
 </html>

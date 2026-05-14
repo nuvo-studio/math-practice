@@ -385,16 +385,7 @@
 </head>
 <body>
 
-<!-- ════════ NAV ════════ -->
-<nav>
-  <div class="nav-inner">
-    <a href="index.html" class="nav-logo">Nuvo <span>Math</span></a>
-    <div class="nav-right">
-      <span class="nav-student" id="nav-student-name"></span>
-      <a href="#" class="nav-signout" id="signout-btn" data-i18n="nav_signout">Sign out</a>
-    </div>
-  </div>
-</nav>
+<div id="nav-root"></div>
 
 
 <!-- ════════ TRIAL EXPIRED ════════ -->
@@ -464,17 +455,6 @@
   function isGuestMode() {
     return PARAM_GUEST && !!PARAM_CURRICULUM;
   }
-
-  // ── Sign out ──
-  document.getElementById('signout-btn').addEventListener('click', (e) => {
-    if (isGuestMode()) {
-      return;
-    }
-    e.preventDefault();
-    localStorage.removeItem('studentId');
-    localStorage.removeItem('nuvo_teacher');
-    window.location.href = 'login.html';
-  });
 
   // ── Curriculum display label ──
   function curriculumLabel(curriculum, grade) {
@@ -840,5 +820,6 @@
   init();
 </script>
 
+<script src="nav.js"></script>
 </body>
 </html>

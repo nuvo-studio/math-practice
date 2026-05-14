@@ -718,7 +718,7 @@ function main() {
   console.log('\n=== Done ===');
   console.log('Problems uploaded: ' + PAA_PROBLEMS.length);
   console.log('Lessons uploaded:  ' + PAA_LESSONS.length);
-  console.log('\nNext: git push frontend, then npx wrangler deploy (in worker/).\n');
+  console.log('\nNext: git push, then npx wrangler deploy (in worker/).\n');
 }
 
 main();

@@ -89,7 +89,7 @@
     } else {
       rightHtml =
         '<a href="login.html" class="nav-signin">Iniciar sesi\u00f3n</a>' +
-        '<a href="filter.html" class="nav-get-started">Empezar</a>';
+        '<a href="filter.html" class="nav-get-started">Practicar</a>';
     }
 
     root.innerHTML =

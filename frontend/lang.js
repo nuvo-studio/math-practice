@@ -410,7 +410,7 @@
       nav_pricing: 'Precios',
       nav_signout: 'Cerrar sesi\u00F3n',
       nav_signin: 'Iniciar sesi\u00F3n',
-      nav_get_started: 'Empezar',
+      nav_get_started: 'Practicar',
       footer_copy: '\u00A9 2026 Nuvo Math \u00B7 nuvostudio.club',
       footer_tagline: 'Pr\u00E1ctica de Matem\u00E1ticas que realmente ense\u00F1a. Pr\u00E1ctica guiada paso a paso y tutor\u00EDas en vivo.',
       loading_just_moment: '\u00A1Un momento!',

@@ -360,24 +360,52 @@ const PAA_LESSONS = [
         '2³ = 2 × 2 × 2 = 8',
         '18 + 2³ ÷ 4 × 2  →  primero 2³, luego ÷ y ×, luego +',
       ],
-      conceptVisual:
-        '<div class="lesson-visual-board">' +
-        '<div class="visual-group-box">' +
-        '<div class="visual-group-title">Orden que se aplica en cascada</div>' +
-        '<div class="paa-order-flow">' +
-        '<div class="paa-order-step"><span>1</span><strong>Paréntesis</strong><small>( )</small></div>' +
-        '<div class="paa-order-step"><span>2</span><strong>Potencias</strong><small>aⁿ</small></div>' +
-        '<div class="paa-order-step"><span>3</span><strong>× y ÷</strong><small>izq → der</small></div>' +
-        '<div class="paa-order-step"><span>4</span><strong>+ y −</strong><small>izq → der</small></div>' +
-        '</div></div>' +
-        '<div class="paa-mini-compare">' +
-        '<div class="visual-group-box"><div class="visual-group-title">Trampa común</div>' +
-        '<p style="font-size:0.88rem;color:var(--text-secondary);line-height:1.55;">Si mezclas el orden, los mismos símbolos pueden dar otro resultado. El examen premia el procedimiento correcto.</p></div>' +
-        '<div class="visual-group-box"><div class="visual-group-title">Idea práctica</div>' +
-        '<p style="font-size:0.88rem;color:var(--text-secondary);line-height:1.55;">Marca primero potencias, luego multiplicaciones y divisiones como un bloque, y deja sumas y restas para cuando ya no queden otros niveles.</p></div>' +
-        '</div>' +
-        '<div class="tile-equation">Mini-ejemplo: 5 + 3 × 4 = 5 + 12 = 17</div>' +
-        '</div>',
+      conceptVisual: `<style>
+.ooo-wrap{font-family:var(--sans)}
+.ooo-visual-label{font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--text-secondary);margin-bottom:.6rem}
+.ooo-expr{display:flex;flex-wrap:wrap;align-items:baseline;gap:.25rem;padding:.75rem 0;min-height:3.2rem}
+.ooo-state{display:flex;flex-wrap:wrap;align-items:baseline;gap:.25rem}
+.ooo-token{display:inline-flex;align-items:center;justify-content:center;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;padding:.25em .55em;font-family:var(--mono);font-size:1.2rem;font-weight:700;color:var(--text);transition:background .3s ease,border-color .3s ease,color .3s ease}
+.ooo-token--amber{background:var(--amber-bg);border-color:var(--amber);color:var(--amber)}
+.ooo-token--ok{background:var(--teal-light);border-color:var(--teal);color:var(--teal)}
+.ooo-op{display:inline-flex;align-items:center;font-size:1.1rem;font-weight:800;color:var(--text-secondary);padding:0 .1rem}
+.ooo-dots{display:flex;gap:.5rem;margin:.5rem 0 .3rem}
+.ooo-dot{width:8px;height:8px;border-radius:50%;background:var(--border);transition:background .3s ease}
+.ooo-dot--on{background:var(--accent)}
+.ooo-step-label{font-size:.9rem;color:var(--text-secondary);line-height:1.5;margin:.25rem 0 .75rem}
+.ooo-step-label--ok{color:var(--teal);font-weight:600}
+.ooo-btn{display:inline-flex;align-items:center;gap:.35rem;background:var(--accent-bg);border:1.5px solid var(--accent-light);border-radius:999px;padding:.5rem 1.1rem;font-family:var(--mono);font-size:.88rem;font-weight:700;color:var(--accent);cursor:pointer;animation:ooo-pulse 2.4s ease-in-out infinite}
+.ooo-btn:hover{background:var(--accent-light)}
+.ooo-reset{display:none;align-items:center;gap:.35rem;background:transparent;border:1.5px solid var(--border);border-radius:999px;padding:.4rem 1rem;font-size:.85rem;font-weight:600;color:var(--text-secondary);cursor:pointer}
+.ooo-reset:hover{background:var(--bg)}
+@keyframes ooo-pulse{0%,100%{opacity:1}50%{opacity:.65}}
+@media(prefers-reduced-motion:reduce){.ooo-btn{animation:none}.ooo-token,.ooo-dot{transition:none}}
+</style>
+<div id="ooo-wrap" data-step="0" class="ooo-wrap">
+  <div class="ooo-visual-label">Representación visual</div>
+  <div class="ooo-expr">
+    <div id="ooo-s0" class="ooo-state">
+      <span class="ooo-token">18</span><span class="ooo-op">+</span><span class="ooo-token">2³</span><span class="ooo-op">÷</span><span class="ooo-token">4</span><span class="ooo-op">×</span><span class="ooo-token">2</span>
+    </div>
+    <div id="ooo-s1" class="ooo-state" style="display:none">
+      <span class="ooo-token">18</span><span class="ooo-op">+</span><span class="ooo-token ooo-token--amber">8</span><span class="ooo-op">÷</span><span class="ooo-token">4</span><span class="ooo-op">×</span><span class="ooo-token">2</span>
+    </div>
+    <div id="ooo-s2" class="ooo-state" style="display:none">
+      <span class="ooo-token">18</span><span class="ooo-op">+</span><span class="ooo-token ooo-token--amber">4</span>
+    </div>
+    <div id="ooo-s3" class="ooo-state" style="display:none">
+      <span class="ooo-token ooo-token--ok">22</span>
+    </div>
+  </div>
+  <div class="ooo-dots">
+    <div id="ooo-dot1" class="ooo-dot"></div>
+    <div id="ooo-dot2" class="ooo-dot"></div>
+    <div id="ooo-dot3" class="ooo-dot"></div>
+  </div>
+  <p id="ooo-label" class="ooo-step-label">Aplica el orden PAPOMUDAS paso a paso.</p>
+  <button id="ooo-btn" class="ooo-btn" onclick="(function(b){var w=document.getElementById('ooo-wrap');var s=parseInt(w.dataset.step||'0');document.getElementById('ooo-s'+s).style.display='none';s++;w.dataset.step=s;document.getElementById('ooo-s'+s).style.display='';document.getElementById('ooo-dot'+s).classList.add('ooo-dot--on');var lbl=document.getElementById('ooo-label');var msgs=['','Primero resolvemos las potencias: 2³ = 8','Luego multiplicación y división de izquierda a derecha: 8 ÷ 4 = 2, luego 2 × 2 = 4','Finalmente la suma: 18 + 4 = 22 ✓'];lbl.textContent=msgs[s];if(s===1){b.textContent='Paso 2: × y ÷ →';}else if(s===2){b.textContent='Paso 3: Suma →';}else{b.style.display='none';document.getElementById('ooo-reset').style.display='inline-flex';lbl.classList.add('ooo-step-label--ok');}})(this)">Paso 1: Potencias →</button>
+  <button id="ooo-reset" class="ooo-reset" onclick="(function(){for(var i=1;i<=3;i++){document.getElementById('ooo-s'+i).style.display='none';document.getElementById('ooo-dot'+i).classList.remove('ooo-dot--on');}document.getElementById('ooo-s0').style.display='';document.getElementById('ooo-wrap').dataset.step='0';var lbl=document.getElementById('ooo-label');lbl.textContent='Aplica el orden PAPOMUDAS paso a paso.';lbl.classList.remove('ooo-step-label--ok');var btn=document.getElementById('ooo-btn');btn.textContent='Paso 1: Potencias →';btn.style.display='';this.style.display='none';})()">↺ Reiniciar</button>
+</div>`,
       rules: [
         'Conmutativa: a + b = b + a · · · a × b = b × a',
         'Asociativa: (a + b) + c = a + (b + c)',

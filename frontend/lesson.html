@@ -1160,6 +1160,8 @@
     const backLink = document.querySelector('.back-link');
     if (guestMode) {
       backLink.href = 'home.html?curriculum=' + encodeURIComponent(curriculum) + '&guest=true';
+    } else if (localStorage.getItem('nuvo_teacher') === 'true') {
+      backLink.href = 'home.html?curriculum=' + encodeURIComponent(curriculum);
     }
 
     showCover();

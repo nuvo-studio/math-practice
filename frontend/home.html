@@ -777,8 +777,21 @@
     }
 
     const studentId = localStorage.getItem('studentId');
-    if (!studentId) {
+    if (!studentId && !IS_TEACHER) {
       window.location.href = 'login.html';
+      return;
+    }
+
+    if (IS_TEACHER && !studentId) {
+      const teacherCurriculum = PARAM_CURRICULUM || 'cambridge';
+      const fakeStudent = { curriculum: teacherCurriculum, grade: '', progress: {} };
+      document.getElementById('loading-state').style.display = 'none';
+      document.getElementById('home-content').style.display = 'block';
+      document.getElementById('curriculum-badge').innerHTML =
+        '&#x1F4D0; ' + curriculumLabel(teacherCurriculum, '');
+      document.getElementById('student-name').textContent = '';
+      document.title = 'Nuvo Math \u2014 Curr\u00edculo';
+      renderCurriculum(fakeStudent, null);
       return;
     }
 

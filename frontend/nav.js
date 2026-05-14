@@ -99,6 +99,7 @@
     if (isTeacher) {
       logoHref = 'index.html';
       rightHtml =
+        '<a href="home.html?curriculum=PAA" class="nav-teacher-link">Ver curr\u00edculo</a>' +
         '<a href="teacher.html" class="nav-teacher-link">Panel del maestro</a>' +
         '<a href="#" class="nav-ghost" id="nav-signout-btn">Cerrar sesi\u00f3n</a>' +
         '<span id="nav-student-name" style="display:none;" aria-hidden="true"></span>';
@@ -129,6 +130,7 @@
         e.preventDefault();
         if (isTeacher) {
           localStorage.removeItem('nuvo_teacher');
+          sessionStorage.removeItem('teacherSecret');
         } else {
           localStorage.removeItem('nuvo_student');
           localStorage.removeItem('studentId');

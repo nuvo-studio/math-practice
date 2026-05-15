@@ -966,6 +966,109 @@
     h1 { font-size: 1.3rem; }
     .equation-display { font-size: 1rem; }
   }
+
+  /* ── Subtopic vertical flow (Nivel 3) ── */
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .st-block { margin-bottom: 8px; }
+
+  .st-divider {
+    display: flex; align-items: center; gap: 12px;
+    margin: 24px 0 20px;
+    color: var(--text-secondary); font-size: 0.72rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.06em;
+  }
+  .st-divider::before, .st-divider::after {
+    content: ''; flex: 1; height: 1px; background: var(--border);
+  }
+
+  .st-completed-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 16px; background: var(--teal-light);
+    border: 1.5px solid var(--teal); border-radius: 12px;
+    margin-bottom: 8px; animation: slideIn 0.3s ease;
+  }
+  .st-completed-icon { color: var(--teal); font-size: 1.1rem; flex-shrink: 0; }
+  .st-completed-title { font-weight: 600; color: var(--teal); font-size: 0.92rem; }
+
+  .st-example-btn {
+    display: inline-block; background: transparent;
+    border: 1.5px solid var(--border); border-radius: 8px;
+    padding: 8px 16px; margin-bottom: 12px;
+    font-family: var(--sans); font-size: 0.85rem; font-weight: 600;
+    color: var(--text-secondary); cursor: pointer;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+  }
+  .st-example-btn:hover {
+    background: var(--accent-bg); border-color: var(--accent-light); color: var(--accent);
+  }
+
+  .st-problem-card {
+    background: var(--card); border: 1.5px solid var(--border);
+    border-radius: 14px; padding: 20px; margin-bottom: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04); animation: slideIn 0.25s ease;
+  }
+  .st-problem-label {
+    font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.06em; color: var(--accent); margin-bottom: 10px;
+  }
+  .st-problem-text { font-size: 0.95rem; line-height: 1.6; color: var(--text); }
+
+  .st-hint-box {
+    padding: 12px 14px; border-radius: 10px; margin-bottom: 12px;
+    font-size: 0.88rem; line-height: 1.5;
+    background: var(--amber-bg); border: 1.5px solid #F5D06A; color: var(--amber);
+    animation: slideIn 0.25s ease;
+  }
+
+  .st-mcq-opts { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
+  .st-mcq-opt {
+    padding: 12px 16px; background: var(--card);
+    border: 1.5px solid var(--border); border-radius: 10px;
+    font-family: var(--mono); font-size: 0.9rem; text-align: left;
+    cursor: pointer; width: 100%;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .st-mcq-opt:hover:not([disabled]) { background: var(--accent-bg); border-color: var(--accent-light); }
+  .st-mcq-correct { background: var(--teal-light) !important; border-color: var(--teal) !important; color: var(--teal) !important; }
+  .st-mcq-wrong   { background: var(--wrong-bg)   !important; border-color: var(--wrong)  !important; color: var(--wrong)  !important; }
+
+  .st-open-row { display: flex; gap: 8px; margin-bottom: 12px; }
+  .st-open-input {
+    flex: 1; padding: 12px 14px; border: 1.5px solid var(--border);
+    border-radius: 10px; font-family: var(--mono); font-size: 1rem;
+    background: var(--card); color: var(--text); outline: none;
+    transition: border-color 0.2s;
+  }
+  .st-open-input:focus { border-color: var(--accent); }
+  .st-submit-btn {
+    padding: 12px 20px; background: var(--accent); color: white;
+    border: none; border-radius: 10px; font-family: var(--sans);
+    font-size: 0.9rem; font-weight: 600; cursor: pointer; white-space: nowrap;
+    transition: opacity 0.15s;
+  }
+  .st-submit-btn:hover { opacity: 0.9; }
+
+  .st-feedback { padding: 10px 14px; border-radius: 10px; margin-bottom: 12px; font-size: 0.88rem; line-height: 1.5; animation: slideIn 0.25s ease; }
+  .st-feedback-correct { background: var(--teal-light); border: 1.5px solid var(--teal); color: var(--teal); }
+  .st-feedback-wrong   { background: var(--wrong-bg);   border: 1.5px solid var(--wrong); color: var(--wrong); }
+
+  .st-completion-card {
+    background: var(--accent-bg); border: 1.5px solid var(--accent-light);
+    border-radius: 14px; padding: 28px; text-align: center; margin-top: 24px;
+    animation: slideIn 0.3s ease;
+  }
+  .st-completion-card h2 { font-size: 1.2rem; font-weight: 700; color: var(--accent); margin-bottom: 8px; }
+  .st-summary-list { list-style: none; text-align: left; margin: 16px 0; }
+  .st-summary-list li {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 0; border-bottom: 1px solid var(--accent-light); font-size: 0.9rem;
+  }
+  .st-summary-list li:last-child { border-bottom: none; }
+  .st-check { color: var(--teal); font-weight: 700; flex-shrink: 0; }
 </style>
 </head>
 <body>
@@ -1225,7 +1328,7 @@
       ${badgeHtml()}
       <h1>${escHtml(lesson.title || 'Lesson')}</h1>
       <p class="subtitle">${escHtml(lesson.subtitle || '')}</p>
-      <button class="main-btn" onclick="showConcepts()">${Lang.t('cover_begin_btn')}</button>
+      <button class="main-btn" onclick="(lesson.subtopics&&lesson.subtopics.length)?startSubtopicFlow():showConcepts()">${Lang.t('cover_begin_btn')}</button>
     `);
   }
 
@@ -1582,6 +1685,416 @@
         </div>
       `);
     }
+  }
+
+
+  // ── Subtopic vertical flow ─────────────────────────────────────
+  const PROXY_URL_ST = 'https://math-practice-proxy.ronelalmanza20.workers.dev';
+  let _allPracticeProblems = [];
+  let _stProgress = {};  // idx → { problems, probIdx, correct, wrongTotal, wrongOnCurrent, hintLevel, exStep, exOpen }
+
+  function _stNormalize(s) {
+    return String(s).trim().toLowerCase().replace(/\s+/g, '').replace(/×/g,'*').replace(/÷/g,'/');
+  }
+
+  function stCheckAnswer(input, problem) {
+    const norm = _stNormalize(input);
+    const ans  = _stNormalize(problem.answer);
+    // numeric
+    const nInput = parseFloat(norm), nAns = parseFloat(ans);
+    if (!isNaN(nInput) && !isNaN(nAns) && Math.abs(nInput - nAns) < 1e-9) return true;
+    // string
+    if (norm === ans) return true;
+    // Algebrite
+    try {
+      if (typeof Algebrite !== 'undefined') {
+        const diff = Algebrite.run(`simplify((${norm})-(${ans}))`);
+        if (diff === '0') return true;
+      }
+    } catch(e) {}
+    return false;
+  }
+
+  async function startSubtopicFlow() {
+    if (!lesson || !lesson.subtopics || !lesson.subtopics.length) { showConcepts(); return; }
+    // fetch all practice problems for this level
+    const curriculum = lesson.curriculum || 'PAA';
+    const unit       = lesson.unit       || 'aritmetica';
+    const stage      = lesson.stage      || lesson.level || '3';
+    try {
+      const r = await fetch(`${PROXY_URL_ST}/problems/curriculum/${curriculum}/${unit}/${stage}/practice`);
+      _allPracticeProblems = r.ok ? await r.json() : [];
+    } catch(e) { _allPracticeProblems = []; }
+
+    // render skeleton: progress bar + empty container
+    render(`
+      ${progressBarHtml(2)}
+      <h2 style="font-size:1rem;font-weight:700;margin:0 0 20px;color:var(--text)">${escHtml(lesson.title||'')}</h2>
+      <div id="st-container"></div>
+    `);
+
+    _stProgress = {};
+    activateStSubtopic(0);
+  }
+
+  function activateStSubtopic(idx) {
+    const subs = lesson.subtopics;
+    if (idx >= subs.length) { showStCompletion(); return; }
+    const sub = subs[idx];
+    const container = document.getElementById('st-container');
+    if (!container) return;
+
+    // divider (not for first)
+    if (idx > 0) {
+      const div = document.createElement('div');
+      div.className = 'st-divider';
+      div.textContent = sub.title || `Tema ${idx+1}`;
+      container.appendChild(div);
+    }
+
+    // build block
+    const block = document.createElement('div');
+    block.className = 'st-block';
+    block.id = `st-block-${idx}`;
+
+    // concept card tabs
+    const tabs = [
+      { key:'written',  label:'Teoría'   },
+      { key:'example',  label:'Ejemplo'  },
+      { key:'visual',   label:'Visual'   },
+      { key:'practice', label:'Práctica' }
+    ];
+    const tabBtns = tabs.map(t =>
+      `<button class="tab-btn${t.key==='written'?' active':''}" onclick="switchStTab(${idx},'${t.key}')" id="st-tab-${t.key}-${idx}">${t.key==='written'?'Teoría':t.key==='example'?'Ejemplo':t.key==='visual'?'Visual':'Práctica'}</button>`
+    ).join('');
+
+    const writtenHtml  = sub.conceptWritten  ? `<div class="concept-written">${sub.conceptWritten}</div>` : '<p style="color:var(--text-secondary);font-size:0.9rem">Sin contenido.</p>';
+    const exampleHtml  = sub.conceptExample  ? `<div class="concept-written">${sub.conceptExample}</div>`  : '<p style="color:var(--text-secondary);font-size:0.9rem">Sin ejemplo.</p>';
+    const visualHtml   = sub.conceptVisual   ? `<div class="concept-written">${sub.conceptVisual}</div>`   : '<p style="color:var(--text-secondary);font-size:0.9rem">Sin visual.</p>';
+    const practiceHtml = sub.conceptPractice ? `<div class="concept-written">${sub.conceptPractice}</div>` : '<p style="color:var(--text-secondary);font-size:0.9rem">Sin práctica guiada.</p>';
+
+    // inline worked example toggle
+    const exHtml = buildStExampleHtml(idx, sub);
+
+    // practice area
+    const practiceArea = `<div id="st-practice-${idx}"></div>`;
+
+    block.innerHTML = `
+      <div class="concept-card" id="st-concept-${idx}" style="margin-bottom:12px;animation:slideIn 0.3s ease">
+        <div class="concept-tabs">${tabBtns}</div>
+        <div id="st-written-${idx}"  class="tab-panel active">${writtenHtml}</div>
+        <div id="st-example-${idx}"  class="tab-panel">${exampleHtml}</div>
+        <div id="st-visual-${idx}"   class="tab-panel">${visualHtml}</div>
+        <div id="st-practice-tab-${idx}" class="tab-panel">${practiceHtml}</div>
+      </div>
+      ${exHtml}
+      ${practiceArea}
+    `;
+    container.appendChild(block);
+
+    // init state
+    const ids = (sub.practiceProblems || []);
+    const problems = _allPracticeProblems.filter(p => ids.includes(p.id));
+    _stProgress[idx] = { problems, probIdx: 0, correct: 0, wrongTotal: 0, wrongOnCurrent: 0, hintLevel: 0, exStep: 0, exOpen: false };
+
+    renderStProblem(idx);
+    updateStProgress();
+
+    // scroll to new block
+    setTimeout(() => block.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+  }
+
+  function buildStExampleHtml(idx, sub) {
+    if (!sub.example) return '';
+    const ex = sub.example;
+    const steps = ex.steps || [];
+    const total = steps.length;
+    if (!total) return '';
+    const first = steps[0] || {};
+    const dotsHtml = steps.map((_,i) =>
+      `<span class="step-dot${i===0?' active':''}" id="st-edot-${idx}-${i}"></span>`
+    ).join('');
+    return `
+      <button class="st-example-btn" id="st-exbtn-${idx}" onclick="toggleStExample(${idx})">
+        Ver ejemplo resuelto ▸
+      </button>
+      <div id="st-expanel-${idx}" style="display:none;margin-bottom:14px">
+        <div class="example-card" style="animation:slideIn 0.25s ease">
+          <div class="example-header">
+            <span class="example-label">Ejemplo</span>
+            <div class="step-dots">${dotsHtml}</div>
+          </div>
+          <div class="equation-display" id="st-eeq-${idx}">${escHtml(first.equation||'')}</div>
+          <div class="annotation"       id="st-eann-${idx}">${escHtml(first.annotation||'')}</div>
+          <div class="narration"        id="st-enar-${idx}">${escHtml(first.narration||'')}</div>
+          <div id="st-evis-${idx}">${first.visual||''}</div>
+          <div class="example-nav">
+            <button class="nav-btn" onclick="stepStExample(${idx},-1)" id="st-eprev-${idx}">← Anterior</button>
+            <span class="step-counter" id="st-estep-${idx}">Paso 1 / ${total}</span>
+            <button class="nav-btn" onclick="stepStExample(${idx},1)"  id="st-enext-${idx}">Siguiente →</button>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  function toggleStExample(idx) {
+    const panel = document.getElementById(`st-expanel-${idx}`);
+    const btn   = document.getElementById(`st-exbtn-${idx}`);
+    if (!panel) return;
+    const opening = panel.style.display === 'none';
+    panel.style.display = opening ? 'block' : 'none';
+    if (btn) btn.textContent = opening ? 'Ocultar ejemplo ▾' : 'Ver ejemplo resuelto ▸';
+    _stProgress[idx] && (_stProgress[idx].exOpen = opening);
+  }
+
+  function stepStExample(idx, dir) {
+    const st = _stProgress[idx];
+    if (!st) return;
+    const sub = lesson.subtopics[idx];
+    const steps = (sub.example && sub.example.steps) || [];
+    const total = steps.length;
+    st.exStep = Math.max(0, Math.min(total - 1, st.exStep + dir));
+    const s = steps[st.exStep] || {};
+    const setT = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v || ''; };
+    const setH = (id, v) => { const el = document.getElementById(id); if (el) el.innerHTML  = v || ''; };
+    setT(`st-eeq-${idx}`,  s.equation   || '');
+    setT(`st-eann-${idx}`, s.annotation || '');
+    setT(`st-enar-${idx}`, s.narration  || '');
+    setH(`st-evis-${idx}`, s.visual     || '');
+    setT(`st-estep-${idx}`, `Paso ${st.exStep+1} / ${total}`);
+    // dots
+    const dots = document.querySelectorAll(`[id^="st-edot-${idx}-"]`);
+    dots.forEach((d,i) => d.classList.toggle('active', i === st.exStep));
+    const prev = document.getElementById(`st-eprev-${idx}`);
+    const next = document.getElementById(`st-enext-${idx}`);
+    if (prev) prev.disabled = st.exStep === 0;
+    if (next) next.disabled = st.exStep === total - 1;
+  }
+
+  function switchStTab(idx, tab) {
+    const panels = { written:`st-written-${idx}`, example:`st-example-${idx}`, visual:`st-visual-${idx}`, practice:`st-practice-tab-${idx}` };
+    const tabIds  = { written:`st-tab-written-${idx}`, example:`st-tab-example-${idx}`, visual:`st-tab-visual-${idx}`, practice:`st-tab-practice-${idx}` };
+    Object.entries(panels).forEach(([k, id]) => {
+      const el = document.getElementById(id);
+      if (el) el.classList.toggle('active', k === tab);
+    });
+    Object.entries(tabIds).forEach(([k, id]) => {
+      const el = document.getElementById(id);
+      if (el) el.classList.toggle('active', k === tab);
+    });
+  }
+
+  function renderStProblem(idx) {
+    const area = document.getElementById(`st-practice-${idx}`);
+    if (!area) return;
+    const st = lesson.subtopics[idx];
+    const prog = _stProgress[idx];
+    if (!prog || !prog.problems.length) {
+      area.innerHTML = '<p style="color:var(--text-secondary);font-size:0.88rem;padding:12px 0">Sin problemas de práctica para este tema.</p>';
+      showStNextSubtopicBtn(idx);
+      return;
+    }
+    if (prog.probIdx >= prog.problems.length) {
+      showStNextSubtopicBtn(idx);
+      return;
+    }
+    const problem = prog.problems[prog.probIdx];
+    const hints = problem.hints || [];
+    let hintsHtml = '';
+    for (let h = 0; h < prog.hintLevel && h < hints.length; h++) {
+      hintsHtml += `<div class="st-hint-box">${escHtml(hints[h])}</div>`;
+    }
+    const reviewBtn = prog.wrongTotal >= 3
+      ? `<button class="st-example-btn" style="margin-bottom:8px" onclick="scrollToStConcept(${idx})">↑ Revisar concepto</button>`
+      : '';
+
+    let inputHtml = '';
+    if (problem.format === 'mcq' && problem.options) {
+      const opts = problem.options.map((opt, i) => {
+        const letter = String.fromCharCode(65 + i);
+        return `<button class="st-mcq-opt" id="st-mcq-${idx}-${i}" onclick="submitStMcq(${idx},'${letter}')">${letter}) ${escHtml(opt)}</button>`;
+      }).join('');
+      inputHtml = `<div class="st-mcq-opts">${opts}</div>`;
+    } else {
+      inputHtml = `
+        <div class="st-open-row">
+          <input class="st-open-input" id="st-open-${idx}" type="text" placeholder="Tu respuesta..."
+            onkeydown="if(event.key==='Enter')submitStOpen(${idx})">
+          <button class="st-submit-btn" onclick="submitStOpen(${idx})">Verificar</button>
+        </div>
+      `;
+    }
+
+    area.innerHTML = `
+      ${reviewBtn}
+      <div class="st-problem-card">
+        <div class="st-problem-label">Problema ${prog.probIdx + 1} / ${prog.problems.length}</div>
+        <div class="st-problem-text">${escHtml(problem.question)}</div>
+      </div>
+      ${hintsHtml}
+      ${inputHtml}
+      <div id="st-feedback-${idx}"></div>
+    `;
+
+    // focus open input
+    const inp = document.getElementById(`st-open-${idx}`);
+    if (inp) setTimeout(() => inp.focus(), 80);
+  }
+
+  function submitStMcq(idx, letter) {
+    const prog = _stProgress[idx];
+    if (!prog) return;
+    const problem = prog.problems[prog.probIdx];
+    if (!problem) return;
+    const correct = letter.toUpperCase() === String(problem.answer).trim().toUpperCase();
+    // disable all buttons
+    const opts = document.querySelectorAll(`[id^="st-mcq-${idx}-"]`);
+    opts.forEach(b => {
+      b.disabled = true;
+      const bLetter = b.id.replace(`st-mcq-${idx}-`, '');
+      const bChar = String.fromCharCode(65 + parseInt(bLetter));
+      if (bChar === letter) b.classList.add(correct ? 'st-mcq-correct' : 'st-mcq-wrong');
+      if (!correct && bChar === String(problem.answer).trim().toUpperCase()) b.classList.add('st-mcq-correct');
+    });
+    if (correct) { onStCorrect(idx); }
+    else         { onStWrong(idx); }
+  }
+
+  function submitStOpen(idx) {
+    const prog = _stProgress[idx];
+    if (!prog) return;
+    const problem = prog.problems[prog.probIdx];
+    if (!problem) return;
+    const inp = document.getElementById(`st-open-${idx}`);
+    if (!inp) return;
+    const val = inp.value.trim();
+    if (!val) return;
+    inp.disabled = true;
+    const correct = stCheckAnswer(val, problem);
+    if (correct) { onStCorrect(idx); }
+    else         { onStWrong(idx); }
+  }
+
+  function onStCorrect(idx) {
+    const prog = _stProgress[idx];
+    prog.correct++;
+    prog.wrongOnCurrent = 0;
+    prog.hintLevel = 0;
+    const fb = document.getElementById(`st-feedback-${idx}`);
+    if (fb) {
+      fb.innerHTML = `<div class="st-feedback st-feedback-correct">¡Correcto! ✓</div>`;
+    }
+    if (prog.correct >= 2) {
+      setTimeout(() => showStNextSubtopicBtn(idx), 700);
+    } else {
+      prog.probIdx = Math.min(prog.probIdx + 1, prog.problems.length - 1);
+      setTimeout(() => renderStProblem(idx), 800);
+    }
+  }
+
+  function onStWrong(idx) {
+    const prog = _stProgress[idx];
+    prog.wrongOnCurrent++;
+    prog.wrongTotal++;
+    // auto-advance hint after 2 wrong on same problem
+    if (prog.wrongOnCurrent >= 2) {
+      const problem = prog.problems[prog.probIdx];
+      const maxHints = (problem && problem.hints) ? problem.hints.length : 0;
+      if (prog.hintLevel < maxHints) prog.hintLevel++;
+      prog.wrongOnCurrent = 0;
+    }
+    const fb = document.getElementById(`st-feedback-${idx}`);
+    if (fb) {
+      const problem = prog.problems[prog.probIdx];
+      const hints = problem ? (problem.hints || []) : [];
+      const nextHint = prog.hintLevel < hints.length ? hints[prog.hintLevel] : null;
+      fb.innerHTML = `<div class="st-feedback st-feedback-wrong">Incorrecto. Inténtalo de nuevo.</div>`;
+    }
+    setTimeout(() => renderStProblem(idx), 800);
+  }
+
+  function showStNextSubtopicBtn(idx) {
+    const area = document.getElementById(`st-practice-${idx}`);
+    if (!area) return;
+    const subs = lesson.subtopics;
+    const isLast = (idx === subs.length - 1);
+    const btnLabel = isLast ? '¡Listo! Ver resumen →' : 'Siguiente tema →';
+    area.innerHTML = `
+      <div class="st-problem-card" style="background:var(--teal-light);border-color:var(--teal);text-align:center">
+        <div style="color:var(--teal);font-weight:700;margin-bottom:10px">¡Bien hecho! Tema completado ✓</div>
+        <button class="main-btn" style="margin:0 auto;display:inline-block" onclick="collapseStSubtopic(${idx})">${btnLabel}</button>
+      </div>
+    `;
+  }
+
+  function collapseStSubtopic(idx) {
+    const block = document.getElementById(`st-block-${idx}`);
+    const sub   = lesson.subtopics[idx];
+    if (block) {
+      const row = document.createElement('div');
+      row.className = 'st-completed-row';
+      row.id = `st-done-${idx}`;
+      row.innerHTML = `<span class="st-completed-icon">✓</span><span class="st-completed-title">${escHtml(sub.title||`Tema ${idx+1}`)}</span>`;
+      block.replaceWith(row);
+      // also remove preceding divider if any
+      const prev = row.previousElementSibling;
+      if (prev && prev.classList.contains('st-divider')) prev.remove();
+    }
+    updateStProgress();
+    const subs = lesson.subtopics;
+    if (idx + 1 < subs.length) {
+      activateStSubtopic(idx + 1);
+    } else {
+      showStCompletion();
+    }
+  }
+
+  function showStCompletion() {
+    const container = document.getElementById('st-container');
+    if (!container) return;
+    const subs = lesson.subtopics || [];
+    const listItems = subs.map((s,i) =>
+      `<li><span class="st-check">✓</span>${escHtml(s.title||`Tema ${i+1}`)}</li>`
+    ).join('');
+    const card = document.createElement('div');
+    card.className = 'st-completion-card';
+    card.innerHTML = `
+      <h2>¡Lección completada!</h2>
+      <p style="font-size:0.9rem;color:var(--accent-dark,var(--accent));margin-bottom:4px">Dominaste todos los temas de esta lección.</p>
+      <ul class="st-summary-list">${listItems}</ul>
+      <button class="main-btn" style="margin:0 auto;display:inline-block" onclick="showTest()">Ir al test →</button>
+    `;
+    container.appendChild(card);
+    setTimeout(() => card.scrollIntoView({ behavior:'smooth', block:'center' }), 50);
+
+    // mark lesson progress
+    try {
+      const studentId = localStorage.getItem('studentId');
+      if (studentId && lesson) {
+        fetch(`${PROXY_URL_ST}/student/${studentId}/progress`, {
+          method:'PUT',
+          headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ unit: lesson.unit||'aritmetica', stage: lesson.stage||lesson.level||'3', status:'concepts_done' })
+        }).catch(()=>{});
+      }
+    } catch(e) {}
+  }
+
+  function updateStProgress() {
+    const subs = lesson.subtopics || [];
+    const done = subs.filter((_,i) => document.getElementById(`st-done-${i}`)).length;
+    const total = subs.length;
+    const pct = total ? Math.round((done / total) * 60 + 10) : 10; // 10–70% range for concept phase
+    const fill = document.querySelector('.progress-fill');
+    const text = document.querySelector('.progress-text');
+    if (fill) fill.style.width = `${pct}%`;
+    if (text) text.textContent = `${pct}%`;
+  }
+
+  function scrollToStConcept(idx) {
+    const el = document.getElementById(`st-concept-${idx}`);
+    if (el) el.scrollIntoView({ behavior:'smooth', block:'start' });
   }
 
   init();

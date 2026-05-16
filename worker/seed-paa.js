@@ -632,7 +632,7 @@ const PAA_LESSONS = [
         '10% descuento adicional → multiplicar por 0.90 sobre el precio actual',
         '0.80 × 0.90 = 0.72 (72% del original, no 70%)',
       ],
-      conceptVisual: fs.readFileSync('./visual_nivel2.html', 'utf8'),
+      conceptVisual: '',
       rules: [
         'Razón: comparación entre dos cantidades → a:b o a/b',
         'Proporción: dos razones iguales → a/b = c/d, por lo tanto ad = bc (productos cruzados)',

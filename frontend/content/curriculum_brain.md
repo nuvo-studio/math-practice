@@ -862,6 +862,85 @@ T3
   - C) 2² × 3 × 7
   - D) 2 × 3 × 14
 
+#### Problemas adicionales de práctica (9):
+
+P7 — Divisibilidad y factorización prima
+- Enunciado: ¿Cuál es la factorización prima de 72?
+- Respuesta: C
+- Tipo: mcq
+- Opciones:
+  - A) 2 × 36
+  - B) 4 × 18
+  - C) 2³ × 3²
+  - D) 2² × 3 × 6
+- Pista 1: La factorización prima usa solo números primos. Elimina las opciones que contienen números compuestos.
+- Pista 2: Divide 72 entre 2 repetidamente: 72 → 36 → 18 → 9. Ahora factoriza 9.
+- Pista 3: 9 = 3². Entonces 72 = 2³ × 3².
+
+P8 — MCD
+- Enunciado: Un agricultor tiene 48 naranjas y 36 manzanas. Quiere hacer bolsas iguales sin que sobre ninguna fruta. ¿Cuántas bolsas puede hacer como máximo?
+- Respuesta: 12
+- Tipo: open
+- Pista 1: El número máximo de bolsas iguales es el MCD de 48 y 36.
+- Pista 2: 48 = 2⁴ × 3 y 36 = 2² × 3². Los factores comunes son 2² y 3.
+- Pista 3: MCD = 2² × 3 = 4 × 3 = ?
+
+P9 — MCM
+- Enunciado: ¿Cuál es el MCM de 8 y 12?
+- Respuesta: 24
+- Tipo: open
+- Pista 1: Factoriza ambos números y toma todos los factores con el mayor exponente.
+- Pista 2: 8 = 2³ y 12 = 2² × 3. El mayor exponente de 2 es 2³ y el de 3 es 3¹.
+- Pista 3: MCM = 2³ × 3 = 8 × 3 = ?
+
+P10 — MCM
+- Enunciado: En una panadería, el pan de trigo se hornea cada 6 horas y el pan de maíz cada 9 horas. Si ambos se hornean juntos ahora, ¿cuántas horas pasarán hasta que coincidan de nuevo?
+- Respuesta: 18
+- Tipo: open
+- Pista 1: El momento en que coinciden de nuevo es el MCM de 6 y 9.
+- Pista 2: 6 = 2 × 3 y 9 = 3². El MCM toma todos los factores con el mayor exponente.
+- Pista 3: MCM = 2 × 3² = 2 × 9 = ?
+
+P11 — Sucesiones aritméticas
+- Enunciado: En la sucesión 5, 12, 19, 26... ¿cuál es el octavo término?
+- Respuesta: 54
+- Tipo: open
+- Pista 1: Identifica la diferencia común entre términos consecutivos.
+- Pista 2: La diferencia es 7. El término n se calcula como: primer término + (n−1) × diferencia.
+- Pista 3: 5 + (8−1) × 7 = 5 + 49 = ?
+
+P12 — Sucesiones aritméticas
+- Enunciado: Una empresa tiene 15 empleados en enero. Cada mes contrata 4 empleados más. ¿Cuántos empleados tendrá en julio (mes 7)?
+- Respuesta: 39
+- Tipo: open
+- Pista 1: Esto es una sucesión aritmética donde el primer término es 15 y la diferencia común es 4.
+- Pista 2: El término del mes n es: 15 + (n−1) × 4. Para julio, n = 7.
+- Pista 3: 15 + (7−1) × 4 = 15 + 24 = ?
+
+P13 — Sucesiones geométricas
+- Enunciado: En la sucesión 3, 6, 12, 24... ¿cuál es el siguiente término?
+- Respuesta: 48
+- Tipo: open
+- Pista 1: Identifica el patrón — ¿por qué número se multiplica cada término?
+- Pista 2: Cada término se multiplica por 2. Esto se llama razón común.
+- Pista 3: El último término es 24. Multiplica: 24 × 2 = ?
+
+P14 — Sucesiones geométricas
+- Enunciado: Una bacteria se divide en 2 cada hora. Si comenzamos con 5 bacterias, ¿cuántas habrá después de 4 horas?
+- Respuesta: 80
+- Tipo: open
+- Pista 1: Cada hora la cantidad se multiplica por 2. Esto es una sucesión geométrica con razón 2.
+- Pista 2: Después de n horas: cantidad inicial × 2ⁿ. Aquí n = 4.
+- Pista 3: 5 × 2⁴ = 5 × 16 = ?
+
+P15 — Sucesiones geométricas
+- Enunciado: En la sucesión 4, 12, 36, 108... ¿cuál es el sexto término?
+- Respuesta: 972
+- Tipo: open
+- Pista 1: Identifica la razón común dividiendo un término entre el anterior.
+- Pista 2: La razón es 3. El término n es: primer término × razón^(n−1).
+- Pista 3: 4 × 3^(6−1) = 4 × 3⁵ = 4 × 243 = ?
+
 ---
 
 ### REGLAS DE VALIDACIÓN ADICIONALES — PAA

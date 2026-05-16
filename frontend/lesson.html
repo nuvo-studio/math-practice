@@ -2275,6 +2275,7 @@
           <div style="display:flex;gap:8px">
             <button class="wt-ctrl-btn" id="wt-pause-btn" onclick="wtTogglePause()">&#9208; Pausar</button>
             <button class="wt-ctrl-btn" onclick="wtRestart()">&#8634; Reiniciar</button>
+            <button class="wt-ctrl-btn" id="wt-audio-toggle" onclick="toggleAudio()">&#128266;</button>
           </div>
           <span id="wt-step-info" style="font-size:0.72rem;color:var(--text-secondary)"></span>
         </div>
@@ -2305,6 +2306,12 @@
 
     // ── Closure state ──────────────────────────────────────────
     const _s = { idx: 0, paused: false, waiting: false, tries: 0, timer: null };
+    let audioEnabled = true;
+
+    function playStepAudio(file) {
+      if (!audioEnabled || !file) return;
+      new Audio('/audio/' + file).play();
+    }
 
     function _setStatus(mode) {
       const el = document.getElementById('wt-status');
@@ -2371,10 +2378,12 @@
       _updateBar();
       if (step.type === 'write') {
         _appendWrite(step);
+        playStepAudio(step.audio);
         _s.idx++;
         _s.timer = setTimeout(_resume, step.pause != null ? step.pause : 0);
       } else if (step.type === 'question') {
         _appendQuestion(step);
+        playStepAudio(step.audio);
         _s.idx++;
         _s.tries = 0;
         _s.waiting = true;
@@ -2383,6 +2392,7 @@
     }
 
     function _onComplete() {
+      document.querySelectorAll('audio').forEach(function(a) { a.pause(); a.currentTime = 0; });
       _setStatus('');
       const fill = document.getElementById('wt-pfill');
       if (fill) fill.style.width = '100%';
@@ -2421,6 +2431,13 @@
       _setStatus('writing');
       _updateBar();
       _resume();
+    };
+
+    window.toggleAudio = function() {
+      audioEnabled = !audioEnabled;
+      const btn = document.getElementById('wt-audio-toggle');
+      if (btn) btn.textContent = audioEnabled ? '\uD83D\uDD0A' : '\uD83D\uDD07';
+      if (!audioEnabled) document.querySelectorAll('audio').forEach(function(a) { a.pause(); a.currentTime = 0; });
     };
 
     window.wtSubmitAnswer = function() {

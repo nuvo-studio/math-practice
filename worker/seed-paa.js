@@ -119,7 +119,7 @@ const PAA_PROBLEMS = [
     curriculum: 'PAA', unit: 'aritmetica', stage: '1',
     problemType: 'test', type: '', format: 'open',
     question: 'Si a = 3 y b = 2, ¿cuánto es a² + 2ab − b²?',
-    answer: '13',
+    answer: '17',
     hints: [], options: [], modules: ['equivalence'], createdAt: CREATED_AT,
   },
 

@@ -1266,20 +1266,15 @@
   }
   .wt-progress-bar  { flex: 1; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
   .wt-progress-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.4s ease; }
-  .wt-note { margin-bottom: 10px; border-radius: 8px; padding: 8px 10px; }
+  .wt-note { margin-bottom: 6px; border-radius: 8px; padding: 8px 10px; }
   .wt-note-label { font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
   .wt-note-rule { background: #EEEDFE; border-left: 2px solid #534AB7; }
   .wt-note-rule .wt-note-label { color: #534AB7; }
   .wt-note-rule-title { font-size: 13px; font-weight: 500; color: #3C3489; margin-bottom: 6px; }
-  /* Match visual height of rule/diagram cards (label + chip row) so formula/check feel consistent */
   .wt-note-formula {
     background: #E1F5EE;
     border-left: 2px solid #0F6E56;
-    min-height: 6.35rem;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+    padding: 6px 10px;
   }
   .wt-note-formula .wt-note-label { color: #0F6E56; }
   .wt-note-formula-content { font-size: 13px; color: #085041; font-family: monospace; }
@@ -1287,18 +1282,37 @@
     display: flex;
     align-items: center;
     gap: 6px;
-    padding: 5px 8px;
+    padding: 6px 10px;
     background: #EAF3DE;
     border-radius: 8px;
-    margin-bottom: 6px;
-    min-height: 6.35rem;
-    box-sizing: border-box;
+    border-left: 2px solid #3B6D11;
   }
   .wt-note-check-icon { color: #3B6D11; font-size: 12px; font-weight: 500; }
   .wt-note-check-text { font-size: 12px; color: #27500A; }
   .wt-note-diagram { background: white; border: 0.5px solid #e2e0d8; border-radius: 8px; padding: 8px 10px; margin-bottom: 10px; }
-  .wt-note-diagram .wt-note-label { color: #888780; }
+  .wt-note-diagram .wt-note-label {
+    color: #888780;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .wt-note-diagram-check {
+    color: #3B6D11;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1;
+  }
+  .wt-note-diagram--done { border-color: #c5ddb0; background: #f7fbf2; }
+  .wt-note-diagram--done .wt-note-label { color: #27500A; }
   .wt-note-diagram-seq { display: flex; align-items: center; gap: 3px; flex-wrap: wrap; margin-top: 2px; }
+  .wt-note-diagram-hint {
+    margin-top: 8px;
+    font-size: 12px;
+    line-height: 1.45;
+    color: #4a4a47;
+  }
+  .wt-note-diagram--done .wt-note-diagram-hint { color: #5a6b50; }
   .wt-note-legend { background: white; border: 0.5px solid #e2e0d8; border-radius: 8px; padding: 8px 10px 10px; margin-bottom: 10px; }
   .wt-note-legend .wt-note-label { color: #888780; }
   .wt-note-legend-rows { display: flex; flex-direction: column; gap: 6px; margin-top: 4px; }
@@ -2472,10 +2486,24 @@
       if (textNodes.length) tick();
     }
 
+    function markDiagramStepDone() {
+      const el = document.querySelector('#wt-notes .wt-note-diagram');
+      if (!el || el.classList.contains('wt-note-diagram--done')) return;
+      el.classList.add('wt-note-diagram--done');
+      const label = el.querySelector('.wt-note-label');
+      if (label && !label.querySelector('.wt-note-diagram-check')) {
+        label.insertAdjacentHTML('beforeend', '<span class="wt-note-diagram-check" aria-hidden="true">\u2713</span>');
+      }
+    }
+
     function renderNote(note, instant) {
       if (!note) return;
       const container = document.getElementById('wt-notes');
       if (!container) return;
+      if (note.type === 'check' || note.type === 'formula') return;
+      if (note.type === 'diagram') {
+        container.querySelectorAll('.wt-note-diagram').forEach(function (el) { el.remove(); });
+      }
       let html = '';
       if (note.type === 'rule') {
         const diagramHtml = note.diagram.map(function(item) {
@@ -2497,12 +2525,21 @@
         const diagramHtml = note.diagram.map(function(item) {
           return '<span class="wt-note-ds-item ' + (item === note.active ? 'wt-note-ds-active ' : '') + 'wt-note-ds-' + item.replace('/','') + '">' + item + '</span>';
         }).join('<span class="wt-note-ds-arrow">\u2192</span>');
-        html = '<div class="wt-note wt-note-diagram"><div class="wt-note-label">' + note.label + '</div><div class="wt-note-diagram-seq">' + diagramHtml + '</div></div>';
+        const hintHtml = note.hint
+          ? '<div class="wt-note-diagram-hint">' + escHtml(note.hint) + '</div>'
+          : '';
+        html = '<div class="wt-note wt-note-diagram"><div class="wt-note-label">' + note.label + '</div><div class="wt-note-diagram-seq">' + diagramHtml + '</div>' + hintHtml + '</div>';
       }
+      if (!html) return;
       container.insertAdjacentHTML('beforeend', html);
       const noteEl = container.lastElementChild;
-      if (!instant && noteEl && note.type !== 'diagram') {
-        typewriterReveal(noteEl);
+      if (!instant && noteEl) {
+        if (note.type === 'diagram' && note.hint) {
+          const hintEl = noteEl.querySelector('.wt-note-diagram-hint');
+          if (hintEl) typewriterReveal(hintEl);
+        } else if (note.type !== 'diagram') {
+          typewriterReveal(noteEl);
+        }
       }
     }
 
@@ -2687,7 +2724,7 @@
         if (step.type === 'question') {
           var calcCol = document.getElementById('wt-col-calc');
           if (calcCol) calcCol.insertAdjacentHTML('beforeend', '<div class="calc-line">' + step.correct + '</div>');
-          renderNote(step.note, true);
+          markDiagramStepDone();
         }
       }
       _s.idx = targetIdx;
@@ -2733,7 +2770,7 @@
         const bub = document.getElementById('wt-qbub');
         if (bub) bub.remove();
         if (col) col.insertAdjacentHTML('beforeend', '<div class="calc-line">' + step.correct + '</div>');
-        renderNote(step.note);
+        markDiagramStepDone();
         _s.waiting = false;
         _setStatus('writing');
         _scheduleContinue(1200);
@@ -2743,7 +2780,7 @@
         if (bub) bub.remove();
         if (col) col.insertAdjacentHTML('beforeend',
           '<div class="calc-line" style="color:var(--text-secondary)">' + step.wrong + '</div>');
-        renderNote(step.note);
+        markDiagramStepDone();
         _s.waiting = false;
         _setStatus('writing');
         _scheduleContinue(1600);

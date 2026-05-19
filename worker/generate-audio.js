@@ -27,8 +27,8 @@ const lines = [
   { file: 'paa-arit-n1-04.mp3', text: 'Seis dividido entre tres es dos. Reemplazamos el paréntesis con ese resultado.' },
   { file: 'paa-arit-n1-05.mp3', text: 'Ahora viene la M de Multiplicación. Va antes que la suma y la resta.' },
   { file: 'paa-arit-n1-06.mp3', text: 'Cuatro por dos es ocho. Reemplazamos esa parte de la expresión.' },
-  { file: 'paa-arit-n1-07.mp3', text: 'Por último, la S de Suma y Resta. Las resolvemos de izquierda a derecha.' },
-  { file: 'paa-arit-n1-08.mp3', text: 'Tres más ocho menos dos. Resuelve esto de izquierda a derecha y dime el resultado.' },
+  { file: 'paa-arit-n1-07.mp3', text: 'Ahora la suma: de izquierda a derecha, primero tres más ocho.' },
+  { file: 'paa-arit-n1-08.mp3', text: 'Tres más ocho es once. Ahora resta dos.' },
   { file: 'paa-arit-n1-09.mp3', text: '¡Perfecto! La respuesta es nueve. Hemos aplicado así el orden de las operaciones correctamente.' },
 ];
 

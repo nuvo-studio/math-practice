@@ -2436,7 +2436,30 @@
       new Audio('/audio/' + file).play();
     }
 
-    function renderNote(note) {
+    function typewriterReveal(rootEl) {
+      var walker = document.createTreeWalker(rootEl, NodeFilter.SHOW_TEXT, null);
+      var textNodes = [];
+      var node;
+      while ((node = walker.nextNode())) {
+        if (node.nodeValue.trim()) textNodes.push(node);
+      }
+      var fullTexts = textNodes.map(function(n) {
+        var full = n.nodeValue;
+        n.nodeValue = '';
+        return full;
+      });
+      var nIdx = 0, cIdx = 0;
+      function tick() {
+        if (nIdx >= textNodes.length) return;
+        cIdx++;
+        textNodes[nIdx].nodeValue = fullTexts[nIdx].slice(0, cIdx);
+        if (cIdx >= fullTexts[nIdx].length) { nIdx++; cIdx = 0; }
+        setTimeout(tick, 140);
+      }
+      if (textNodes.length) tick();
+    }
+
+    function renderNote(note, instant) {
       if (!note) return;
       const container = document.getElementById('wt-notes');
       if (!container) return;
@@ -2457,6 +2480,7 @@
         html = '<div class="wt-note wt-note-diagram"><div class="wt-note-label">' + note.label + '</div><div class="wt-note-diagram-seq">' + diagramHtml + '</div></div>';
       }
       container.insertAdjacentHTML('beforeend', html);
+      if (!instant) typewriterReveal(container.lastElementChild);
     }
 
     function _setStatus(mode) {
@@ -2614,12 +2638,12 @@
         var step = steps[i];
         if (step.type === 'write') {
           _appendWrite(step);
-          renderNote(step.note);
+          renderNote(step.note, true);
         }
         if (step.type === 'question') {
           var calcCol = document.getElementById('wt-col-calc');
           if (calcCol) calcCol.insertAdjacentHTML('beforeend', '<div class="calc-line">' + step.correct + '</div>');
-          renderNote(step.note);
+          renderNote(step.note, true);
         }
       }
       _s.idx = targetIdx;

@@ -483,6 +483,19 @@ const PAA_LESSONS = [
       title: 'Operaciones con números reales y orden de operaciones',
       subtitle:
         'Elige el orden correcto: paréntesis y potencias antes que multiplicar o dividir, y estas antes que sumar o restar. Así toda expresión tiene un valor único.',
+      intro: {
+        rule: 'Orden de las operaciones — Paréntesis → Potencias → Multiplicación y División → Suma → Resta (de izquierda a derecha cuando hay varias del mismo nivel).',
+        goals: [
+          'Aplicar el orden de operaciones paso a paso, sin saltarte ninguno.',
+          'Reconocer qué operación toca resolver en cada momento.',
+          'Evitar errores típicos de la PAA: multiplicar antes de una potencia, sumar antes de dividir, etc.',
+        ],
+        problems: [
+          'Expresiones numéricas con suma, resta, multiplicación, división y paréntesis.',
+          'Ejercicios donde un solo error de orden cambia la respuesta.',
+        ],
+        practice: 'Después del recorrido guiado y un ejemplo resuelto, practicarás con 6 ejercicios y cerrarás con una prueba corta del nivel.',
+      },
       conceptVoice:
         'En la Prueba de Admisión aparecen expresiones con sumas, restas, productos, cocientes y potencias. ' +
         'El orden de operaciones te dice qué hacer primero: paréntesis, luego potencias, luego multiplicación y división de izquierda a derecha, y al final suma y resta también de izquierda a derecha. ' +

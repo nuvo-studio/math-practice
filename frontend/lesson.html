@@ -148,6 +148,47 @@
     margin-bottom: 24px;
   }
 
+  .cover-intro {
+    text-align: left;
+    margin-bottom: 20px;
+  }
+  .cover-intro-section + .cover-intro-section {
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+  }
+  .cover-intro-label {
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+  .cover-intro-section p {
+    font-size: 0.88rem;
+    line-height: 1.5;
+    color: var(--text);
+    margin: 0;
+  }
+  .cover-intro-section ul {
+    margin: 0;
+    padding-left: 1.1rem;
+    font-size: 0.88rem;
+    line-height: 1.5;
+    color: var(--text);
+  }
+  .cover-intro-section li + li { margin-top: 4px; }
+  .cover-intro-rule {
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 10px;
+    line-height: 1.45;
+  }
+
   /* ── Cards ── */
   .card {
     background: var(--card);
@@ -1628,12 +1669,40 @@
   }
 
   // ── Phase 1: Cover ────────────────────────────────────────────
+  function coverIntroHtml() {
+    const intro = lesson.intro;
+    if (!intro) {
+      return lesson.subtitle
+        ? `<p class="subtitle">${escHtml(lesson.subtitle)}</p>`
+        : '';
+    }
+    let html = '<div class="card cover-intro">';
+    if (intro.rule) {
+      html += `<div class="cover-intro-section"><div class="cover-intro-label">${Lang.t('cover_intro_rule')}</div><p class="cover-intro-rule">${escHtml(intro.rule)}</p></div>`;
+    }
+    if (intro.goals && intro.goals.length) {
+      html += `<div class="cover-intro-section"><div class="cover-intro-label">${Lang.t('cover_intro_goals')}</div><ul>${intro.goals.map(function (g) { return '<li>' + escHtml(g) + '</li>'; }).join('')}</ul></div>`;
+    }
+    if (intro.problems && intro.problems.length) {
+      html += `<div class="cover-intro-section"><div class="cover-intro-label">${Lang.t('cover_intro_problems')}</div><ul>${intro.problems.map(function (p) { return '<li>' + escHtml(p) + '</li>'; }).join('')}</ul></div>`;
+    }
+    const practiceCount = (lesson.practiceProblems || []).length;
+    const practiceText = intro.practice || (practiceCount
+      ? Lang.t('cover_intro_practice') + ': ' + practiceCount + ' ejercicios de pr\u00E1ctica y una prueba del nivel.'
+      : '');
+    if (practiceText) {
+      html += `<div class="cover-intro-section"><div class="cover-intro-label">${Lang.t('cover_intro_practice')}</div><p>${escHtml(practiceText)}</p></div>`;
+    }
+    html += '</div>';
+    return html;
+  }
+
   function showCover() {
     render(`
       ${progressBarHtml(1)}
       ${badgeHtml()}
       <h1>${escHtml(lesson.title || 'Lesson')}</h1>
-      <p class="subtitle">${escHtml(lesson.subtitle || '')}</p>
+      ${coverIntroHtml()}
       <button class="main-btn" onclick="(lesson.subtopics&&lesson.subtopics.length)?startSubtopicFlow():showConcepts()">${Lang.t('cover_begin_btn')}</button>
     `);
   }

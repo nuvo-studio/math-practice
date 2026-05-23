@@ -1233,6 +1233,14 @@
     return s;
   }
 
+  /** True when Algebrite's simplified difference is numerically zero (0, 0.0, -0, etc.). */
+  function isAlgebriteZero(result) {
+    const s = String(result == null ? '' : result).trim();
+    if (s === '0') return true;
+    const n = parseFloat(s);
+    return Number.isFinite(n) && Math.abs(n) < 1e-9;
+  }
+
   // ── Check algebraic equivalence via Algebrite ──
   function equationEquivalence(a, b, problemType) {
     const t0 = performance.now();
@@ -1247,7 +1255,7 @@
     const diffTrimmed = diffResult.trim();
     console.log(`[equationEquivalence] diff="${diffTrimmed}" in ${(performance.now()-t0).toFixed(1)}ms`);
 
-    if (diffTrimmed === '0') {
+    if (isAlgebriteZero(diffTrimmed)) {
       console.log(`[equationEquivalence] matched via diff in ${(performance.now()-t0).toFixed(1)}ms`);
       return { valid: true };
     }
@@ -1272,7 +1280,7 @@
       if (varPart && /^[a-zA-Z]$/.test(varPart)) {
         const subResult = Algebrite.run(`simplify(subst(${valPart}, ${varPart}, ${normA}))`).trim();
         console.log(`[equationEquivalence] subst(${valPart}, ${varPart}, normA)="${subResult}" in ${(performance.now()-t0).toFixed(1)}ms`);
-        if (subResult === '0') {
+        if (isAlgebriteZero(subResult)) {
           console.log(`[equationEquivalence] matched via substitution in ${(performance.now()-t0).toFixed(1)}ms`);
           return { valid: true };
         }
@@ -1345,7 +1353,7 @@
       const diffResult = Algebrite.run(`simplify((${normA}) - (${normB}))`);
       const diffTrimmed = diffResult.trim();
       console.log(`[checkEquivalence] Algebrite result="${diffTrimmed}" in ${(performance.now()-t0).toFixed(1)}ms`);
-      if (diffTrimmed === '0') return { valid: true };
+      if (isAlgebriteZero(diffTrimmed)) return { valid: true };
       if (!diffTrimmed || diffTrimmed.toLowerCase().includes('stop') || diffTrimmed.toLowerCase().includes('error')) {
         return { valid: null, parseError: true };
       }
@@ -1373,12 +1381,12 @@
 
     let isCorrect = false;
 
-    // Primary: simplify(a - b) === '0'
+    // Primary: simplify(a - b) is zero
     try {
       const normInput  = normalize(input);
       const normAnswer = normalize(problem.answer);
       const diff = Algebrite.run(`simplify((${normInput})-(${normAnswer}))`).trim();
-      isCorrect = diff === '0';
+      isCorrect = isAlgebriteZero(diff);
       console.log(`[submitTranslate] diff="${diff}" isCorrect=${isCorrect} in ${(performance.now()-t0).toFixed(1)}ms`);
     } catch (e) {
       console.warn('[submitTranslate] Algebrite threw:', e);
@@ -1392,7 +1400,7 @@
       if (interpreted) {
         try {
           const diff2 = Algebrite.run(`simplify((${normalize(interpreted)})-(${normalize(problem.answer)}))`).trim();
-          isCorrect = diff2 === '0';
+          isCorrect = isAlgebriteZero(diff2);
           console.log(`[submitTranslate] fallback diff="${diff2}" isCorrect=${isCorrect}`);
         } catch (e) {
           console.warn('[submitTranslate] Algebrite (fallback) threw:', e);

@@ -42,13 +42,18 @@
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: stretch;
+  }
+
+  #nav-root {
+    width: 100%;
+    flex-shrink: 0;
   }
 
   /* ── Top nav ── */
   .lesson-topnav {
     width: 100%;
-    padding: 10px 16px;
+    padding: 10px max(12px, env(safe-area-inset-right)) 10px max(12px, env(safe-area-inset-left));
     display: flex;
     align-items: center;
     border-bottom: 1px solid var(--border);
@@ -71,7 +76,11 @@
 
   /* ── Content area ── */
   .container {
+    width: 100%;
     max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 24px 16px 48px;
   }
   body.has-walkthrough .container {
     max-width: min(1400px, calc(100vw - 48px));
@@ -79,7 +88,7 @@
     padding: 28px clamp(14px, 2.5vw, 32px) 60px;
   }
 
-  /* ── Lesson phase steps (replaces progress bar) ── */
+  /* ── Lesson phase nav (in-lesson sections) ── */
   .lesson-phase-nav {
     display: flex;
     flex-wrap: nowrap;
@@ -89,6 +98,12 @@
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
     padding-bottom: 2px;
+    position: sticky;
+    top: 56px;
+    z-index: 90;
+    background: var(--bg);
+    padding-top: 4px;
+    margin-top: -4px;
   }
   .lesson-phase-nav::-webkit-scrollbar { display: none; }
 
@@ -105,7 +120,7 @@
     cursor: pointer;
     transition: border-color 0.15s, background 0.15s, color 0.15s;
   }
-  .lesson-phase-step:hover:not(:disabled) {
+  .lesson-phase-step:hover {
     border-color: var(--accent);
     background: var(--accent-bg);
   }
@@ -116,12 +131,6 @@
   .lesson-phase-step.is-done:not(.is-current) {
     border-color: #D1FAE5;
     background: #F0FDF4;
-  }
-  .lesson-phase-step.is-locked,
-  .lesson-phase-step:disabled {
-    opacity: 0.45;
-    cursor: not-allowed;
-    pointer-events: none;
   }
 
   .lesson-phase-num {
@@ -2066,17 +2075,15 @@
 
     const steps = [];
     for (let n = 1; n <= LESSON_PHASE_COUNT; n++) {
-      const unlocked = n <= lessonMaxPhase;
       const isCurrent = n === current;
-      const isDone = unlocked && n < current;
+      const isDone = n < current;
       let cls = 'lesson-phase-step';
       if (isCurrent) cls += ' is-current';
       if (isDone) cls += ' is-done';
-      if (!unlocked) cls += ' is-locked';
       const label = Lang.t(LESSON_PHASE_LABELS[n]);
       steps.push(
-        `<button type="button" class="${cls}" ${unlocked ? '' : 'disabled'} ` +
-        `onclick="goToLessonPhase(${n})" aria-current="${isCurrent ? 'step' : 'false'}">` +
+        `<button type="button" class="${cls}" data-lesson-phase="${n}" ` +
+        `aria-current="${isCurrent ? 'step' : 'false'}">` +
         `<span class="lesson-phase-num">${n}</span>` +
         `<span class="lesson-phase-label">${escHtml(label)}</span>` +
         `</button>`
@@ -2103,8 +2110,16 @@
     ));
   }
 
+  function teardownActiveWalkthrough() {
+    if (typeof window._lessonWtTeardown === 'function') {
+      window._lessonWtTeardown();
+      window._lessonWtTeardown = null;
+    }
+  }
+
   function goToConceptsPhase() {
     stopVoice();
+    teardownActiveWalkthrough();
     document.body.classList.remove('has-walkthrough');
     if (lessonUsesWalkthroughConcepts()) {
       startSubtopicFlow();
@@ -2115,14 +2130,27 @@
 
   window.goToLessonPhase = function (n) {
     const phase = Number(n);
-    if (!phase || phase > lessonMaxPhase) return;
+    if (!phase || phase < 1 || phase > LESSON_PHASE_COUNT) return;
     stopVoice();
+    teardownActiveWalkthrough();
     document.body.classList.remove('has-walkthrough');
     if (phase === 1) showCover();
     else if (phase === 2) goToConceptsPhase();
     else if (phase === 3) showExample();
     else if (phase === 4) showPractice();
   };
+
+  (function bindLessonPhaseNavClicks() {
+    const app = document.getElementById('app');
+    if (!app || app.dataset.phaseNavBound) return;
+    app.dataset.phaseNavBound = '1';
+    app.addEventListener('click', function (e) {
+      const step = e.target.closest('.lesson-phase-step[data-lesson-phase]');
+      if (!step) return;
+      e.preventDefault();
+      goToLessonPhase(Number(step.getAttribute('data-lesson-phase')));
+    });
+  })();
 
   function badgeHtml() {
     const lvl = (lesson && lesson.level) ? lesson.level : (String(stage).match(/\d+/) || [''])[0] || stage;
@@ -3239,6 +3267,12 @@
         _s.timer = null;
       }
     }
+
+    window._lessonWtTeardown = function () {
+      _clearContinueTimer();
+      wtStopStepAudio();
+      _s.paused = true;
+    };
 
     function _scheduleContinue(pause) {
       _clearContinueTimer();

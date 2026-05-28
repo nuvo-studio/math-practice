@@ -3,9 +3,13 @@
   'use strict';
 
   var CSS = [
-    '#nav-root { font-family: "DM Sans", "Inter", sans-serif; }',
+    '#nav-root {',
+    '  font-family: "DM Sans", "Inter", sans-serif;',
+    '  width: 100%; align-self: stretch;',
+    '}',
     '#nav-root nav {',
     '  position: sticky; top: 0; z-index: 200;',
+    '  width: 100%;',
     '  background: rgba(255,255,255,0.96);',
     '  backdrop-filter: blur(8px);',
     '  -webkit-backdrop-filter: blur(8px);',
@@ -13,7 +17,8 @@
     '}',
     '#nav-root .nav-inner {',
     '  width: 100%; max-width: none; margin: 0;',
-    '  padding: 0 16px; height: 56px;',
+    '  padding: 0 max(10px, env(safe-area-inset-right)) 0 max(10px, env(safe-area-inset-left));',
+    '  height: 56px;',
     '  display: flex; align-items: center;',
     '  justify-content: space-between; gap: 12px;',
     '}',

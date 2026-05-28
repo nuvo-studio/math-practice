@@ -115,7 +115,10 @@
   }
   .cover-heading {
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 16px;
+  }
+  .cover-begin-wrap {
+    margin-bottom: 24px;
   }
   .cover-card {
     background: var(--card);
@@ -2179,8 +2182,10 @@
     renderWithPhase(1, `
       <div class="cover-badge-wrap">${badgeHtml()}</div>
       <h1 class="cover-heading">${escHtml(lesson.title || 'Lesson')}</h1>
+      <div class="cover-begin-wrap">
+        <button class="main-btn main-btn--cta" onclick="(lesson.subtopics&&lesson.subtopics.length)?startSubtopicFlow():showConcepts()">${Lang.t('cover_begin_btn')}</button>
+      </div>
       ${coverIntroHtml()}
-      <button class="main-btn main-btn--cta" onclick="(lesson.subtopics&&lesson.subtopics.length)?startSubtopicFlow():showConcepts()">${Lang.t('cover_begin_btn')}</button>
     `);
   }
 

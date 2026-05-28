@@ -51,6 +51,11 @@
     flex-shrink: 0;
   }
 
+  /* Match lesson.html: gutters live on .lesson-page, not body */
+  body.lesson-flow-active {
+    padding: 0;
+  }
+
   .lesson-page #practice-screen.curriculum-practice {
     max-width: none;
     width: 100%;
@@ -744,7 +749,7 @@
   }
 
   @media (max-width: 500px) {
-    body { padding: 14px; }
+    body { padding: 0; }
     .problem-card { padding: 20px; }
     .problem-text { font-size: 1rem; }
   }
@@ -845,7 +850,7 @@
 
 </style>
 <script src="lang.js?v=20260514-practicar"></script>
-<script src="lesson-phase-nav.js?v=20260531-scroll"></script>
+<script src="lesson-phase-nav.js?v=20260531-match-lesson"></script>
 <script src="calculator.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/algebrite@1.4.0/dist/algebrite.bundle-for-browser.js"></script>
 <script src="math-validation.js?v=20260518-ineq"></script>
@@ -1045,6 +1050,7 @@
       LessonPhaseNav.injectStyles();
     }
 
+    document.body.classList.add('lesson-flow-active');
     page.style.display = 'block';
     if (practice) practice.classList.add('curriculum-practice');
 

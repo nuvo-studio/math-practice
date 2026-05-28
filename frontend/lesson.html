@@ -1269,6 +1269,13 @@
   }
   .col-theory { background: #f5f4f0; border-right: 1px solid var(--border); }
   .col-prob   { border-right: 1px solid var(--border); }
+  .col-prob .wt-col-content,
+  .col-calc .wt-col-content {
+    background: var(--bg);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
   .wt-grid-svg {
     position: absolute; top: 0; left: 0;
     width: 100%; height: 100%;
@@ -1417,10 +1424,10 @@
   .wt-progress-bar  { flex: 1; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
   .wt-progress-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.4s ease; }
   .wt-note { margin-bottom: 6px; border-radius: 8px; padding: 8px 10px; }
-  .wt-note-label { font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
+  .wt-note-label { font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; font-family: var(--sans); }
   .wt-note-rule { background: #EEEDFE; border-left: 2px solid #534AB7; }
   .wt-note-rule .wt-note-label { color: #534AB7; }
-  .wt-note-rule-title { font-size: 13px; font-weight: 500; color: #3C3489; margin-bottom: 6px; }
+  .wt-note-rule-title { font-size: 13px; font-weight: 500; color: #3C3489; margin-bottom: 6px; font-family: var(--sans); }
   .wt-note-formula {
     background: #E1F5EE;
     border-left: 2px solid #0F6E56;
@@ -1437,8 +1444,8 @@
     border-radius: 8px;
     border-left: 2px solid #3B6D11;
   }
-  .wt-note-check-icon { color: #3B6D11; font-size: 12px; font-weight: 500; }
-  .wt-note-check-text { font-size: 12px; color: #27500A; }
+  .wt-note-check-icon { color: #3B6D11; font-size: 12px; font-weight: 500; font-family: var(--sans); }
+  .wt-note-check-text { font-size: 12px; color: #27500A; font-family: var(--sans); }
   .wt-note-diagram { background: white; border: 0.5px solid #e2e0d8; border-radius: 8px; padding: 8px 10px; margin-bottom: 10px; }
   .wt-note-diagram .wt-note-label {
     color: #888780;
@@ -1469,14 +1476,15 @@
     font-size: 12px;
     line-height: 1.45;
     color: #4a4a47;
+    font-family: var(--sans);
   }
   .wt-note-diagram--done .wt-note-diagram-text { color: #5a6b50; }
   .wt-note-legend { background: white; border: 0.5px solid #e2e0d8; border-radius: 8px; padding: 8px 10px 10px; margin-bottom: 10px; }
-  .wt-note-legend .wt-note-label { color: #888780; }
-  .wt-note-legend-rows { display: flex; flex-direction: column; gap: 6px; margin-top: 4px; }
-  .wt-note-legend-row { display: flex; align-items: flex-start; gap: 8px; font-size: 12px; line-height: 1.38; color: #2b2b28; }
+  .wt-note-legend .wt-note-label { font-size: 14px; font-weight: 700; color: var(--text); text-transform: none; letter-spacing: 0; margin-bottom: 10px; }
+  .wt-note-legend-rows { display: flex; flex-direction: column; gap: 5px; margin-top: 4px; border-left: 2px solid #e2e0d8; padding-left: 8px; margin-left: 2px; }
+  .wt-note-legend-row { display: flex; align-items: flex-start; gap: 8px; font-size: 11px; line-height: 1.38; color: #4a4a47; background: var(--bg); border-radius: 5px; padding: 4px 6px; font-family: var(--sans); }
   .wt-note-legend-row .wt-note-ds-item { flex-shrink: 0; margin-top: 1px; }
-  .wt-note-ds-item { font-size: 11px; font-weight: 500; padding: 2px 6px; border-radius: 4px; }
+  .wt-note-ds-item { font-size: 11px; font-weight: 500; padding: 2px 6px; border-radius: 4px; font-family: var(--mono); }
   .wt-note-ds-arrow { color: #b4b2a9; font-size: 10px; }
   .wt-note-ds-P  { background: #EEEDFE; color: #3C3489; }
   .wt-note-ds-A  { background: #FAEEDA; color: #633806; }

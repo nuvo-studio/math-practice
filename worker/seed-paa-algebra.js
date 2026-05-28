@@ -1,8 +1,13 @@
 #!/usr/bin/env node
 // seed-paa-algebra.js — Uploads PAA Álgebra lessons and problems to Cloudflare KV
-// Run from the worker/ directory: node seed-paa-algebra.js
 //
-// Requires: wrangler CLI authenticated and wrangler.toml present in this directory.
+// From project root (math-practice/):
+//   node worker/seed-paa-algebra.js
+//
+// If your shell is already in worker/:
+//   node seed-paa-algebra.js
+//
+// Requires: wrangler CLI authenticated and wrangler.toml in worker/.
 //
 // VALIDATION AUDIT (run before seeding):
 //   PASS  L1: P1 (Simplify), P2 (Simplify), P3 (Evaluate), P4 (Expand), P5 (Factorize), P6 (Solve)

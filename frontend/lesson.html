@@ -1434,6 +1434,16 @@
     margin-top: 0;
     animation: wt-in 0.4s ease forwards;
   }
+  .wt-calc-card.has-question .wt-q-bubble {
+    margin-top: 10px;
+  }
+  .wt-calc-card.has-question .wt-q-bubble--enter {
+    animation: wt-q-reveal 0.5s cubic-bezier(0.33, 0, 0.2, 1) forwards;
+  }
+  @keyframes wt-q-reveal {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
   .wt-calc-nav-side {
     flex: 0 0 auto;
     display: flex;
@@ -3258,6 +3268,45 @@
       return track.querySelector('.wt-calc-card[data-step-idx="' + stepIdx + '"]');
     }
 
+    function _prevCalcWriteStep(qIdx) {
+      var prev = steps[qIdx - 1];
+      if (prev && prev.type === 'write' && prev.col === 'calc') return prev;
+      return null;
+    }
+
+    /** Card for a question step (own card or merged onto previous calc write). */
+    function _calcCardForQuestionStep(qIdx) {
+      var card = _calcCardForStep(qIdx);
+      if (card) return card;
+      var prevCard = _calcCardForStep(qIdx - 1);
+      if (prevCard && prevCard.dataset.questionStepIdx === String(qIdx)) return prevCard;
+      return null;
+    }
+
+    function _calcQuestionBubbleHtml(step) {
+      return (
+        '<div class="wt-q-bubble wt-q-bubble--enter" id="wt-qbub">' +
+        '<div class="wt-q-text">' + escHtml(step.question) + '</div>' +
+        '<div class="wt-q-hint">' + escHtml(step.hint) + '</div>' +
+        '<div class="wt-q-row">' +
+        '<input class="wt-q-input" id="wt-qinp" type="text" placeholder="?"' +
+        ' onkeydown="if(event.key===\'Enter\')wtSubmitAnswer()">' +
+        '<button class="wt-q-btn" onclick="wtSubmitAnswer()">Listo</button>' +
+        '</div>' +
+        '<div class="wt-q-trytext" id="wt-qtry"></div>' +
+        '</div>'
+      );
+    }
+
+    function _calcResolvedHtml(step, qStepIdx, resultHtml) {
+      var qLead = step.lead ? String(step.lead) : '';
+      if (!qLead) {
+        var prev = _prevCalcWriteStep(qStepIdx);
+        if (prev && prev.html) qLead = String(prev.html);
+      }
+      return qLead + resultHtml;
+    }
+
     function _calcSortedCards() {
       var track = _calcTrack();
       return track ? Array.from(track.querySelectorAll('.wt-calc-card')) : [];
@@ -3330,11 +3379,13 @@
     }
 
     function _calcResolveQuestionCard(stepIdx, html) {
-      var card = _calcCardForStep(stepIdx);
+      var card = _calcCardForQuestionStep(stepIdx);
       if (!card) return;
       card.dataset.kind = 'resolved';
+      delete card.dataset.questionStepIdx;
+      card.classList.remove('has-question');
       card.innerHTML = html;
-      _calcFilmstripFocus(stepIdx);
+      _calcFilmstripFocusCard(card);
     }
 
     function _appendWrite(step, replayStepIdx) {
@@ -3360,23 +3411,32 @@
 
     function _appendQuestion(step, replayStepIdx) {
       var qIdx = replayStepIdx != null ? replayStepIdx : _s.idx;
-      if (_calcCardForStep(qIdx)) return;
+      if (_calcCardForQuestionStep(qIdx)) return;
       var leadHtml = step.lead ? String(step.lead) : '';
-      var card = _calcAppendCard(qIdx,
-        (leadHtml ? leadHtml : '') +
-        '<div class="wt-q-bubble" id="wt-qbub">' +
-        '<div class="wt-q-text">' + escHtml(step.question) + '</div>' +
-        '<div class="wt-q-hint">' + escHtml(step.hint) + '</div>' +
-        '<div class="wt-q-row">' +
-        '<input class="wt-q-input" id="wt-qinp" type="text" placeholder="?"' +
-        ' onkeydown="if(event.key===\'Enter\')wtSubmitAnswer()">' +
-        '<button class="wt-q-btn" onclick="wtSubmitAnswer()">Listo</button>' +
-        '</div>' +
-        '<div class="wt-q-trytext" id="wt-qtry"></div>' +
-        '</div>',
-        'question');
+      var bubbleHtml = _calcQuestionBubbleHtml(step);
+      var prevCard = _prevCalcWriteStep(qIdx) ? _calcCardForStep(qIdx - 1) : null;
+
+      /* Keep the "= ?" line on screen; reveal the input on the same card (no filmstrip slide). */
+      if (prevCard && prevCard.dataset.kind === 'write' && !leadHtml) {
+        prevCard.dataset.kind = 'question';
+        prevCard.dataset.questionStepIdx = String(qIdx);
+        prevCard.classList.add('has-question');
+        prevCard.insertAdjacentHTML('beforeend', bubbleHtml);
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () {
+            var inp = document.getElementById('wt-qinp');
+            if (inp) inp.focus();
+          });
+        });
+        return;
+      }
+
+      var card = _calcAppendCard(qIdx, (leadHtml ? leadHtml : '') + bubbleHtml, 'question');
       if (!card) return;
-      setTimeout(function() { const inp = document.getElementById('wt-qinp'); if (inp) inp.focus(); }, 100);
+      setTimeout(function () {
+        var inp = document.getElementById('wt-qinp');
+        if (inp) inp.focus();
+      }, 100);
     }
 
     function _resume() {
@@ -3493,12 +3553,12 @@
         }
         if (step.type === 'question') {
           renderNote(step.note, true);
-          var qLead = step.lead ? String(step.lead) : '';
           _calcResolveQuestionCard(
             i,
-            qLead + '<div class="calc-line">' + step.correct + '</div>'
+            _calcResolvedHtml(step, i, '<div class="calc-line">' + step.correct + '</div>')
           );
-          lastCalcIdx = i;
+          var qCard = _calcCardForQuestionStep(i);
+          lastCalcIdx = qCard ? parseInt(qCard.dataset.stepIdx, 10) : i;
           markDiagramStepDone();
         }
       }
@@ -3543,18 +3603,26 @@
       }
       _s.tries++;
       var qStepIdx = _s.idx - 1;
-      var qLead = step.lead ? String(step.lead) : '';
       if (correct) {
         inp.disabled = true;
-        _calcResolveQuestionCard(qStepIdx, qLead + '<div class="calc-line">' + step.correct + '</div>');
+        _calcResolveQuestionCard(
+          qStepIdx,
+          _calcResolvedHtml(step, qStepIdx, '<div class="calc-line">' + step.correct + '</div>')
+        );
         markDiagramStepDone();
         _s.waiting = false;
         _setStatus('writing');
         _scheduleContinue(WT_AFTER_ANSWER_OK_MS);
       } else if (_s.tries >= 2) {
         inp.disabled = true;
-        _calcResolveQuestionCard(qStepIdx,
-          qLead + '<div class="calc-line" style="color:var(--text-secondary)">' + step.wrong + '</div>');
+        _calcResolveQuestionCard(
+          qStepIdx,
+          _calcResolvedHtml(
+            step,
+            qStepIdx,
+            '<div class="calc-line" style="color:var(--text-secondary)">' + step.wrong + '</div>'
+          )
+        );
         markDiagramStepDone();
         _s.waiting = false;
         _setStatus('writing');

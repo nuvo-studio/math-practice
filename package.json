@@ -1,6 +1,8 @@
 {
   "scripts": {
-    "generate-audio": "node worker/generate-audio.js"
+    "generate-audio": "node worker/generate-audio.js",
+    "generate-audio:algebra-n1": "node worker/generate-audio.js algebra-n1",
+    "generate-audio:arit-n1": "node worker/generate-audio.js arit-n1"
   },
   "dependencies": {
     "dotenv": "^16.0.0"

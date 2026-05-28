@@ -1,9 +1,18 @@
 # Nuvo Math — Curriculum Brain
-**Version 1.0 | Algebra only | Grades 6–9 | Cambridge, Common Core, IB MYP**
+**Version 1.1 | Algebra-scoped tool | Grades 6–9 | Cambridge, Common Core, IB MYP, PAA**
 
 This document is the authoritative reference for all content generated for Nuvo Math.
 Every problem, lesson concept, worked example, and hint sequence must be validated
 against the relevant section of this document before being approved for the product.
+
+**Scope principle (added v1.1):** Nuvo Math is an algebra practice tool. Its step-by-step engine
+(Algebrite) validates content that is symbolically verifiable line by line. The Cambridge / Common
+Core / IB curricula are algebra-only by design. The PAA curriculum names four exam units
+(Aritmética, Álgebra, Geometría, Datos y Probabilidad), but Nuvo Math only DELIVERS the algebra
+content — a PAA student uses Nuvo for the Álgebra unit and prepares for the other areas elsewhere.
+Even within a curriculum, only engine-validatable topics are in scope; graph-reading, "which figure"
+items, and other visual tasks are out of scope regardless of the unit they appear in. See the
+ÁLGEBRA unit's "NOTA DE ALCANCE DEL MOTOR" for the canonical in/out split.
 
 ---
 
@@ -565,6 +574,365 @@ término, diferencia común, razón común
 
 ---
 
+### PAA — UNIDAD 2: ÁLGEBRA
+**Código Nuvo Math:** curriculum: "PAA", unit: "algebra"
+
+#### NOTA DE ALCANCE DEL MOTOR (Nuvo Math)
+Esta es la unidad central de Nuvo Math. El motor de validación paso a paso (Algebrite) está
+diseñado para exactamente este tipo de contenido: equivalencia algebraica verificable línea por línea.
+Sin embargo, NO todo el temario de Álgebra de la PAA es validable por el motor. El temario oficial
+incluye temas gráficos y visuales que el motor no puede validar (igual que Geometría). Por eso esta
+unidad se divide explícitamente en dos grupos:
+
+**Temas DENTRO del alcance del motor (los que Nuvo Math enseña y valida):**
+- Expresiones algebraicas: simplificación, evaluación, factorización
+- Ecuaciones lineales en una variable (incógnita en uno o ambos lados)
+- Inecuaciones lineales en una variable
+- Inecuaciones con valor absoluto (p. ej. |x+2| ≤ 4 → −4 ≤ x+2 ≤ 4)
+- Leyes de exponentes (enteros, y simbólicas con variables en el exponente)
+- Operaciones con polinomios (suma, resta, producto; residuo al dividir por x+a)
+- Ecuaciones cuadráticas factorizables (p. ej. 3x²+11x+10=0)
+- Ecuaciones racionales sencillas (p. ej. 3/(5x)=9)
+- Sistemas de 2 ecuaciones lineales en 2 variables (sustitución y eliminación)
+- Traducción de enunciados verbales a expresiones/ecuaciones algebraicas
+
+**Temas FUERA del alcance del motor (son temas del examen, pero NO los entrega la herramienta Nuvo;
+se cubren en tutoría u otros recursos):**
+- Rectas y sus propiedades cuando se piden gráficamente (pendiente como concepto numérico SÍ es validable;
+  identificar/dibujar la gráfica de una recta NO lo es)
+- Funciones: dominio, campo de valores y gráficas (leer o producir gráficas)
+- Funciones lineales, cuadráticas y exponenciales presentadas gráficamente
+- Identificar una función creciente/decreciente a partir de su gráfica
+- Identificar una inecuación a partir de una región sombreada o recta numérica
+- Variación y relaciones de cambio cuando se piden de forma gráfica
+- Exponentes racionales y radicales como respuesta final (la PAA prohíbe registrar radicales en
+  "suplir la respuesta"; el trabajo simbólico intermedio puede ser validable, la simplificación de
+  radicales como tal queda al margen)
+
+> Regla práctica: si la respuesta correcta es "¿cuál gráfica?" o "¿cuál región?", está fuera del motor.
+> Si la respuesta es una expresión, un valor, o un conjunto solución expresable simbólicamente, es validable.
+
+#### Cobertura de temas fuera del motor mediante MCQ (decisión de producto):
+Los temas "fuera del motor" listados arriba (gráficas, regiones sombreadas, identificar funciones desde
+una gráfica, rectas presentadas gráficamente, etc.) SÍ se incluyen en Nuvo — pero ÚNICAMENTE como
+ejercicios de **selección múltiple (MCQ)**, nunca como práctica paso a paso. Razón: el estudiante PAA
+debe exponerse a estos formatos (el examen real los usa), pero el motor no puede validarlos simbólicamente.
+
+Reglas para los MCQ visuales:
+- **Render:** los gráficos se dibujan **en código como SVG**, embebidos en los datos del problema (texto en KV).
+  NO se usa hospedaje de imágenes. Línea recta, región sombreada (semiplano), parábola sencilla y recta
+  numérica con desigualdad son todos dibujables en pocas líneas de SVG. (Fallback: si algún problema
+  necesitara un raster real, recién ahí se añade una carpeta de imágenes en el repo — no antes.)
+- **Ubicación:** los MCQ se MEZCLAN dentro de los niveles existentes, junto a los problemas paso a paso.
+  No hay un nivel ni sección aparte.
+- **Feedback:** además de marcar A/B/C/D correcta/incorrecta, cada MCQ muestra una **explicación corta**
+  después de responder (recupera algo del "por qué" que de otro modo se pierde con MCQ).
+- **Tipo de problema:** usar el tipo MCQ existente (mismo camino de validación de letra que los MCQ de
+  Aritmética: n2-p4, n3-p1, n3-p7). NO pasa por Algebrite.
+
+#### Lección guiada: tablero de tres columnas (walkthrough)
+
+Algunos niveles usan el **mismo tablero** que Aritmética N1 (TEORÍA · PROBLEMA · CÁLCULOS en `lesson.html`), no la pantalla con pestañas "Conceptos clave".
+
+| Qué | Dónde |
+|-----|--------|
+| Motor UI | `frontend/lesson.html` → `renderWalkthrough()` |
+| Generador de pasos | `worker/walkthrough-generator.js` |
+| Datos en KV | `lesson:PAA:{unit}:level{n}` → `subtopics[].walkthrough` |
+
+**Cuándo usar walkthrough:** un ejemplo narrativo fuerte por nivel (orden de operaciones, despejar una ecuación, ambos lados, etc.). Los 6 problemas de práctica siguen en `app.html` con el motor Algebrite.
+
+**Cuándo NO hace falta:** si el nivel solo necesita reglas cortas + ejemplo tabulado; el flujo con pestañas sigue siendo válido.
+
+**Cómo añadir un nivel nuevo:**
+
+1. Elegir o crear una **receta** en `walkthrough-generator.js` (`papomudasWalkthrough`, `linearSolveWalkthrough`, `linearSolveBothSidesWalkthrough`, …) o componer con `probWrite` / `calcQuestion`.
+2. En el seed (`seed-paa.js`, `seed-paa-algebra.js`, …):
+
+   ```js
+   subtopics: [
+     subtopicWithWalkthrough('Título del tema', miReceta({ audioPrefix: 'paa-unit-n1-wt' })),
+   ],
+   ```
+
+3. `node seed-paa-algebra.js` (o el seed del unit) — solo KV; no requiere deploy del worker.
+4. Probar `lesson.html?curriculum=PAA&unit=…&stage=…`.
+
+**Audio opcional:** `audioPrefix` + `-01.mp3`, `-02.mp3` en `frontend/audio/`. Sin archivos, el tablero funciona igual.
+
+**Estado Álgebra (motor):**
+
+| Nivel | Walkthrough (tablero) | Audio (`frontend/audio/`) | Práctica |
+|-------|------------------------|---------------------------|----------|
+| 1 | `linearSolveWalkthrough` — `2x + 5 = 13` | `paa-algebra-n1-wt-01` … `06` — `node generate-audio.js algebra-n1` | 6 problemas |
+| 2 | `linearSolveBothSidesWalkthrough` — `4x − 5 = 2x + 7` | pendiente (`paa-algebra-n2-wt-01` … `08`) | 6 problemas (inecuaciones en práctica; tablero de inecuaciones pendiente) |
+| 3 | Pendiente (cuadrática o sistema — una receta) | — | 6 problemas |
+
+#### Calibración de dificultad para los 3 niveles (solo temas dentro del alcance del motor):
+- **Nivel 1 — Expresiones y lineales de un lado:** Simplificar (términos semejantes), evaluar
+  (incluyendo sustitución de negativos), expandir un factor sobre un paréntesis, factorizar factor común,
+  resolver ecuaciones lineales con incógnita en UN solo lado (p. ej. 2x=8, 3x+5=14, 9−2x=7),
+  traducir enunciados sencillos a expresiones.
+- **Nivel 2 — Lineales de ambos lados, inecuaciones, exponentes:** Ecuaciones lineales con incógnita
+  en AMBOS lados y con paréntesis, inecuaciones lineales, inecuaciones con valor absoluto, leyes de
+  exponentes (incluyendo simbólicas), operaciones con polinomios, evaluación de polinomios con negativos
+  [f(−2)], ecuaciones racionales sencillas.
+- **Nivel 3 — Cuadráticas y sistemas:** Resolver cuadráticas factorizables, residuo de división polinómica
+  (p. ej. 4x²+6x+k entre x+1), sistemas 2×2 por sustitución y por eliminación, traducción de problemas
+  de contexto a sistemas.
+
+#### Profundidad calibrada a partir de los ejercicios reales de la guía (qué tan a fondo):
+- **Sistemas:** SOLO 2×2, coeficientes enteros/sencillos, AMBOS métodos (sustitución y eliminación).
+  Nada de 3 variables ni matrices.
+- **Leyes de exponentes:** nivel simbólico (variables en el exponente, p. ej. (5^m)^n / 5^m), no solo numérico.
+- **Cuadráticas:** factorizables o por fórmula sencilla; las respuestas suelen ser racionales.
+  No se exige completar el cuadrado con casos complejos.
+- **Valor absoluto:** básico — convertir |expr| ≤ k a desigualdad doble y resolver.
+- **Polinomios:** incluye el concepto de residuo al dividir por (x+a) — evaluar en x=−a (teorema del residuo
+  en su forma básica), no división larga obligatoria.
+- **Factorización:** factor común y trinomios sencillos; NO se exige factorizar diferencia de cubos ni casos avanzados.
+
+#### Lo que NO se cubre en Álgebra PAA (Nuvo Math, motor):
+- Aritmética pura (Unidad 1), Geometría (Unidad 3), Datos y Probabilidad (Unidad 4)
+- Trigonometría avanzada (la guía menciona "razones trigonométricas" pero es marginal; fuera de Nuvo por ahora)
+- Logaritmos, números complejos, cálculo
+- Todo el grupo gráfico/visual listado arriba en la nota de alcance del motor
+
+#### Vocabulario esperado (en español):
+expresión algebraica, término, término semejante, coeficiente, variable, incógnita, constante,
+simplificar, evaluar, sustituir, factorizar, factor común, expandir, distribuir, paréntesis,
+ecuación, ecuación lineal, despejar, miembro (lado) de la ecuación, solución, conjunto solución,
+inecuación, desigualdad, valor absoluto, exponente, base, ley de exponentes, potencia de una potencia,
+polinomio, monomio, binomio, trinomio, grado, residuo, cuadrática, factorizable, raíz,
+ecuación racional, sistema de ecuaciones, sustitución, eliminación, pendiente
+
+#### Errores comunes a evitar en los problemas:
+- Distribuir mal el signo negativo al expandir: −(x−3) = −x+3, no −x−3
+- Sumar términos no semejantes (3x + 2 ≠ 5x)
+- Al resolver con incógnita en ambos lados, mover términos sin cambiar el signo
+- Confundir las leyes de exponentes: (a^m)^n = a^(mn), NO a^(m+n); a^m·a^n = a^(m+n), NO a^(mn)
+- Olvidar que una cuadrática puede tener dos soluciones
+- Al evaluar f(−2), errores de signo con potencias de negativos: (−2)² = 4 pero (−2)³ = −8
+- En sistemas, sustituir en la ecuación equivocada o no distribuir al sustituir
+- Tratar una inecuación como ecuación y olvidar invertir el signo al multiplicar/dividir por negativo
+
+#### Nota sobre formato de respuesta (de la guía oficial):
+- Las respuestas de "suplir" son siempre positivas; nunca negativas.
+- No se registran radicales: deben llevarse a su forma decimal o fracción más simple.
+- No se registran números mixtos: convertir a fracción impropia.
+- Precisión decimal: 2/3 se acepta como .666 o .667, NO como .66 ni .67.
+  (Implicación para el motor: aceptar tanto la fracción como su decimal equivalente — ya cubierto
+  por el arreglo de isAlgebriteZero que normaliza equivalencias.)
+
+---
+
+### PAA · Álgebra · Nivel 1
+**Tema:** Expresiones y ecuaciones lineales de un solo lado
+
+#### Tarjeta de concepto:
+Una expresión algebraica combina números, variables y operaciones (ej. 3x + 5).
+
+- **Términos semejantes:** misma variable, mismo exponente. Solo esos se combinan: 3x + 5x = 8x, pero 3x + 2x^2 no.
+- **Evaluar:** sustituir un valor por la variable y calcular. Si x = -2: x^2 + 1 = (-2)^2 + 1 = 5.
+- **Expandir:** a(b + c) = ab + ac. Ej. 3(x + 2) = 3x + 6.
+- **Factor común:** inverso de expandir. Ej. 6x + 9 = 3(2x + 3).
+- **Ecuación lineal (un lado):** aísla la incógnita deshaciendo operaciones. 3x + 5 = 14, 3x = 9, x = 3.
+
+#### Ejemplo trabajado:
+**Resuelve 3x + 5 = 14**
+
+Paso 1: Restar 5 de ambos lados: 3x = 9
+Paso 2: Dividir entre 3: **x = 3**
+
+#### Problemas de práctica (6):
+
+P1
+- Enunciado: Simplifica 4x + 3x
+- Respuesta: 7x
+- Tipo: Simplify
+- Pista 1: Son términos semejantes (misma variable x).
+- Pista 2: Suma los coeficientes: 4 + 3.
+- Pista 3: (4 + 3)x = ?
+
+P2
+- Enunciado: Simplifica 5x + 2 - 3x + 4
+- Respuesta: 2x + 6
+- Tipo: Simplify
+- Pista 1: Agrupa términos con x por un lado y números por otro.
+- Pista 2: 5x - 3x y 2 + 4.
+- Pista 3: (5x - 3x) + (2 + 4) = ?
+
+P3
+- Enunciado: Evalúa x^2 + 1 cuando x = -2
+- Respuesta: 5
+- Tipo: Evaluate
+- Pista 1: Sustituye x por -2. Cuidado con el signo en la potencia.
+- Pista 2: (-2)^2 = 4 (un negativo al cuadrado es positivo).
+- Pista 3: 4 + 1 = ?
+
+P4
+- Enunciado: Expande 4(x + 3)
+- Respuesta: 4x + 12
+- Tipo: Expand
+- Pista 1: Multiplica el 4 por cada término del paréntesis.
+- Pista 2: 4 por x y 4 por 3.
+- Pista 3: 4x + 12 = ?
+
+P5
+- Enunciado: Factoriza 6x + 9
+- Respuesta: 3(2x + 3)
+- Tipo: Factorize
+- Pista 1: ¿Qué número divide a 6 y a 9?
+- Pista 2: El factor común es 3.
+- Pista 3: 3(2x + 3), verifica expandiendo.
+
+P6
+- Enunciado: Resuelve 2x + 5 = 13
+- Respuesta: x = 4
+- Tipo: Solve
+- Pista 1: Resta 5 de ambos lados.
+- Pista 2: 2x = 8.
+- Pista 3: x = 8 / 2 = ?
+
+---
+
+### PAA · Álgebra · Nivel 2
+**Tema:** Ecuaciones de ambos lados, inecuaciones, exponentes y polinomios
+
+#### Tarjeta de concepto:
+- **Ambos lados:** lleva variables a un lado y números al otro. 4x - 5 = 2x + 7, 2x = 12, x = 6.
+- **Con paréntesis:** expande primero, luego resuelve.
+- **Inecuaciones:** como ecuaciones, pero al multiplicar/dividir por negativo se INVIERTE el sentido.
+- **Valor absoluto:** |x + 2| <= 4 equivale a -4 <= x + 2 <= 4.
+- **Leyes de exponentes:** (a^m)^n = a^(mn); a^m · a^n = a^(m+n); a^m / a^n = a^(m-n).
+- **Polinomios:** suma/resta combinando términos semejantes; evalúa por sustitución (cuidado con signos).
+
+#### Ejemplo trabajado:
+**Resuelve 4x - 5 = 2x + 7**
+
+Paso 1: Restar 2x de ambos lados: 2x - 5 = 7
+Paso 2: Sumar 5 a ambos lados: 2x = 12
+Paso 3: Dividir entre 2: **x = 6**
+
+#### Problemas de práctica (6):
+
+P1
+- Enunciado: Resuelve 4x - 5 = 2x + 7
+- Respuesta: x = 6
+- Tipo: Solve
+- Pista 1: Resta 2x de ambos lados.
+- Pista 2: 2x - 5 = 7, luego 2x = 12.
+- Pista 3: x = 12 / 2 = ?
+
+P2
+- Enunciado: Resuelve 3(x - 2) = 9
+- Respuesta: x = 5
+- Tipo: Solve
+- Pista 1: Expande, o divide ambos lados entre 3.
+- Pista 2: x - 2 = 3.
+- Pista 3: x = 3 + 2 = ?
+
+P3
+- Enunciado: Resuelve la inecuación -2x > 6
+- Respuesta: x < -3
+- Tipo: Solve
+- Pista 1: Divide ambos lados entre -2.
+- Pista 2: Al dividir entre negativo, INVIERTE el sentido.
+- Pista 3: x < -3.
+
+P4
+- Enunciado: Resuelve la inecuación 2x + 1 < 9
+- Respuesta: x < 4
+- Tipo: Solve
+- Pista 1: Resta 1, luego divide entre 2 (positivo: el sentido no cambia).
+- Pista 2: 2x < 8.
+- Pista 3: x < 8 / 2 = ?
+
+P5
+- Enunciado: Simplifica (x^2 + 3x) + (2x^2 - x)
+- Respuesta: 3x^2 + 2x
+- Tipo: Simplify
+- Pista 1: Combina los x^2 por un lado y los x por otro.
+- Pista 2: x^2 + 2x^2; 3x - x.
+- Pista 3: 3x^2 + 2x.
+
+P6
+- Enunciado: Evalúa x^2 - 4x + 3 cuando x = 5
+- Respuesta: 8
+- Tipo: Evaluate
+- Pista 1: Sustituye x por 5 en cada término.
+- Pista 2: 25 - 20 + 3.
+- Pista 3: 25 - 4(5) + 3 = ?
+
+---
+
+### PAA · Álgebra · Nivel 3
+**Tema:** Cuadráticas factorizables y sistemas 2×2
+
+#### Tarjeta de concepto:
+- **Cuadráticas por factorización:** x^2 + 5x + 6 = 0, busca dos números que multiplicados den 6 y sumados den 5 (2 y 3), (x + 2)(x + 3) = 0, x = -2 o x = -3.
+- **Sistemas 2×2 (eliminación):** suma o resta las ecuaciones para eliminar una variable.
+- **Sistemas 2×2 (sustitución):** despeja una variable y sustitúyela en la otra ecuación.
+
+#### Ejemplo trabajado:
+**Resuelve x^2 + 5x + 6 = 0**
+
+Paso 1: Dos números que multiplicados den 6 y sumados den 5: 2 y 3
+Paso 2: Factoriza: (x + 2)(x + 3) = 0
+Paso 3: Iguala cada factor a cero: **x = -2 o x = -3**
+
+#### Problemas de práctica (6):
+
+P1
+- Enunciado: Factoriza x^2 + 5x + 6
+- Respuesta: (x + 2)(x + 3)
+- Tipo: Factorize
+- Pista 1: Dos números que multiplicados den 6 y sumados den 5.
+- Pista 2: 2 y 3.
+- Pista 3: (x + 2)(x + 3).
+
+P2
+- Enunciado: Resuelve x^2 - 7x + 12 = 0
+- Respuesta: x = 3, x = 4
+- Tipo: Solve
+- Pista 1: Factoriza: dos números que den 12 y sumen 7.
+- Pista 2: 3 y 4, (x - 3)(x - 4) = 0.
+- Pista 3: x - 3 = 0 y x - 4 = 0.
+
+P3
+- Enunciado: Resuelve x^2 - 9 = 0
+- Respuesta: x = 3, x = -3
+- Tipo: Solve
+- Pista 1: Es una diferencia de cuadrados: x^2 - 9 = (x-3)(x+3).
+- Pista 2: (x - 3)(x + 3) = 0.
+- Pista 3: x = 3 o x = -3.
+
+P4
+- Enunciado: Resuelve el sistema: x + y = 7 ; x - y = 1
+- Respuesta: x = 4, y = 3
+- Tipo: Solve
+- Pista 1: Suma las dos ecuaciones para eliminar y.
+- Pista 2: 2x = 8.
+- Pista 3: x = 4, luego y = 7 - 4 = ?
+
+P5
+- Enunciado: Resuelve por sustitución: y = 2x ; x + y = 9
+- Respuesta: x = 3, y = 6
+- Tipo: Solve
+- Pista 1: Sustituye y = 2x en la segunda ecuación.
+- Pista 2: x + 2x = 9, 3x = 9.
+- Pista 3: x = 3, y = 2(3) = ?
+
+P6
+- Enunciado: Resuelve el sistema: 2x + y = 10 ; x - y = 2
+- Respuesta: x = 4, y = 2
+- Tipo: Solve
+- Pista 1: Suma las ecuaciones para eliminar y.
+- Pista 2: 3x = 12.
+- Pista 3: x = 4, luego y = 4 - 2 = ?
+
+---
+
 ### PAA · Aritmética · Nivel 1
 **Tema:** Operaciones con números reales y orden de operaciones
 
@@ -940,6 +1308,28 @@ P15 — Sucesiones geométricas
 - Pista 1: Identifica la razón común dividiendo un término entre el anterior.
 - Pista 2: La razón es 3. El término n es: primer término × razón^(n−1).
 - Pista 3: 4 × 3^(6−1) = 4 × 3⁵ = 4 × 243 = ?
+
+---
+
+### PUNTUACIÓN DE DOS VÍAS — PASO A PASO vs. MCQ (importante)
+
+Como los niveles ahora mezclan problemas paso a paso y MCQ, y como un MCQ es adivinable (25% de acierto
+al azar), los dos tipos se puntúan en **vías separadas** y NO se promedian directamente:
+
+- **Vía simbólica (paso a paso):** se puntúa por conteo de rechazos — Mastery (3, 0 rechazos),
+  Solid (2, 1–2), Shaky (1, 3+), Fail (0). Esta vía es la señal principal de dominio.
+- **Vía conceptual (MCQ):** se puntúa binario — correcto / incorrecto (con posible reintento único).
+  Mide cobertura/exposición, no dominio manipulativo.
+
+Reglas:
+- En las pruebas de unidad, los resultados se REPORTAN por separado, p. ej.
+  "Álgebra simbólica: Solid · Conceptos visuales: 3/4". Un acierto de MCQ por suerte NO debe contaminar
+  la calificación de manipulación simbólica (que es la señal diagnóstica que más importa).
+- Se guardan ambas puntuaciones crudas. La fórmula para **agregarlas en una sola calificación** se define
+  MÁS ADELANTE, una vez que haya datos reales de estudiantes que indiquen el peso correcto.
+  (Misma disciplina que el auto-flag: primero recolectar, luego decidir el criterio.)
+- Implicación de datos: el registro de intento de unidad debe almacenar las dos vías por separado
+  (p. ej. perLevel con subcampos `stepScore` y `mcqScore`), no un único número combinado.
 
 ---
 

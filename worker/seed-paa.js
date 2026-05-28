@@ -6,6 +6,7 @@
 
 'use strict';
 
+const { papomudasWalkthrough, subtopicWithWalkthrough } = require('./walkthrough-generator');
 const { execSync, spawnSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
@@ -487,25 +488,10 @@ const PAA_LESSONS = [
         'Orden de operaciones (PAPOMUDAS): Paréntesis → Potencias → Multiplicación y División (izquierda a derecha) → Adición y Sustracción (izquierda a derecha)',
       ],
       subtopics: [
-        {
-          title: 'PAPOMUDAS',
-          walkthrough: [
-            { col: 'theory', type: 'write', html: '', pause: 1800, audio: 'paa-arit-n1-01.mp3', note: { type: 'rule', label: 'regla', content: 'Orden de las Operaciones', diagram: ['P','A','M/D','S','R'], active: null }, railLabel: 'Orden de operaciones' },
-            { col: 'prob',   type: 'write', html: '3 + 4 × 2 − (6 ÷ 3)', pause: 2000, audio: 'paa-arit-n1-02.mp3', note: null, railLabel: 'El problema' },
-            { col: 'calc',   type: 'write', html: '<div class="calc-line"><span class="red">(6 ÷ 3)</span> = ?</div>', pause: 700, audio: 'paa-arit-n1-03.mp3', note: { type: 'diagram', label: 'primero: paréntesis', diagram: ['P','A','M/D','S','R'], active: 'P', text: 'Par\u00e9ntesis van primero: en esta expresi\u00f3n resuelve (6 \u00f7 3).' }, railLabel: 'Primero: paréntesis' },
-            { col: 'calc',   type: 'question', question: '¿cuánto es 6 ÷ 3?', hint: 'resuelve el paréntesis', answer: '2', correct: '✓ 6 ÷ 3 = <span class="hl">2</span>', wrong: '6 ÷ 3 = <span class="hl">2</span>', audio: null, note: null, railLabel: 'Resuelve 6 ÷ 3' },
-            { col: 'prob',   type: 'write', html: '3 + 4 × 2 − <span class="hl">2</span>', pause: 1400, audio: 'paa-arit-n1-04.mp3', note: null, railLabel: 'Paréntesis = 2' },
-            { col: 'calc',   type: 'write', html: '<div class="calc-sep"></div><div class="calc-line"><span class="blu">4 × 2</span> = ?</div>', pause: 700, audio: 'paa-arit-n1-05.mp3', note: { type: 'diagram', label: 'siguiente: mult/div', diagram: ['P','A','M/D','S','R'], active: 'M/D', text: 'Multiplicaci\u00f3n y divisi\u00f3n, de izquierda a derecha: aqu\u00ed calcula 4 \u00d7 2.' }, railLabel: 'Siguiente: mult/div' },
-            { col: 'calc',   type: 'question', question: '¿cuánto es 4 × 2?', hint: 'multiplicación antes que suma', answer: '8', correct: '✓ 4 × 2 = <span class="hl">8</span>', wrong: '4 × 2 = <span class="hl">8</span>', audio: null, note: null, railLabel: 'Resuelve 4 × 2' },
-            { col: 'prob',   type: 'write', html: '3 + <span class="hl">8</span> − 2', pause: 1400, audio: 'paa-arit-n1-06.mp3', note: null, railLabel: 'Multiplicación = 8' },
-            { col: 'calc',   type: 'write', html: '<div class="calc-sep"></div><div class="calc-line"><span class="amb">3 + 8</span> − 2 = ?</div>', pause: 700, audio: 'paa-arit-n1-07.mp3', note: { type: 'diagram', label: 'siguiente: suma', diagram: ['P','A','M/D','S','R'], active: 'S', text: 'Suma de izquierda a derecha: primero 3 + 8.' }, railLabel: 'Siguiente: suma' },
-            { col: 'calc',   type: 'question', question: '¿cuánto es 3 + 8?', hint: 'suma primero', answer: '11', correct: '✓ 3 + 8 = <span class="hl">11</span>', wrong: '3 + 8 = <span class="hl">11</span>', audio: null, note: null, railLabel: 'Resuelve 3 + 8' },
-            { col: 'prob',   type: 'write', html: '<span class="hl">11</span> − 2', pause: 1400, audio: 'paa-arit-n1-08.mp3', note: null, railLabel: 'Suma = 11' },
-            { col: 'calc',   type: 'write', html: '<div class="calc-sep"></div><div class="calc-line"><span class="amb">11 − 2</span> = ?</div>', pause: 700, audio: null, note: { type: 'diagram', label: 'último: resta', diagram: ['P','A','M/D','S','R'], active: 'R', text: 'Resta al final: 11 − 2.' }, railLabel: 'Último: resta' },
-            { col: 'calc',   type: 'question', question: '¿cuánto es 11 − 2?', hint: 'resta lo que queda', answer: '9', correct: '✓ 11 − 2 = <span class="hl">9</span>', wrong: '11 − 2 = <span class="hl">9</span>', audio: null, note: null, railLabel: 'Resuelve 11 − 2' },
-            { col: 'prob',   type: 'write', html: '<span class="hl">= 9 ✓</span>', final: true, pause: 0, audio: 'paa-arit-n1-09.mp3', note: null, railLabel: 'Resultado = 9' },
-          ],
-        },
+        subtopicWithWalkthrough(
+          'PAPOMUDAS',
+          papomudasWalkthrough({ audioPrefix: 'paa-arit-n1' })
+        ),
       ],
       example: {
         start: '18 + 2³ ÷ 4 × 2',

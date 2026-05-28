@@ -6,6 +6,7 @@
 //
 // VALIDATION AUDIT (run before seeding):
 //   PASS  L1: P1 (Simplify), P2 (Simplify), P3 (Evaluate), P4 (Expand), P5 (Factorize), P6 (Solve)
+//   L1/L2 use subtopics[].walkthrough (3-column board) via walkthrough-generator.js
 //   PASS  L2: P1–P6 (including P3/P4 inequalities via math-validation.js inequalityEquivalence)
 //   PASS  L3: P1 (Factorize trinomial — Algebrite expands both sides to verify),
 //          P2/P3 (multi-value Solve — comma-separated order-independent matching),
@@ -19,6 +20,11 @@
 
 'use strict';
 
+const {
+  linearSolveWalkthrough,
+  linearSolveBothSidesWalkthrough,
+  subtopicWithWalkthrough,
+} = require('./walkthrough-generator');
 const { spawnSync } = require('child_process');
 const fs   = require('fs');
 const path = require('path');
@@ -325,8 +331,21 @@ const PAA_ALGEBRA_LESSONS = [
           'Expansión y factorización de expresiones lineales.',
           'Ecuaciones lineales de dos pasos.',
         ],
-        practice: 'Después del concepto y el ejemplo, practicarás con 6 ejercicios paso a paso.',
+        practice: 'Después del recorrido guiado en el tablero, practicarás con 6 ejercicios paso a paso.',
       },
+      subtopics: [
+        subtopicWithWalkthrough(
+          'Resolver ecuaciones lineales',
+          linearSolveWalkthrough({
+            equation: '2x + 5 = 13',
+            subtractLabel: '5',
+            subtractResult: '8',
+            divideLabel: '2',
+            finalAnswer: '4',
+            audioPrefix: 'paa-algebra-n1-wt',
+          })
+        ),
+      ],
       conceptVoice:
         'En álgebra, una expresión como 4x + 3x combina dos términos semejantes — misma variable x — y se simplifica sumando los coeficientes: 4 + 3 = 7, entonces 4x + 3x = 7x. ' +
         'Si hay términos con x y números separados, agrúpalos por tipo antes de combinar. ' +
@@ -432,8 +451,24 @@ const PAA_ALGEBRA_LESSONS = [
           'Inecuaciones lineales con posible inversión de sentido.',
           'Operaciones con polinomios.',
         ],
-        practice: 'Después del concepto y el ejemplo, practicarás con 6 ejercicios paso a paso.',
+        practice: 'Después del recorrido guiado en el tablero, practicarás con 6 ejercicios paso a paso.',
       },
+      subtopics: [
+        subtopicWithWalkthrough(
+          'Ecuaciones en ambos lados',
+          linearSolveBothSidesWalkthrough({
+            equation: '4x − 5 = 2x + 7',
+            subtractVarTerm: '2x',
+            afterMoveEquation: '2x − 5 = 7',
+            addLabel: '5',
+            afterAddEquation: '2x = 12',
+            rightAfterMove: '7',
+            divideLabel: '2',
+            finalAnswer: '6',
+            audioPrefix: 'paa-algebra-n2-wt',
+          })
+        ),
+      ],
       conceptVoice:
         'Cuando la incógnita aparece en ambos lados, el objetivo es llevar todos los términos con x a un lado y los números al otro. ' +
         'Por ejemplo, 4x − 5 = 2x + 7: restamos 2x a ambos lados → 2x − 5 = 7; sumamos 5 → 2x = 12; dividimos entre 2 → x = 6. ' +

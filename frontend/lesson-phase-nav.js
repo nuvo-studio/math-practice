@@ -6,29 +6,42 @@
   var LABEL_KEYS = ['', 'phase_intro', 'phase_concepts', 'phase_example', 'phase_practice'];
 
   var CSS = [
-    '.lesson-topnav {',
-    '  width: 100%;',
-    '  padding: 10px max(12px, env(safe-area-inset-right)) 10px max(12px, env(safe-area-inset-left));',
+    '.lesson-page {',
+    '  width: 100%; max-width: 600px; margin: 0 auto;',
+    '  padding: 0 16px 48px; box-sizing: border-box; flex-shrink: 0;',
+    '}',
+    '.lesson-page #practice-screen { margin-top: 0; }',
+    '.lesson-page .lesson-topnav {',
+    '  width: calc(100% + 32px); margin-left: -16px; margin-right: -16px;',
+    '  padding: 10px 16px;',
     '  display: flex; align-items: center;',
     '  border-bottom: 1px solid var(--border, #E8E8E4);',
-    '  background: var(--card, #fff);',
-    '  flex-shrink: 0;',
+    '  background: var(--card, #fff); flex-shrink: 0;',
+    '}',
+    '.lesson-topnav {',
+    '  width: 100%;',
+    '  padding: 10px max(16px, env(safe-area-inset-right)) 10px max(16px, env(safe-area-inset-left));',
+    '  display: flex; align-items: center;',
+    '  border-bottom: 1px solid var(--border, #E8E8E4);',
+    '  background: var(--card, #fff); flex-shrink: 0;',
     '}',
     '.lesson-topnav .back-link {',
     '  font-size: 0.82rem; font-weight: 600;',
     '  color: var(--accent, #2D6A4F); text-decoration: none;',
     '  display: inline-flex; align-items: center; gap: 4px;',
     '}',
+    '.lesson-page .lesson-phase-shell {',
+    '  width: 100%; max-width: none; margin: 0 0 12px; padding: 8px 0 0;',
+    '}',
     '.lesson-phase-shell {',
     '  width: 100%; max-width: 600px; margin: 0 auto 12px;',
-    '  padding: 8px max(12px, env(safe-area-inset-right)) 0 max(12px, env(safe-area-inset-left));',
-    '  box-sizing: border-box; flex-shrink: 0; min-height: 40px;',
+    '  padding: 8px 16px 0; box-sizing: border-box; flex-shrink: 0; min-height: 40px;',
     '  position: sticky; top: 56px; z-index: 95;',
     '  background: var(--bg, #FAFAF8);',
     '}',
     '.lesson-phase-nav {',
-    '  display: flex; flex-wrap: nowrap; gap: 6px;',
-    '  margin-bottom: 0; overflow-x: auto;',
+    '  display: flex; flex-wrap: nowrap; gap: 6px; width: 100%;',
+    '  margin-bottom: 0; overflow-x: auto; overflow-y: hidden;',
     '  -webkit-overflow-scrolling: touch;',
     '  scrollbar-width: none; padding-bottom: 4px;',
     '}',
@@ -136,6 +149,26 @@
     });
   }
 
+  function scrollActivePhaseIntoView(root, current) {
+    var nav = root.querySelector('.lesson-phase-nav');
+    var cur = root.querySelector('.lesson-phase-step.is-current');
+    if (!nav || !cur) return;
+    requestAnimationFrame(function () {
+      var navW = nav.clientWidth;
+      var curL = cur.offsetLeft;
+      var curW = cur.offsetWidth;
+      if (current === 1) {
+        nav.scrollLeft = 0;
+      } else if (current === PHASE_COUNT) {
+        nav.scrollLeft = Math.max(0, nav.scrollWidth - navW);
+      } else if (curL + curW > nav.scrollLeft + navW) {
+        nav.scrollLeft = curL + curW - navW;
+      } else if (curL < nav.scrollLeft) {
+        nav.scrollLeft = curL;
+      }
+    });
+  }
+
   function render(root, opts) {
     if (!root) return;
     injectStyles();
@@ -143,6 +176,7 @@
     var current = Math.min(Math.max(opts.current || 1, 1), PHASE_COUNT);
     root.innerHTML = buildHtml(current, opts);
     bind(root, opts.onNavigate);
+    scrollActivePhaseIntoView(root, current);
   }
 
   window.LessonPhaseNav = {

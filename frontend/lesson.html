@@ -51,6 +51,12 @@
   }
 
   /* ── Content area ── */
+  .lesson-page .container {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 24px 0 0;
+  }
   .container {
     width: 100%;
     max-width: 600px;
@@ -1699,23 +1705,24 @@
 </head>
 <body>
 <div id="nav-root"></div>
-<div class="lesson-topnav">
-  <a href="home.html" class="back-link" data-i18n="back_to_curriculum">← Back to curriculum</a>
-</div>
-<div class="lesson-phase-shell" id="lesson-phase-shell">
-  <div id="lesson-phase-root"></div>
-</div>
-
-<div class="container" id="app">
+<div class="lesson-page">
+  <div class="lesson-topnav">
+    <a href="home.html" class="back-link" data-i18n="back_to_curriculum">← Back to curriculum</a>
+  </div>
+  <div class="lesson-phase-shell" id="lesson-phase-shell">
+    <div id="lesson-phase-root"></div>
+  </div>
+  <div class="container" id="app">
   <div class="state-card">
     <div class="icon">&#9203;</div>
     <h2 data-i18n="loading_lesson_h2">Loading lesson…</h2>
     <p data-i18n="loading_just_moment">Just a moment!</p>
   </div>
+  </div>
 </div>
 
 <script src="lang.js?v=20260514-concept-nav"></script>
-<script src="lesson-phase-nav.js?v=20260529-phase-fix"></script>
+<script src="lesson-phase-nav.js?v=20260530-align"></script>
 <script src="calculator.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/algebrite@1.4.0/dist/algebrite.bundle-for-browser.js"></script>
 <script>

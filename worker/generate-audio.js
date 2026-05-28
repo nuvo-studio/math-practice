@@ -76,7 +76,8 @@ async function main() {
     await generateLine(line);
   }
 
-  console.log('\nDone.\n');
+  console.log('\nDone.');
+  console.log('If walkthrough voice changed, bump WALKTHROUGH_AUDIO_REV in frontend/lesson.html and deploy.\n');
 }
 
 main().catch(err => { console.error(err.message); process.exit(1); });

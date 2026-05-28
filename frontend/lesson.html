@@ -1544,6 +1544,13 @@
 <script src="https://cdn.jsdelivr.net/npm/algebrite@1.4.0/dist/algebrite.bundle-for-browser.js"></script>
 <script>
   const WORKER = 'https://math-practice-proxy.ronelalmanza20.workers.dev';
+  /** Bump when walkthrough MP3s are regenerated (cache-bust; filenames stay the same). */
+  const WALKTHROUGH_AUDIO_REV = '20260528-v2';
+
+  function walkthroughAudioUrl(file) {
+    if (!file) return '';
+    return '/audio/' + file + '?v=' + encodeURIComponent(WALKTHROUGH_AUDIO_REV);
+  }
 
   Lang.apply();
 
@@ -2684,7 +2691,7 @@
 
     function playStepAudio(file) {
       if (!audioEnabled || !file) return;
-      new Audio('/audio/' + file).play();
+      new Audio(walkthroughAudioUrl(file)).play();
     }
 
     function typewriterReveal(rootEl) {
@@ -2876,7 +2883,7 @@
         _s.idx++;
         const pause = step.pause != null ? step.pause : 0;
         if (audioEnabled && step.audio) {
-          const aud = new Audio('/audio/' + step.audio);
+          const aud = new Audio(walkthroughAudioUrl(step.audio));
           var continued = false;
           function continueOnce() {
             if (continued) return;

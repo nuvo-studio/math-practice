@@ -1702,7 +1702,7 @@
 <div class="lesson-topnav">
   <a href="home.html" class="back-link" data-i18n="back_to_curriculum">← Back to curriculum</a>
 </div>
-<div class="lesson-phase-shell" id="lesson-phase-shell" style="display:none;">
+<div class="lesson-phase-shell" id="lesson-phase-shell">
   <div id="lesson-phase-root"></div>
 </div>
 
@@ -1715,7 +1715,7 @@
 </div>
 
 <script src="lang.js?v=20260514-concept-nav"></script>
-<script src="lesson-phase-nav.js?v=20260528-phase-shell"></script>
+<script src="lesson-phase-nav.js?v=20260529-phase-fix"></script>
 <script src="calculator.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/algebrite@1.4.0/dist/algebrite.bundle-for-browser.js"></script>
 <script>
@@ -1900,6 +1900,7 @@
   // ── Boot ─────────────────────────────────────────────────────
   async function init() {
     if (!curriculum || !unit || !stage) {
+      document.getElementById('lesson-phase-shell').style.display = 'none';
       render(`
         <div class="state-card">
           <div class="icon">&#129300;</div>
@@ -1908,6 +1909,8 @@
         </div>`);
       return;
     }
+
+    updateLessonPhaseNav(1);
 
     // Legacy ?phase=test URLs — level tests removed; treat as practice completion
     if (phaseParam === 'test') {
@@ -1988,22 +1991,68 @@
     return n;
   }
 
-  function updateLessonPhaseNav(phaseNum) {
-    const current = touchLessonPhase(phaseNum >= 5 ? LESSON_PHASE_COUNT : phaseNum);
-    if (phaseNum >= 5) lessonMaxPhase = LESSON_PHASE_COUNT;
-    const root = document.getElementById('lesson-phase-root');
-    if (!root || !window.LessonPhaseNav) return;
-    LessonPhaseNav.render(root, {
+  function lessonPhaseNavOpts(current) {
+    return {
       current: current,
       escHtml: escHtml,
       href: function (n) {
-        if (n === 4) return curriculumAppUrl('practice', 'complete');
+        if (n === 4 && lesson) return curriculumAppUrl('practice', 'complete');
         return null;
       },
       onNavigate: function (n) {
         goToLessonPhase(n);
       },
-    });
+    };
+  }
+
+  function lessonPhaseNavFallbackHtml(current) {
+    const labels = ['', 'phase_intro', 'phase_concepts', 'phase_example', 'phase_practice'];
+    const steps = [];
+    for (let n = 1; n <= LESSON_PHASE_COUNT; n++) {
+      const isCurrent = n === current;
+      const isDone = n < current;
+      let cls = 'lesson-phase-step';
+      if (isCurrent) cls += ' is-current';
+      if (isDone) cls += ' is-done';
+      const label = Lang.t(labels[n]);
+      const inner =
+        `<span class="lesson-phase-num">${n}</span>` +
+        `<span class="lesson-phase-label">${escHtml(label)}</span>`;
+      const practiceHref = n === 4 && lesson ? curriculumAppUrl('practice', 'complete') : null;
+      if (practiceHref && !isCurrent) {
+        steps.push(`<a class="${cls}" href="${practiceHref}" data-lesson-phase="${n}">${inner}</a>`);
+      } else {
+        steps.push(
+          `<button type="button" class="${cls}" data-lesson-phase="${n}"` +
+          `${isCurrent ? ' aria-current="step"' : ''}>${inner}</button>`
+        );
+      }
+    }
+    return `<nav class="lesson-phase-nav" aria-label="${escHtml(Lang.t('lesson_phase_nav_aria'))}">${steps.join('')}</nav>`;
+  }
+
+  function updateLessonPhaseNav(phaseNum) {
+    const current = touchLessonPhase(phaseNum >= 5 ? LESSON_PHASE_COUNT : phaseNum);
+    if (phaseNum >= 5) lessonMaxPhase = LESSON_PHASE_COUNT;
+    const shell = document.getElementById('lesson-phase-shell');
+    const root = document.getElementById('lesson-phase-root');
+    if (!shell || !root) return;
+    shell.style.display = 'block';
+    const opts = lessonPhaseNavOpts(current);
+    if (window.LessonPhaseNav) {
+      LessonPhaseNav.render(root, opts);
+    } else {
+      root.innerHTML = lessonPhaseNavFallbackHtml(current);
+    }
+    if (!root.dataset.phaseNavBound) {
+      root.dataset.phaseNavBound = '1';
+      root.addEventListener('click', function (e) {
+        const el = e.target.closest('[data-lesson-phase]');
+        if (!el || el.tagName === 'A') return;
+        e.preventDefault();
+        goToLessonPhase(Number(el.getAttribute('data-lesson-phase')));
+      });
+    }
   }
 
   function syncLessonPhaseNav(current) {

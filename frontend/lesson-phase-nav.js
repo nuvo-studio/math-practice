@@ -20,9 +20,9 @@
     '  display: inline-flex; align-items: center; gap: 4px;',
     '}',
     '.lesson-phase-shell {',
-    '  width: 100%; max-width: 600px; margin: 0 auto;',
+    '  width: 100%; max-width: 600px; margin: 0 auto 12px;',
     '  padding: 8px max(12px, env(safe-area-inset-right)) 0 max(12px, env(safe-area-inset-left));',
-    '  box-sizing: border-box; flex-shrink: 0;',
+    '  box-sizing: border-box; flex-shrink: 0; min-height: 40px;',
     '  position: sticky; top: 56px; z-index: 95;',
     '  background: var(--bg, #FAFAF8);',
     '}',
@@ -104,7 +104,7 @@
       var href = opts.href ? opts.href(i) : null;
       if (href && !isCurrent) {
         steps.push(
-          '<a class="' + cls + '" href="' + esc(href) + '" data-lesson-phase="' + i + '">' + inner + '</a>'
+          '<a class="' + cls + '" href="' + href + '" data-lesson-phase="' + i + '">' + inner + '</a>'
         );
       } else {
         steps.push(
@@ -123,14 +123,16 @@
   }
 
   function bind(root, onNavigate) {
-    if (!root || root.dataset.phaseNavBound) return;
+    if (!root) return;
+    root._lessonPhaseOnNavigate = onNavigate;
+    if (root.dataset.phaseNavBound) return;
     root.dataset.phaseNavBound = '1';
     root.addEventListener('click', function (e) {
       var el = e.target.closest('[data-lesson-phase]');
       if (!el || el.tagName === 'A') return;
       e.preventDefault();
       var n = Number(el.getAttribute('data-lesson-phase'));
-      if (onNavigate) onNavigate(n);
+      if (root._lessonPhaseOnNavigate) root._lessonPhaseOnNavigate(n);
     });
   }
 

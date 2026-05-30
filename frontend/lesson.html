@@ -2987,7 +2987,7 @@
     document.body.classList.add('has-walkthrough');
 
     // ── Closure state ──────────────────────────────────────────
-    const _s = { idx: 0, paused: false, waiting: false, tries: 0, timer: null };
+    const _s = { idx: 0, paused: false, waiting: false, tries: 0, timer: null, resumeFromIdx: null };
     let audioEnabled = true;
     let _wtStepAudio = null;
     /** Min dwell on Cálculos cards; also lifts old KV seeds that still have pause: 700. */
@@ -3485,17 +3485,27 @@
       const btn = document.getElementById('wt-pause-btn');
       if (btn) btn.textContent = _s.paused ? '\u25B6 Reanudar' : '\u23F8 Pausar';
       if (_s.paused) {
+        var prevStep = steps[_s.idx - 1];
+        _s.resumeFromIdx = (_wtStepAudio !== null && prevStep && prevStep.type === 'write') ? _s.idx - 1 : null;
         _clearContinueTimer();
         wtStopStepAudio();
       } else {
-        _resume();
+        if (_s.resumeFromIdx !== null) {
+          var rStep = steps[_s.resumeFromIdx];
+          var rPause = rStep.pause != null ? rStep.pause : 0;
+          if (rStep.col === 'calc' && rPause < WT_CALC_WRITE_PAUSE_MIN) rPause = WT_CALC_WRITE_PAUSE_MIN;
+          _s.resumeFromIdx = null;
+          wtPlayStepAudio(rStep.audio, function() { _scheduleContinue(rPause); });
+        } else {
+          _resume();
+        }
       }
     };
 
     window.wtRestart = function() {
       _clearContinueTimer();
       wtStopStepAudio();
-      _s.idx = 0; _s.paused = false; _s.waiting = false; _s.tries = 0; _s.timer = null;
+      _s.idx = 0; _s.paused = false; _s.waiting = false; _s.tries = 0; _s.timer = null; _s.resumeFromIdx = null;
       _resetWtNotes();
       const probEl = document.getElementById('wt-col-prob');
       if (probEl) probEl.innerHTML = '';

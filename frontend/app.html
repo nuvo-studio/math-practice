@@ -991,6 +991,29 @@
   let stepHistory = [];
   let wrongCount = 0;
   let formCheckAttempts = 0;
+  /** Consecutive leading-"=" notation misses on the current worked line (Simplify/Expand/Factorize only). */
+  let equalsNotationMissCount = 0;
+  const EXPRESSION_EQUALS_NOTATION_TYPES = ['Simplify', 'Expand', 'Factorize'];
+
+  function expressionLineForEquivalence(line, problemType) {
+    const t = String(line || '').trim();
+    if (!EXPRESSION_EQUALS_NOTATION_TYPES.includes(problemType) || !t.startsWith('=')) return t;
+    return t.replace(/^=\s*/, '').trim();
+  }
+
+  function rejectEqualsNotationMiss(input) {
+    equalsNotationMissCount++;
+    logStep(input, false);
+    studentCalc.clear();
+    const equalsNudgeMsg =
+      'Recuerda: cada línea lleva un signo de igual al principio, porque es igual a la línea anterior.';
+    if (equalsNotationMissCount >= 2) {
+      showFeedback('nudge', equalsNudgeMsg);
+    } else {
+      showFeedback('wrong', IS_UNIT_TEST ? 'Ese paso no es válido. Intenta de nuevo.' : "That's not correct. Try again!");
+    }
+    reenableInput();
+  }
   let askRonelProblems = [];
   let generatedLink = '';
   let guestProblemAttempted = false;
@@ -1922,6 +1945,7 @@
     stepHistory = [];
     wrongCount = 0;
     formCheckAttempts = 0;
+    equalsNotationMissCount = 0;
     guestProblemAttempted = false;
     if (IS_UNIT_TEST) {
       unitTestRejections = 0;
@@ -2006,20 +2030,34 @@
     const previousExpression = (problem.type === 'Evaluate' || problem.type === 'Rearrange')
       ? problem.answer
       : stepHistory.length > 0
-        ? stepHistory[stepHistory.length - 1]
+        ? expressionLineForEquivalence(stepHistory[stepHistory.length - 1], problem.type)
         : getInitialWorkExpression(problem);
 
+    // ── Notation pre-check: leading "=" on every student line (expression chain types only) ──
+    let equivInput = input;
+    if (EXPRESSION_EQUALS_NOTATION_TYPES.includes(problem.type)) {
+      if (!input.startsWith('=')) {
+        rejectEqualsNotationMiss(input);
+        return;
+      }
+      equivInput = expressionLineForEquivalence(input, problem.type);
+      if (!equivInput) {
+        rejectEqualsNotationMiss(input);
+        return;
+      }
+    }
+
     const t0 = performance.now();
-    console.log('[submitStep] entry', { input, problemType: problem.type, previousExpression });
-    console.log('[submitStep] normalized input:', JSON.stringify(normalize(input)));
+    console.log('[submitStep] entry', { input, equivInput, problemType: problem.type, previousExpression });
+    console.log('[submitStep] normalized input:', JSON.stringify(normalize(equivInput)));
 
     let equiv;
     if (input.includes(',')) {
       console.log('[submitStep] comma answer — skipping step check, treating as final answer');
-      equiv = checkIsFinal(input, problem.answer, problem.type);
+      equiv = checkIsFinal(equivInput, problem.answer, problem.type);
       console.log(`[submitStep] checkIsFinal (comma shortcut) in ${(performance.now()-t0).toFixed(1)}ms:`, equiv);
     } else {
-      equiv = checkEquivalence(previousExpression, input, problem.type);
+      equiv = checkEquivalence(previousExpression, equivInput, problem.type);
       console.log(`[submitStep] checkEquivalence result in ${(performance.now()-t0).toFixed(1)}ms:`, equiv);
 
       if (equiv.valid === null) {
@@ -2046,12 +2084,13 @@
 
     if (equiv.valid === true) {
       wrongCount = 0;
+      equalsNotationMissCount = 0;
       stepHistory.push(input);
       addStepToHistory(input);
       logStep(input, true);
       document.getElementById('feedback').style.display = 'none';
 
-      const isFinal = checkIsFinal(input, problem.answer, problem.type);
+      const isFinal = checkIsFinal(equivInput, problem.answer, problem.type);
       console.log('[submitStep] checkIsFinal:', isFinal);
       if (isFinal.valid === true) {
         if (input.includes(',')) {
@@ -2069,7 +2108,7 @@
           const useRawMatch = !(problem.modules?.includes('formCheck'));
           let formMatches, formFeedback;
           if (useRawMatch) {
-            const rawA = canonicalFormForCheck(input);
+            const rawA = canonicalFormForCheck(equivInput);
             const rawB = canonicalFormForCheck(problem.answer);
             formMatches = rawA === rawB;
             formFeedback = null;
@@ -2078,7 +2117,7 @@
             showLoading('Checking answer form...');
             console.log('[submitStep] calling askClaudeFormCheck...');
             const tF = performance.now();
-            const formCheck = await askClaudeFormCheck(input, problem.answer, problem.type);
+            const formCheck = await askClaudeFormCheck(equivInput, problem.answer, problem.type);
             console.log(`[submitStep] askClaudeFormCheck returned in ${(performance.now()-tF).toFixed(1)}ms:`, formCheck);
             hideLoading();
             if (formCheck === null) {
